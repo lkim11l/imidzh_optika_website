@@ -7,5 +7,10 @@
     "start": "node scripts/preview.mjs",
     "build": "node scripts/prepare-pages.mjs"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2"
+  }
 }

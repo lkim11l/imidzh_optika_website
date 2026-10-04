@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs');
-const base = 'http://127.0.0.1:4173';
+const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4173';
 const results = [];
 async function check(name, action) { if(process.env.VERIFY_ONLY && !name.includes(process.env.VERIFY_ONLY))return;await action();results.push(name);console.log('PASS',name); }
 async function waitCollection(page) { await page.locator('#route-view .results-count').waitFor(); }
@@ -17,6 +17,7 @@ function normalize(text) { return text.replace(/\s/g,''); }
   page.on('console',message => {if(message.type() === 'error')errors.push(message.text());});
   page.on('request',request => { if(/optika77|cs-cart/i.test(request.url()))productionRequests.push(request.url()); });
   page.on('response',response => {if(response.status() >= 400 && response.url().startsWith(base))failedRequests.push(response.url());});
+  await page.route('**/rest/v1/rpc/optika_submit_booking',route=>route.fulfill({status:204,body:''}));
   try {
     await check('Homepage keeps hero and has two category cards / four featured models',async() => {
       await page.goto(base);await page.locator('#featured-products .product-card').first().waitFor();
@@ -92,13 +93,13 @@ function normalize(text) { return text.replace(/\s/g,''); }
       await page.locator('#route-view [data-quantity][data-delta="-1"]').click();assert.equal(normalize(await page.locator('#route-view .summary-line.total strong').textContent()),'41900₽');
       await page.locator('#route-view [data-remove-cart]').click();assert.equal(await page.locator('#route-view .cart-item').count(),0);
     });
-    await check('Booking, fitting request and cart request remain explicit demonstrations',async() => {
+    await check('Booking success and demonstration fitting/cart requests',async() => {
       await page.goto(base+'/product/tom-ford-sole-01');await page.locator('[data-request-product]').waitFor();await page.locator('[data-request-product]').click();
       await page.locator('#request-form input[name=phone]').fill('abcdefghi');assert.equal(await page.locator('#request-form input[name=phone]').evaluate(input=>input.checkValidity()),false);
       await page.locator('#request-form input[name=name]').fill('Тест');await page.locator('#request-form input[name=phone]').fill('+7 (999) 123-45-67');
       await page.locator('#request-form button[type=submit]').click();assert.equal(await page.locator('#request-result').isVisible(),true);await page.locator('#request-result button').click();
       await page.locator('[data-add-cart]').click();await page.locator('[data-open-cart]').click();await page.locator('#cart-dialog [data-request-cart]').click();assert.equal(await page.locator('#request-dialog').evaluate(el=>el.open),true);await page.keyboard.press('Escape');
-      await page.locator('.header [data-booking]').click();await page.locator('#booking-form input[name=name]').fill('Тест');await page.locator('#booking-form input[name=phone]').fill('+7 999 123 45 67');await page.locator('#booking-form button[type=submit]').click();assert.equal(await page.locator('#booking-result').isVisible(),true);await page.locator('#booking-done').click();
+      await page.locator('.header [data-booking]').click();await page.locator('#booking-form input[name=name]').fill('Тест');await page.locator('#booking-form input[name=phone]').fill('+7 999 123 45 67');await page.locator('#booking-form input[name=consent]').check();await page.locator('#booking-form button[type=submit]').click();await page.locator('#booking-result').waitFor();assert.equal(await page.locator('#booking-result').isVisible(),true);await page.locator('#booking-done').click();
       const storage = await page.evaluate(()=>JSON.stringify({...localStorage}));assert.equal(storage.includes('Тест'),false);assert.equal(storage.includes('999'),false);
     });
     await check('Keyboard focus is trapped in dialogs and Escape restores opener',async() => {
@@ -129,3 +130,4 @@ function normalize(text) { return text.replace(/\s/g,''); }
     fs.writeFileSync('qa-report.json',JSON.stringify({passed:results.length+1,checks:results,errors,failedRequests,productionRequests},null,2));
   } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1);});
+

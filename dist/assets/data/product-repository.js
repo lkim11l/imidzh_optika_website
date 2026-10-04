@@ -1,3 +1,6 @@
+import {usesSupabaseCatalog,listRows,normalizeRow} from './supabase.js';
+let catalogPromise;
+const catalog=()=>catalogPromise ||= listRows().then(rows=>rows.map(normalizeRow)).catch(error=>{catalogPromise=null;throw error;});
 import { mockProducts, brands } from './products.js';
 /**
  * Data boundary. Replace this provider with an API adapter later.
@@ -7,9 +10,9 @@ import { mockProducts, brands } from './products.js';
  */
 /** @type {ProductRepository} */
 export const productRepository = Object.freeze({
-  async getProducts() { return [...mockProducts]; },
-  async getProduct(slug) { return mockProducts.find(product => product.slug === slug) || null; },
-  async getBrands() { return [...brands]; }
+  async getProducts() { return usesSupabaseCatalog() ? [...await catalog()] : [...mockProducts]; },
+  async getProduct(slug) { return (usesSupabaseCatalog() ? await catalog() : mockProducts).find(product => product.slug === slug) || null; },
+  async getBrands() { return usesSupabaseCatalog() ? [...new Set((await catalog()).map(p=>p.brand))].sort() : [...brands]; }
 });
 export function filterProducts(products, filters) {
   const query = (filters.query || '').trim().toLocaleLowerCase('ru');
