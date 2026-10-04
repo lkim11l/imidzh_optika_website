@@ -1,0 +1,15 @@
+/* Salon contact details. No changes to hero, catalog or admin styles. */
+.store-placeholder.store-contacts{display:grid;justify-content:stretch;gap:24px;min-height:420px}
+.store-contacts .eyebrow{margin:0}
+.store-contacts h3{font-size:clamp(2rem,3vw,2.625rem);line-height:1.15;letter-spacing:-1.2px;margin:0}
+.store-contact-details{display:grid;gap:20px}
+.store-contact-details>div{display:grid;gap:7px;min-width:0}
+.store-contact-details .contact-label{font-size:.625rem;font-weight:650;letter-spacing:1.2px;color:#75796f}
+.store-contact-details address,.store-contact-details p{font-size:1rem;line-height:1.65;font-style:normal;margin:0;color:var(--ink);overflow-wrap:anywhere}
+.store-contacts .store-phone{display:inline-flex;align-items:center;width:max-content;max-width:100%;min-height:44px;font-size:1.25rem;line-height:1.5;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px}
+.store-map-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;width:fit-content;max-width:100%;font-size:.875rem;font-weight:550;text-decoration:underline;text-underline-offset:5px;line-height:1.5}
+.store-map-link>span[aria-hidden]{font-size:1.125rem;text-decoration:none}
+.store-contacts a:hover{color:var(--blue)}
+.footer{flex-wrap:wrap}
+.footer .footer-phone{white-space:nowrap}
+@media(max-width:540px){.store-placeholder.store-contacts{min-height:0;padding:28px;gap:23px}.store-contacts h3{font-size:2rem}.store-contact-details address,.store-contact-details p{font-size:.9375rem}.store-contacts .store-phone{font-size:1.125rem}.store-map-link{font-size:.8125rem}}
