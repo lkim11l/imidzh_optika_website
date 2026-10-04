@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),path=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']});try{
+ const {mockProducts}=await import(path.resolve(__dirname,'../dist/assets/data/products.js'));const rows=mockProducts.map(p=>({id:p.id,slug:p.slug,published:true,data:p}));const errors=[];
+ for(const width of [1440,390,430]){
+  const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await context.route('**/*.supabase.co/**',r=>{assert.equal(r.request().method(),'GET');return r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(r.request().url().includes('optika_products')?rows:[])});});await context.route('https://fonts.googleapis.com/**',r=>r.fulfill({status:200,contentType:'text/css',body:''}));const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));const base=process.env.PREVIEW_URL||'http://127.0.0.1:4173';
+  const noCart=async()=>{assert.equal(await page.locator('[data-open-cart],[data-add-cart],[data-request-cart],#cart-dialog,a[href="/cart"],a[href="/cart/"]').count(),0);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);};
+  await page.goto(base);await page.locator('#featured-products .product-card').first().waitFor();await noCart();await page.locator('.hero-ctas [data-booking]').click();assert(await page.locator('#booking-dialog').isVisible());await page.keyboard.press('Escape');
+  if(width<600){await page.locator('[data-open-menu]').click();await noCart();await page.keyboard.press('Escape');}
+  await page.goto(base+'/catalog');await page.locator('#route-view .product-card').first().waitFor();await noCart();await page.locator('#route-view [data-favorite]').first().click();const count=await page.locator('[data-favorite-count]').textContent();assert.equal(count,'1');
+  await page.locator('#route-view .product-card-link').first().click();await page.locator('.product-detail').waitFor();await noCart();assert(await page.locator('[data-request-product]').isVisible());await page.locator('[data-request-product]').click();assert(await page.locator('#request-dialog').isVisible());await page.keyboard.press('Escape');
+  await page.goto(base+'/favorites');await page.locator('#route-view .product-card').first().waitFor();await page.locator('#route-view [data-favorite]').first().click();await page.locator('#route-view .empty-state').waitFor();await noCart();
+  for(const url of ['/cart','/cart/']){await page.goto(base+url);await page.locator('#route-view .catalog-page').waitFor();assert.equal(new URL(page.url()).pathname,'/catalog');await noCart();}
+  await page.goto(base+'/catalog/optical');await page.locator('#route-view .product-card').first().waitFor();await page.locator('[data-open-filters]').click();assert(await page.locator('#filter-dialog').isVisible());await page.keyboard.press('Escape');await noCart();await context.close();
+ }
+ assert.deepEqual(errors,[]);console.log('PASS: no cart on home/catalog/product/favorites/mobile menu; legacy cart redirects; favorites add/remove and persistence; booking/request dialogs and filters; desktop/390/430; no overflow or runtime errors, no database writes.');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

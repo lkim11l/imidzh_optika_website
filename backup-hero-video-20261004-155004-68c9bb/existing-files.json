@@ -1,0 +1,9 @@
+﻿[
+    "dist/index.html",
+    "dist/assets/hero-glasses.css",
+    "dist/assets/hero-glasses.js",
+    "dist/assets/hero/glasses-motion.mp4",
+    "dist/assets/hero/glasses-motion.webm",
+    "scripts/verify-hero-video.cjs",
+    "scripts/verify-hero.cjs"
+]

@@ -1,0 +1,6 @@
+﻿[
+    "dist/index.html",
+    "dist/assets/hero-glasses.css",
+    "dist/assets/hero-glasses.js",
+    "scripts/verify-hero.cjs"
+]

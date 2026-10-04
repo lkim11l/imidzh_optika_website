@@ -49,3 +49,13 @@
 .hero-experiment .hero-rating{gap:7px}
 .hero-experiment .hero-rating-star{color:#b08335;font-size:1rem;line-height:1}
 .hero-experiment .hero-rating strong{font-size:.875rem;font-weight:650;color:#38342e}
+
+/* Transparent frames keep the original image's reserved space. No autoplay. */
+.hero-glasses-motion{position:relative}
+.hero-experiment .hero-scroll-canvas{position:absolute;inset:0 auto 0 50%;width:auto;max-width:100%;height:100%;aspect-ratio:16/9;transform:translateX(-50%);object-fit:contain;opacity:0;pointer-events:none}
+.hero-experiment .hero-scroll-ready .hero-scroll-canvas{opacity:1}
+.hero-experiment .hero-scroll-ready .hero-glasses-motion>img{opacity:0}
+.hero-experiment .hero-video,.hero-experiment .hero-video-toggle{display:none!important}
+@media(prefers-reduced-motion:reduce){.hero-experiment .hero-scroll-canvas{display:none}.hero-experiment .hero-scroll-ready .hero-glasses-motion>img{opacity:1}}
+
+.hero-experiment.hero-is-settled .hero-copy>*,.hero-experiment.hero-is-settled .hero-glasses-intro,.hero-experiment.hero-is-settled .hero-annotation,.hero-experiment.hero-is-settled .hero-guide{animation:none}

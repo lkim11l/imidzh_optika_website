@@ -1,0 +1,42 @@
+const assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const root=path.resolve(__dirname,'..'),out=path.join(root,'.qa-video');fs.mkdirSync(out,{recursive:true});
+const base=process.env.PREVIEW_URL||'http://127.0.0.1:4173';
+(async()=>{const browser=await chromium.launch(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']}:{});
+try{
+ const {mockProducts}=await import(path.join(root,'dist/assets/data/products.js'));
+ const products=mockProducts.map(p=>({id:p.id,slug:p.slug,published:true,data:p}));
+ const errors=[];
+ async function setup(options={}){
+  const context=await browser.newContext(options);
+  await context.route('**/*.supabase.co/**',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(r.request().url().includes('optika_products')?products:[])}));
+  await context.route('https://fonts.googleapis.com/**',r=>r.fulfill({status:200,contentType:'text/css',body:''}));
+  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));return {context,page};
+ }
+ const {page,context}=await setup({viewport:{width:1440,height:1000}});let mediaRequests=0;page.on('request',r=>{if(/glasses-motion\.(mp4|webm)/.test(r.url()))mediaRequests++;});
+ await page.goto(base+'/');await page.locator('.hero-video').evaluate(v=>{window.heroVideoShift=0;new PerformanceObserver(entries=>{for(const e of entries.getEntries())if(!e.hadRecentInput&&e.sources?.some(s=>s.node?.closest?.('.hero-experiment')))window.heroVideoShift+=e.value;}).observe({type:'layout-shift',buffered:true});});
+ await page.waitForFunction(()=>document.querySelector('.hero-glasses').classList.contains('hero-video-playing'));
+ assert(mediaRequests>0);assert(await page.locator('.hero-video').evaluate(v=>v.muted&&!v.paused&&v.videoWidth>0&&v.loop&&v.playsInline));
+ const t=await page.locator('.hero-video').evaluate(v=>v.currentTime);await page.waitForTimeout(300);assert(await page.locator('.hero-video').evaluate((v,t)=>v.currentTime>t,t));
+ await page.getByRole('button',{name:'Приостановить анимацию очков',exact:true}).click();assert(await page.locator('.hero-video').evaluate(v=>v.paused));await page.getByRole('button',{name:'Включить анимацию очков',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('.hero-video').paused);
+ await page.evaluate(()=>scrollTo(0,document.body.scrollHeight));await page.waitForFunction(()=>document.querySelector('.hero-video').paused);await page.evaluate(()=>scrollTo(0,0));await page.waitForFunction(()=>!document.querySelector('.hero-video').paused);
+ await page.getByRole('button',{name:'Приостановить анимацию очков',exact:true}).click();await page.evaluate(()=>scrollTo(0,document.body.scrollHeight));await page.waitForTimeout(100);await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(200);assert(await page.locator('.hero-video').evaluate(v=>v.paused));await page.getByRole('button',{name:'Включить анимацию очков',exact:true}).click();
+ // Dynamic reduced motion restores the complete static composition.
+ await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('.hero-video').paused);assert.equal(await page.locator('.hero-glasses-motion>img').evaluate(e=>getComputedStyle(e).opacity),'1');assert(await page.locator('.hero-video-toggle').isHidden());await page.emulateMedia({reducedMotion:'no-preference'});await page.waitForFunction(()=>!document.querySelector('.hero-video').paused);await page.waitForTimeout(1500);
+ for(const width of [1920,1440,1280,1024,768,430,390]){
+  await page.setViewportSize({width,height:1000});await page.locator('.hero-glasses').scrollIntoViewIfNeeded();await page.waitForFunction(()=>!document.querySelector('.hero-video').paused);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+  const b=await page.locator('.hero-video').boundingBox();assert(b.x>=0&&b.x+b.width<=width+1);
+  await page.screenshot({path:path.join(out,`hero-video-${width}.png`)});
+ }
+ assert.equal(await page.evaluate(()=>window.heroVideoShift),0);
+ await page.locator('.hero-ctas [data-booking]').click();assert(await page.locator('#booking-dialog').isVisible());await page.keyboard.press('Escape');await page.locator('.hero-ctas a').click();await page.locator('#route-view .product-card').first().waitFor();assert.match(page.url(),/catalog/);
+ const lazy=await setup({viewport:{width:390,height:450}});await lazy.page.goto(base+'/');await lazy.page.waitForTimeout(1700);assert.equal(await lazy.page.locator('.hero-video').getAttribute('src'),null);await lazy.page.locator('.hero-glasses').scrollIntoViewIfNeeded();await lazy.page.waitForFunction(()=>!document.querySelector('.hero-video').paused);
+ const blocked=await setup({viewport:{width:1440,height:1000}});await blocked.page.addInitScript(()=>{const original=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){return window.qaAllowPlay?original.call(this):Promise.reject(new DOMException('Autoplay blocked','NotAllowedError'));};});await blocked.page.goto(base+'/');await blocked.page.locator('.hero-video-toggle').waitFor();assert.equal(await blocked.page.locator('.hero-glasses-motion>img').evaluate(e=>getComputedStyle(e).opacity),'1');await blocked.page.evaluate(()=>window.qaAllowPlay=true);await blocked.page.getByRole('button',{name:'Включить анимацию очков',exact:true}).click();await blocked.page.waitForFunction(()=>document.querySelector('.hero-glasses').classList.contains('hero-video-playing'));
+ await blocked.page.evaluate(()=>{window.qaTabHidden=true;Object.defineProperty(document,'hidden',{configurable:true,get:()=>window.qaTabHidden});document.dispatchEvent(new Event('visibilitychange'));});await blocked.page.waitForFunction(()=>document.querySelector('.hero-video').paused);await blocked.page.evaluate(()=>{window.qaTabHidden=false;document.dispatchEvent(new Event('visibilitychange'));});await blocked.page.waitForFunction(()=>!document.querySelector('.hero-video').paused);
+ const reduced=await setup({viewport:{width:390,height:1000},reducedMotion:'reduce'});let reducedRequests=0;reduced.page.on('request',r=>{if(/glasses-motion\./.test(r.url()))reducedRequests++;});await reduced.page.goto(base+'/');await reduced.page.locator('.hero-glasses').scrollIntoViewIfNeeded();await reduced.page.waitForTimeout(1700);assert.equal(reducedRequests,0);assert.equal(await reduced.page.locator('.hero-video').getAttribute('src'),null);assert(await reduced.page.locator('.hero-glasses-motion>img').isVisible());
+ const nojs=await setup({viewport:{width:390,height:1000},javaScriptEnabled:false});await nojs.page.goto(base+'/');assert(await nojs.page.locator('.hero-glasses-motion>img').isVisible());assert.equal(await nojs.page.locator('.hero-video').getAttribute('src'),null);
+ const saver=await setup({viewport:{width:1440,height:1000}});await saver.page.addInitScript(()=>Object.defineProperty(navigator,'connection',{value:{saveData:true}}));await saver.page.goto(base+'/');await saver.page.waitForTimeout(1700);assert.equal(await saver.page.locator('.hero-video').getAttribute('src'),null);
+ const failure=await setup({viewport:{width:1440,height:1000}});await failure.context.route('**/assets/hero/glasses-motion.*',r=>r.fulfill({status:200,contentType:'video/mp4',body:'invalid video for fallback test'}));await failure.page.goto(base+'/');await failure.page.waitForFunction(()=>document.querySelector('.hero-video').error);assert.equal(await failure.page.locator('.hero-glasses-motion>img').evaluate(e=>getComputedStyle(e).opacity),'1');assert(await failure.page.locator('.hero-video-toggle').isHidden());const rect=await failure.page.locator('.hero-glasses').boundingBox();await failure.page.mouse.move(rect.x+rect.width*.9,rect.y+rect.height*.5);await failure.page.waitForTimeout(200);assert.match(await failure.page.locator('.hero-glasses-motion').evaluate(e=>e.style.transform),/translate3d/);
+ assert.deepEqual(errors,[]);console.log('PASS video: real decoding/playback, pause/resume, offscreen pause, preserved user pause, dynamic reduced motion, seven widths, zero video layout shift, CTA/catalog, reduced-motion no download, no JS, Save-Data, invalid-video static fallback and pointer depth, no runtime errors.');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
