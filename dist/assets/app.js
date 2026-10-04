@@ -1,0 +1,166 @@
+import { productRepository, filterProducts } from './data/product-repository.js';
+import { shopStore } from './state/store.js';
+import { escapeHTML as esc, money, icon, productGrid, emptyState, cartContents, ProductImage, modelCount } from './ui/components.js';
+import { installProductImages, setProductImageSource } from './ui/product-image.js';
+installProductImages();
+
+const $ = selector => document.querySelector(selector);
+const home = $('#home'), view = $('#route-view'), main = $('#main-content');
+const labels = {optical:'Оправы для зрения',sunglasses:'Солнцезащитные очки',women:'Женские',men:'Мужские',unisex:'Унисекс'};
+let products = [], brands = [], currentRoute = '', routeGeneration = 0, toastTimer;
+const safeDestination = value => { try { const url = new URL(value); return ['https:','http:'].includes(url.protocol) ? url.href : null; } catch { return null; } };
+const productById = id => products.find(product => product.id === id);
+function notify(message) {
+  if(!shopStore.canPersist()) message += ' Сохранение в браузере недоступно: выбор останется до обновления страницы.';
+  clearTimeout(toastTimer); $('#toast').textContent = message; $('#toast').classList.add('shown');
+  toastTimer = setTimeout(() => $('#toast').classList.remove('shown'), 3500);
+}
+function openDialog(dialog) { document.querySelectorAll('dialog[open]').forEach(other => other.close()); dialog.showModal(); }
+function filtersFromURL() {
+  const url = new URL(location.href), category = url.pathname.replace(/\/$/,'').split('/')[2];
+  const number = key => { const value = url.searchParams.get(key); return value !== null && value !== '' && Number.isFinite(Number(value)) ? Math.max(0,Number(value)) : null; };
+  return {category:['optical','sunglasses'].includes(category) ? category : '', genders:url.searchParams.getAll('gender').filter(value => ['men','women','unisex'].includes(value)), brands:url.searchParams.getAll('brand').filter(value => brands.includes(value)), min:number('min'), max:number('max'), sort:['new','price-asc','price-desc'].includes(url.searchParams.get('sort')) ? url.searchParams.get('sort') : 'popular', query:url.searchParams.get('q') || ''};
+}
+function catalogURL(filters) {
+  const params = new URLSearchParams();
+  filters.genders?.forEach(value => params.append('gender',value));filters.brands?.forEach(value => params.append('brand',value));
+  if(filters.min != null) params.set('min',filters.min);if(filters.max != null) params.set('max',filters.max);
+  if(filters.sort && filters.sort !== 'popular') params.set('sort',filters.sort);if(filters.query) params.set('q',filters.query);
+  return `/catalog${filters.category ? '/'+filters.category : ''}${params.size ? '?'+params.toString() : ''}`;
+}
+const mockNotice = '<p class="prototype-note catalog-notice">Демонстрационная коллекция. Модели, фотографии и цены условные — это не текущий ассортимент магазина.</p>';
+function breadcrumb(items) {
+  return `<nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a>${items.map(item => `<span aria-hidden="true">/</span>${item.href ? `<a href="${esc(item.href)}">${esc(item.label)}</a>` : `<span aria-current="page">${esc(item.label)}</span>`}`).join('')}</nav>`;
+}
+function activeFilters(filters) {
+  const chips = [];filters.genders.forEach(value => chips.push({key:'gender',value,text:labels[value]}));filters.brands.forEach(value => chips.push({key:'brand',value,text:value}));
+  if(filters.min != null || filters.max != null) chips.push({key:'price',value:'',text:`${filters.min != null ? 'от '+money(filters.min) : ''}${filters.min != null && filters.max != null ? ' ' : ''}${filters.max != null ? 'до '+money(filters.max) : ''}`});
+  if(filters.query) chips.push({key:'q',value:'',text:`Поиск: ${filters.query}`});
+  return chips.length ? `<div class="active-filters" aria-label="Примененные фильтры">${chips.map(chip => `<button class="filter-chip" data-clear-filter="${chip.key}" data-value="${esc(chip.value)}" aria-label="Убрать фильтр: ${esc(chip.text)}">${esc(chip.text)}${icon('close')}</button>`).join('')}<button class="reset-filters" data-reset-filters>Сбросить фильтры</button></div>` : '';
+}
+function renderCatalog() {
+  const filters = filtersFromURL(), displayed = filterProducts(products,filters);
+  const intro = ({
+    optical: {label:'ОПРАВЫ',title:'Хорошо видеть.<br>И хорошо выглядеть.',text:'Оправы, в которых комфорт и ваш стиль находят друг друга.'},
+    sunglasses: {label:'СОЛНЦЕЗАЩИТНЫЕ',title:'Солнце меняется.<br>Стиль остаётся.',text:'Сдержанные формы и выразительные акценты. Найдите свою пару.'},
+    all: {label:'КОЛЛЕКЦИЯ',title:'Очки, которые<br>становятся частью образа.',text:'Оправы и солнцезащитные модели из нашей коллекции.'}
+  })[filters.category || 'all'];
+  const categoryLink = (category,label) => `<a href="${esc(catalogURL({...filters,category}))}" class="category-tab ${filters.category === category ? 'selected' : ''}" ${filters.category === category ? 'aria-current="page"' : ''}>${label}</a>`;
+  const filterCount = filters.brands.length + filters.genders.length + Number(filters.min != null || filters.max != null);
+  view.innerHTML = `<section class="catalog-page wrap">${breadcrumb([{label:filters.category ? labels[filters.category] : 'Каталог'}])}<div class="catalog-heading"><p class="eyebrow">${intro.label}</p><h1>${intro.title}</h1><p>${intro.text}</p></div>${mockNotice}<div class="catalog-toolbar"><nav class="category-tabs" aria-label="Категории каталога">${categoryLink('','Все очки')}${categoryLink('optical','Оправы')}${categoryLink('sunglasses','Солнцезащитные')}</nav><div class="catalog-controls"><button class="filter-toggle" data-open-filters>${icon('filter')}Фильтры${filterCount ? `<span class="filter-count">${filterCount}</span>` : ''}</button><label class="sort-control"><span class="sr-only">Сортировка</span><select id="sort-select"><option value="popular" ${filters.sort === 'popular' ? 'selected' : ''}>Популярные</option><option value="new" ${filters.sort === 'new' ? 'selected' : ''}>Новинки</option><option value="price-asc" ${filters.sort === 'price-asc' ? 'selected' : ''}>Цена: по возрастанию</option><option value="price-desc" ${filters.sort === 'price-desc' ? 'selected' : ''}>Цена: по убыванию</option></select></label></div></div>${activeFilters(filters)}<p class="results-count" role="status">${modelCount(displayed.length)}</p>${displayed.length ? productGrid(displayed) : emptyState('Пока нет совпадений', 'Попробуйте выбрать другой бренд или расширить диапазон цены.', '<button class="button" data-reset-filters>Сбросить фильтры</button>')}</section>`;
+  document.title = `${filters.category ? labels[filters.category] : 'Каталог'} — Имидж Оптика`;
+}
+function fillFilterForm() {
+  const filters = filtersFromURL();
+  $('#filter-form').innerHTML = `<fieldset><legend>Категория</legend><label class="filter-option"><input type="radio" name="category" value="" ${!filters.category ? 'checked' : ''}>Все очки</label>${['optical','sunglasses'].map(category => `<label class="filter-option"><input type="radio" name="category" value="${category}" ${filters.category === category ? 'checked' : ''}>${labels[category]}</label>`).join('')}</fieldset><fieldset><legend>Для кого</legend>${['women','men','unisex'].map(gender => `<label class="filter-option"><input type="checkbox" name="gender" value="${gender}" ${filters.genders.includes(gender) ? 'checked' : ''}>${labels[gender]}</label>`).join('')}</fieldset><fieldset><legend>Бренд</legend><div class="brand-options">${brands.map(brand => `<label class="filter-option"><input type="checkbox" name="brand" value="${esc(brand)}" ${filters.brands.includes(brand) ? 'checked' : ''}>${esc(brand)}</label>`).join('')}</div></fieldset><fieldset><legend>Цена, ₽</legend><div class="price-inputs"><label>От<input type="number" name="min" min="0" max="1000000" step="100" inputmode="numeric" value="${filters.min ?? ''}" placeholder="15 000"></label><label>До<input type="number" name="max" min="0" max="1000000" step="100" inputmode="numeric" value="${filters.max ?? ''}" placeholder="100 000"></label></div><p id="price-error" class="field-error" role="alert" hidden>Цена «От» не должна быть больше цены «До».</p></fieldset><div class="filter-actions"><button class="button" type="submit">Показать модели <span id="filter-preview-count"></span></button><button type="button" class="text-button" data-reset-filter-form>Сбросить фильтры</button></div>`;
+  previewFilters();
+}
+function filterFormValues() {
+  const values = new FormData($('#filter-form'));
+  return {...filtersFromURL(),category:values.get('category') || '',genders:values.getAll('gender'),brands:values.getAll('brand'),min:values.get('min') !== '' ? Number(values.get('min')) : null,max:values.get('max') !== '' ? Number(values.get('max')) : null};
+}
+function previewFilters() {
+  const filters = filterFormValues();$('#filter-preview-count').textContent = `(${filterProducts(products,filters).length})`;
+  $('#price-error').hidden = !(filters.min != null && filters.max != null && filters.min > filters.max);
+}
+async function renderProduct(slug, generation) {
+  const product = await productRepository.getProduct(slug);if(generation !== routeGeneration) return;if(!product) {renderNotFound();return;}
+  const photo = product.images[0], related = filterProducts(products.filter(item => item.id !== product.id),{category:product.category,sort:'popular'}).slice(0,4);
+  document.title = `${product.brand} ${product.model} — Имидж Оптика`;
+  view.innerHTML = `<section class="product-page wrap">${breadcrumb([{label:'Каталог',href:'/catalog'},{label:labels[product.category],href:'/catalog/'+product.category},{label:product.brand+' '+product.model}])}<div class="product-detail"><div class="product-gallery"><div class="gallery-main" id="gallery-main">${ProductImage(photo,{id:'gallery-image',loading:'eager'})}<button class="favorite-button icon-button" data-favorite="${esc(product.id)}" aria-label="В избранное: ${esc(product.brand)} ${esc(product.model)}" aria-pressed="false">${icon('heart')}</button></div><div class="gallery-thumbs" aria-label="Виды модели">${product.images.map((image,index) => `<button class="gallery-thumb ${index === 0 ? 'selected' : ''}" data-gallery-src="${esc(image.src)}" data-gallery-alt="${esc(image.alt)}" aria-label="${index === 0 ? 'Общий вид' : 'Фото '+(index+1)}" aria-pressed="${index === 0}">${ProductImage(image,{loading:'eager'})}<span>${index === 0 ? 'Общий вид' : 'Фото '+(index+1)}</span></button>`).join('')}<button class="gallery-thumb detail-thumb" data-gallery-detail aria-label="Детали оправы" aria-pressed="false">${ProductImage(photo,{loading:'eager'})}<span>Детали</span></button></div><p class="prototype-note">Иллюстрация концепции, не фотография реальной модели бренда.</p></div><div class="product-detail-info"><p class="eyebrow">${esc(product.brand)}</p><h1>${esc(product.model)}</h1><p class="detail-price">${money(product.price)}${product.oldPrice ? `<s>${money(product.oldPrice)}</s>` : ''}</p><p class="product-type">${labels[product.category]} · ${labels[product.gender]}</p><p class="detail-description">${esc(product.shortDescription)}<br>${esc(product.description)}</p><dl class="attributes">${Object.entries(product.attributes).map(([label,value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl><div class="product-detail-actions"><button class="button" data-request-product="${esc(product.id)}">Уточнить наличие / примерить в салоне</button><button class="button secondary" data-add-cart="${esc(product.id)}">${icon('bag')}Добавить в корзину</button></div>${mockNotice}<div class="product-accordions"><details><summary>Доставка и получение</summary><p>В прототипе доставка и оплата не оформляются. Условия получения, сроки и наличие нужно будет подтвердить у магазина.</p></details><details><summary>Подбор и консультация</summary><p>Поможем сравнить посадку и форму, обсудить подходящие линзы. Индивидуальный подход — без навязывания лишних услуг.</p><button class="text-button" data-booking>Записаться на проверку зрения</button></details></div></div></div><section class="related-section"><div class="collection-heading"><h2>Вам может понравиться</h2><a class="text-button" href="/catalog/${product.category}">Все модели</a></div>${productGrid(related)}</section></section>`;
+}
+function renderFavorites() {
+  const selected = products.filter(product => shopStore.isFavorite(product.id));document.title = 'Избранное — Имидж Оптика';
+  view.innerHTML = `<section class="saved-page wrap">${breadcrumb([{label:'Избранное'}])}<div class="catalog-heading"><p class="eyebrow">ВАШ ВЫБОР</p><h1>То, что понравилось.</h1><p>Сохраните модели, чтобы вернуться к ним перед примеркой.</p></div>${selected.length ? `${mockNotice}<p class="results-count" role="status">${modelCount(selected.length)}</p>${productGrid(selected)}` : emptyState('Найдите то, что вам близко', 'Нажмите на сердце у модели — она останется здесь после обновления страницы.')}</section>`;
+}
+function renderCart() {
+  document.title = 'Корзина — Имидж Оптика';
+  view.innerHTML = `<section class="cart-page wrap">${breadcrumb([{label:'Корзина'}])}<div class="catalog-heading"><p class="eyebrow">ПЕРЕД ПРИМЕРКОЙ</p><h1>Ваша корзина</h1><p>Соберите модели, которые хочется рассмотреть ближе.</p></div>${cartContents(products)}</section>`;
+}
+function renderNotFound() { document.title = 'Страница не найдена — Имидж Оптика';view.innerHTML = `<section class="wrap saved-page">${emptyState('Эта страница не найдена', 'Возможно, модель больше не входит в коллекцию. Посмотрите другие варианты.')}</section>`; }
+async function renderRoute({scroll = true, focus = false} = {}) {
+  const generation = ++routeGeneration, path = location.pathname.replace(/\/$/,'') || '/';currentRoute = path;home.hidden = path !== '/';view.hidden = path === '/';
+  document.querySelectorAll('.header nav a').forEach(link => { const selected = new URL(link.href).pathname === path && path !== '/';if(selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current'); });
+  if(path === '/')document.title = 'Имидж Оптика — видеть больше';
+  else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
+  else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
+  else if(path === '/favorites')renderFavorites();else if(path === '/cart')renderCart();else renderNotFound();
+  if(generation !== routeGeneration)return;updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
+  if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
+}
+async function navigate(url, options = {}) {document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
+function updateCountsAndHearts() {
+  const favorites = shopStore.getFavorites().length;
+  document.querySelectorAll('[data-favorite-count]').forEach(count => {count.textContent = favorites;count.hidden = !favorites;});
+  document.querySelectorAll('[data-cart-count]').forEach(count => {count.textContent = shopStore.cartCount();count.hidden = !shopStore.cartCount();});
+  document.querySelectorAll('[data-favorite]').forEach(button => {const product = productById(button.dataset.favorite), selected = shopStore.isFavorite(button.dataset.favorite);button.classList.toggle('is-favorite',selected);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected ? 'Убрать из избранного' : 'В избранное'}: ${product?.brand || ''} ${product?.model || ''}`);});
+}
+function updateCartWithFocus() {
+  const active = document.activeElement, id = active?.dataset.quantity || active?.dataset.removeCart, delta = active?.dataset.delta;
+  $('#cart-drawer-content').innerHTML = cartContents(products,true);if(currentRoute === '/cart')renderCart();
+  if(id) {const scope = $('#cart-dialog').open ? $('#cart-dialog') : view;const target = delta ? scope.querySelector(`[data-quantity="${id}"][data-delta="${delta}"]`) : scope.querySelector(`[data-remove-cart="${id}"]`);if(target && !target.disabled)target.focus({preventScroll:true});else scope.querySelector('button:not([disabled]),a')?.focus({preventScroll:true});}
+}
+function startBooking() {const destination = safeDestination(window.OPTIKA_CONFIG.bookingUrl);if(destination) {location.assign(destination);return;}$('#booking-form').hidden = false;$('#booking-result').hidden = true;openDialog($('#booking-dialog'));}
+function startRequest(productId = null) {const product = productById(productId);$('#request-product').textContent = product ? `${product.brand} · ${product.model}` : `Ваш выбор: ${shopStore.cartCount()} шт. Сумма демонстрационная.`;$('#request-form').hidden = false;$('#request-result').hidden = true;openDialog($('#request-dialog'));}
+function renderSearch() {
+  const query = $('#search-input').value.trim(), matches = filterProducts(products,{query,sort:'popular'});
+  $('#search-results').innerHTML = `${query ? `<p class="search-summary">Найдено моделей: ${matches.length}</p>` : '<p class="search-summary">Можно начать с этих моделей</p>'}${matches.length ? `<div class="search-list">${matches.slice(0,5).map(product => `<a class="search-result" href="/product/${esc(product.slug)}">${ProductImage(product.images[0],{className:'search-thumb',loading:'eager'})}<span><strong>${esc(product.brand)}</strong><span>${esc(product.model)}</span></span><span class="search-price">${money(product.price)}</span></a>`).join('')}</div><a class="text-button search-all" href="${esc(catalogURL({query}))}">Все результаты (${matches.length})</a>` : '<p>Попробуйте другой бренд или название формы.</p>'}`;
+}
+const revealObserver = 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches ? new IntersectionObserver(entries => entries.forEach(entry => {if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}}),{threshold:0.06}) : null;
+function setupReveals() {if(!revealObserver || home.hidden)return;document.querySelectorAll('#home .card,#home .hoya,#home .category-editorial,#home .appointment,#home .store-section').forEach(element => {if(!element.classList.contains('reveal')){element.classList.add('reveal');revealObserver.observe(element);}});}
+document.addEventListener('click',event => {
+  const button = event.target.closest('button');
+  if(button) {
+    if(button.hasAttribute('data-booking'))startBooking();if(button.hasAttribute('data-open-menu'))openDialog($('#mobile-menu'));
+    if(button.hasAttribute('data-search')){renderSearch();openDialog($('#search-dialog'));$('#search-input').focus();}
+    if(button.hasAttribute('data-open-cart')){$('#cart-drawer-content').innerHTML = cartContents(products,true);openDialog($('#cart-dialog'));}
+    if(button.hasAttribute('data-close-dialog') || button.classList.contains('close'))button.closest('dialog')?.close();
+    if(button.hasAttribute('data-open-filters')){fillFilterForm();openDialog($('#filter-dialog'));}
+    if(button.hasAttribute('data-reset-filter-form')){$('#filter-form').querySelectorAll('input').forEach(input => {if(['checkbox','radio'].includes(input.type))input.checked = input.name === 'category' && input.value === '';else input.value = '';});previewFilters();}
+    if(button.hasAttribute('data-reset-filters'))navigate(catalogURL({category:filtersFromURL().category}),{scroll:false});
+    if(button.hasAttribute('data-clear-filter')){const filters = filtersFromURL(), key = button.dataset.clearFilter;if(key === 'gender')filters.genders = filters.genders.filter(value => value !== button.dataset.value);if(key === 'brand')filters.brands = filters.brands.filter(value => value !== button.dataset.value);if(key === 'price'){filters.min = null;filters.max = null;}if(key === 'q')filters.query = '';navigate(catalogURL(filters),{scroll:false});}
+    if(button.dataset.favorite){shopStore.toggleFavorite(button.dataset.favorite);notify(shopStore.isFavorite(button.dataset.favorite) ? 'Модель сохранена в избранном' : 'Модель убрана из избранного');}
+    if(button.dataset.addCart){shopStore.addToCart(button.dataset.addCart);notify('Модель добавлена в корзину');}
+    if(button.dataset.quantity){const item = shopStore.getCart().find(item => item.id === button.dataset.quantity);if(item)shopStore.setQuantity(item.id,item.quantity + Number(button.dataset.delta));}
+    if(button.dataset.removeCart)shopStore.removeFromCart(button.dataset.removeCart);if(button.dataset.requestProduct)startRequest(button.dataset.requestProduct);if(button.hasAttribute('data-request-cart'))startRequest();
+    if(button.dataset.gallerySrc || button.hasAttribute('data-gallery-detail')){const detail = button.hasAttribute('data-gallery-detail');$('#gallery-main').classList.toggle('show-detail',detail);if(!detail){setProductImageSource($('#gallery-image'),button.dataset.gallerySrc,button.dataset.galleryAlt);}document.querySelectorAll('.gallery-thumb').forEach(thumb => {thumb.classList.toggle('selected',thumb === button);thumb.setAttribute('aria-pressed',String(thumb === button));});}
+  }
+  const link = event.target.closest('a[href]');if(!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download'))return;
+  const url = new URL(link.href);if(url.origin !== location.origin || url.hash === '#main-content')return;event.preventDefault();
+  const key = ({'/catalog':'catalog','/catalog/optical':'frames','/catalog/sunglasses':'sunglasses','/cart':'cart'})[url.pathname], destination = key && safeDestination(window.OPTIKA_CONFIG.commerce[key]);
+  if(destination)location.assign(destination);else navigate(url.pathname + url.search + url.hash);
+});
+document.addEventListener('change',event => {if(event.target.id === 'sort-select')navigate(catalogURL({...filtersFromURL(),sort:event.target.value}),{scroll:false});});
+$('#filter-form').addEventListener('input',previewFilters);
+$('#filter-form').addEventListener('submit',event => {event.preventDefault();const filters = filterFormValues();if(filters.min != null && filters.max != null && filters.min > filters.max){$('#price-error').hidden = false;$('#filter-form input[name=min]').focus();return;}navigate(catalogURL(filters),{scroll:false});});
+$('#search-input').addEventListener('input',renderSearch);
+$('#search-form').addEventListener('submit',event => {event.preventDefault();navigate(catalogURL({query:$('#search-input').value.trim()}));});
+document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('keydown',event => {
+    if(event.key !== 'Tab')return;
+    const controls = [...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')].filter(element => element.getClientRects().length);
+    const first = controls[0], last = controls.at(-1);
+    if(event.shiftKey && document.activeElement === first){event.preventDefault();last?.focus();}
+    else if(!event.shiftKey && document.activeElement === last){event.preventDefault();first?.focus();}
+  });
+  dialog.addEventListener('click',event => {if(event.target !== dialog)return;const rect = dialog.getBoundingClientRect();if(event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)dialog.close();});
+  dialog.addEventListener('close',() => dialog.querySelectorAll('form').forEach(form => form.reset()));
+});
+$('#booking-form').addEventListener('submit',event => {event.preventDefault();const form = event.currentTarget;if(!form.reportValidity())return;form.reset();form.hidden = true;$('#booking-result').hidden = false;$('#booking-done').focus();});
+$('#booking-done').addEventListener('click',() => $('#booking-dialog').close());
+$('#request-form').addEventListener('submit',event => {event.preventDefault();const form = event.currentTarget;if(!form.reportValidity())return;form.reset();form.hidden = true;$('#request-result').hidden = false;$('#request-result button').focus();});
+window.addEventListener('optika:statechange',() => {
+  const wasFavorite = document.activeElement?.hasAttribute('data-favorite');
+  updateCountsAndHearts();updateCartWithFocus();
+  if(currentRoute === '/favorites'){
+    renderFavorites();updateCountsAndHearts();
+    if(wasFavorite){const target = view.querySelector('[data-favorite]') || view.querySelector('.empty-state .button');target?.focus({preventScroll:true});}
+  }
+});
+window.addEventListener('popstate',() => renderRoute({focus:true}));
+try {
+  [products,brands] = await Promise.all([productRepository.getProducts(),productRepository.getBrands()]);shopStore.initialize(products);
+  $('#featured-products').innerHTML = productGrid(products.filter(product => product.isFeatured).slice(0,4));$('#featured-products').setAttribute('aria-busy','false');
+  $('#brand-list').innerHTML = ['Silhouette','Chopard','Tom Ford','Dolce & Gabbana','Ray-Ban','Miu Miu','Moncler','Fendi'].map(brand => `<a href="${esc(catalogURL({brands:[brand]}))}">${esc(brand)}</a>`).join('');
+  await renderRoute({scroll:!!location.hash});
+} catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname !== '/'){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}

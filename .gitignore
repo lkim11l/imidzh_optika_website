@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.openai/
+.sites-runtime/
+qa-*.png
+qa-report.json
+qa-refinement-report.json
+.DS_Store
+Thumbs.db

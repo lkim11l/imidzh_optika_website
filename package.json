@@ -1,0 +1,11 @@
+{
+  "name": "imidzh-optika-staging",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Имидж Оптика — responsive staging website",
+  "scripts": {
+    "start": "node scripts/preview.mjs",
+    "build": "node scripts/prepare-pages.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
