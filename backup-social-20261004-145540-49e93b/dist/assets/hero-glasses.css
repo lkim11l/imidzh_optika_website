@@ -1,0 +1,47 @@
+/* Homepage experiment only. All selectors are scoped; global styles stay intact. */
+.hero.hero-experiment{grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);gap:26px;padding:38px 0 54px;min-height:610px;align-items:center}
+.hero-experiment .hero-copy{position:relative;z-index:1;min-width:0}
+.hero-experiment .eyebrow{margin-bottom:25px;color:#64615d;font-weight:650;font-size:.75rem;letter-spacing:1.7px}
+.hero-experiment h1{font-size:clamp(2.5rem,3.8vw,3.25rem);line-height:1.15;letter-spacing:-1.8px;margin-bottom:27px;font-weight:500}
+.hero-experiment h1 span{color:#76716a}
+.hero-experiment .lead{font-size:1.125rem;line-height:1.65;max-width:420px;margin-bottom:28px;color:#65625f}
+.hero-experiment .hero-ctas{flex-direction:column;align-items:flex-start;gap:10px}
+.hero-experiment .hero-ctas .button{padding:18px 24px;font-size:.9375rem;min-height:56px}
+.hero-experiment .hero-ctas .text-button{font-size:.9375rem;font-weight:550;text-decoration-thickness:1px;text-underline-offset:6px;color:#5b5854}
+.hero-services{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-wrap:wrap;gap:9px 15px;font-size:.75rem;line-height:1.6;color:#77716a}
+.hero-services li+li::before{content:'·';margin-right:15px;color:#aba59c}
+.hero-glasses{position:relative;width:100%;aspect-ratio:1.39;min-width:0;margin:0;isolation:isolate;perspective:1100px}
+.hero-glasses::before{content:'';position:absolute;inset:12% 0 3%;z-index:-1;background:radial-gradient(ellipse at 54% 57%,#dfd1be45 0%,#eae2d220 40%,transparent 69%);pointer-events:none}
+.hero-glasses-intro{position:absolute;inset:16% 0 11%}
+.hero-glasses-motion{height:100%;width:100%;transform-origin:50% 50%}
+.hero-glasses img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 14px #4637230c)}
+.hero-guides{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;stroke:#8c8170;stroke-width:.7;opacity:.48}
+.hero-guides circle{fill:#8c8170;stroke:none}
+.hero-annotation{position:absolute;display:flex;align-items:flex-start;gap:11px;font-size:.6875rem;line-height:1.65;color:#6b645b;pointer-events:none}
+.hero-annotation>div{display:grid;gap:3px}
+.hero-annotation strong{font-size:.625rem;letter-spacing:1.4px;font-weight:650;color:#686052}
+.annotation-number{font-size:.625rem;letter-spacing:.5px;color:#a09381;font-variant-numeric:tabular-nums;padding-top:1px}
+.annotation-01{top:7%;left:7%}.annotation-02{top:10%;right:3%}.annotation-03{bottom:5%;right:9%}.annotation-04{bottom:10%;left:3%}
+@media(prefers-reduced-motion:no-preference){
+ .hero-experiment .hero-copy>.eyebrow,.hero-experiment h1{animation:hero-copy-in .55s cubic-bezier(.2,.65,.3,1) both}
+ .hero-experiment h1{animation-delay:.06s}
+ .hero-experiment .lead,.hero-experiment .hero-ctas,.hero-experiment .hero-services{animation:hero-copy-in .55s cubic-bezier(.2,.65,.3,1) .2s both}
+ .hero-experiment .hero-ctas{animation-delay:.26s}.hero-experiment .hero-services{animation-delay:.34s}
+ .hero-experiment .hero-glasses-intro{animation:hero-glasses-in .7s cubic-bezier(.2,.65,.3,1) .3s both}
+ .hero-experiment .hero-annotation,.hero-experiment .hero-guide{animation:hero-label-in .35s ease .7s both}
+ .hero-experiment .annotation-02,.hero-experiment .guide-02{animation-delay:.82s}.hero-experiment .annotation-03,.hero-experiment .guide-03{animation-delay:.94s}.hero-experiment .annotation-04,.hero-experiment .guide-04{animation-delay:1.06s}
+}
+@keyframes hero-copy-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hero-glasses-in{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes hero-label-in{from{opacity:0}to{opacity:1}}
+@media(max-width:1100px){.hero.hero-experiment{gap:20px;min-height:535px;padding-top:28px}.hero-experiment h1{font-size:clamp(2.25rem,3.8vw,3rem);letter-spacing:-1.5px}.hero-experiment .lead{font-size:1.0625rem}.hero-experiment .lead .desktop{display:none}.hero-annotation{font-size:.625rem;gap:7px}.hero-annotation strong{font-size:.5625rem;letter-spacing:1px}.hero-glasses{aspect-ratio:1.2}.annotation-02{right:0}.annotation-03{right:2%}}
+@media(max-width:900px){.hero.hero-experiment{grid-template-columns:1fr;min-height:0;max-width:700px;padding:34px 0 40px;gap:12px}.hero-experiment .hero-copy{max-width:560px}.hero-experiment h1{font-size:clamp(2.5rem,6vw,3.25rem);letter-spacing:-1.8px}.hero-experiment .lead{max-width:480px}.hero-experiment .hero-ctas{flex-direction:row;align-items:center;gap:22px;flex-wrap:wrap}.hero-glasses{aspect-ratio:1.72}.hero-glasses-intro{inset:0}.hero-guides,.hero-annotation{display:none}.hero-glasses::before{inset:0}.hero-services{margin-top:19px}}
+@media(max-width:540px){.hero.hero-experiment{padding-top:27px;padding-bottom:30px;gap:14px}.hero-experiment .eyebrow{margin-bottom:20px;font-size:.6875rem;letter-spacing:1.2px}.hero-experiment h1{font-size:clamp(2rem,8.6vw,2.375rem);letter-spacing:-1.2px;margin-bottom:22px}.hero-experiment .lead{font-size:1rem;line-height:1.6;margin-bottom:22px;max-width:340px}.hero-experiment .hero-ctas{flex-direction:column;align-items:stretch;gap:4px}.hero-experiment .hero-ctas .button{width:100%;padding:17px 14px;font-size:.875rem}.hero-experiment .hero-ctas .text-button{align-self:flex-start;font-size:.875rem}.hero-services{font-size:.625rem;gap:7px 10px;margin-top:15px}.hero-services li+li::before{margin-right:10px}.hero-glasses{aspect-ratio:1.72}.hero-glasses img{filter:drop-shadow(0 8px 8px #4637230c)}}
+@media(prefers-reduced-motion:reduce){.hero-experiment .hero-glasses-motion{transform:none!important}.hero-experiment .hero-copy>*,.hero-experiment .hero-glasses-intro,.hero-experiment .hero-annotation,.hero-experiment .hero-guide{animation:none!important;opacity:1;transform:none}}
+
+/* Compact social links; activated when the owner supplies account URLs. */
+.hero-experiment .hero-socials{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.hero-experiment .hero-social-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 12px;border:1px solid #dedbd6;border-radius:999px;color:#65625f;background:transparent;font-size:.75rem;font-weight:550;line-height:1.3;text-decoration:none}
+.hero-experiment .hero-social-link svg{width:16px;height:16px;flex:none}
+.hero-experiment .hero-social-link:hover{color:#292724;background:#eeebe5;border-color:#c9c4bc}
+.hero-experiment .hero-social-link:focus-visible{outline:2px solid currentColor;outline-offset:3px}
