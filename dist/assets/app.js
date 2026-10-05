@@ -1,3 +1,4 @@
+import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
 import {applyContent} from './data/content.js';
 import {request as supabaseRequest} from './data/supabase.js';
@@ -87,7 +88,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
   else if(path==='/product')await renderProduct(new URLSearchParams(location.search).get('slug')||'',generation);
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
-  else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
 }
@@ -174,4 +175,4 @@ try {
     if(!products.some(p=>p.isMock))$('#brands .prototype-note').hidden=true;
   });
   await renderRoute({scroll:!!location.hash});
-} catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname !== '/'){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}
+} catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname.replace(/\/$/,'')==='/about'){await renderRoute({scroll:false});}else if(location.pathname !== '/'){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}

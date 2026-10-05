@@ -1,3 +1,4 @@
+import {editorialData,applyHomepageImages} from './editorial.js';
 import { request, isConfigured } from './supabase.js';
 export const contentFields = [
  ['heroTitle','Заголовок первого экрана','.hero h1',160],
@@ -6,6 +7,9 @@ export const contentFields = [
  ['visionText','Текст проверки зрения','#vision>div:last-child>p',600],
  ['hoyaTitle','Заголовок HOYA','.hoya-copy h2',160],
  ['hoyaText','Описание HOYA','.hoya-copy>p:not(.eyebrow)',700],
+ ['collectionTitle','Заголовок коллекции','#collection h2',160],
+ ['trustTitle','Опыт — заголовок','.trust-line>div:first-child strong',100],
+ ['trustText','Опыт — описание','.trust-line>div:first-child span',200],
  ['appointmentTitle','Заголовок записи','#appointment h2',160]
 ];
 export async function loadContent() {
@@ -13,8 +17,9 @@ export async function loadContent() {
  return (await request('/rest/v1/optika_content?id=eq.homepage&select=*'))[0] || null;
 }
 export async function applyContent() {
- const row=await loadContent();if(!row)return null;
- for(const [key,,selector] of contentFields) {const el=document.querySelector(selector);if(el && typeof row.data[key]==='string' && row.data[key].trim()) {el.textContent=row.data[key];el.style.whiteSpace='pre-line';}}
+ const row=await loadContent();const data=editorialData(row?.data);
+ for(const [key,,selector] of contentFields) {const el=document.querySelector(selector);if(el && typeof data[key]==='string' && data[key].trim()) {el.textContent=data[key];el.style.whiteSpace='pre-line';}}
+ applyHomepageImages(document,data);
  return row;
 }
 
