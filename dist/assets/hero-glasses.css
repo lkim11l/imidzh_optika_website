@@ -59,3 +59,10 @@
 @media(prefers-reduced-motion:reduce){.hero-experiment .hero-scroll-canvas{display:none}.hero-experiment .hero-scroll-ready .hero-glasses-motion>img{opacity:1}}
 
 .hero-experiment.hero-is-settled .hero-copy>*,.hero-experiment.hero-is-settled .hero-glasses-intro,.hero-experiment.hero-is-settled .hero-annotation,.hero-experiment.hero-is-settled .hero-guide{animation:none}
+
+/* Enabled only by the scroll controller; static/no-JS fallback has no runway. */
+.hero-scroll-track.hero-scroll-pinned>.hero-experiment{position:sticky;top:var(--hero-pin-top,0);min-height:var(--hero-pin-min-height,0);margin-top:0;margin-bottom:0}
+@media(prefers-reduced-motion:reduce){
+ .hero-scroll-track{height:auto!important}
+ .hero-scroll-track.hero-scroll-pinned>.hero-experiment{position:relative;top:auto}
+}

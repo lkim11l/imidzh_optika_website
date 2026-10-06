@@ -32,3 +32,19 @@
 @media(max-width:720px){.header .wordmark{font-size:20px}.header .header-about{font-size:12px;padding:10px 13px}.header .icon-button{width:34px;padding:7px}.owner-grid{grid-template-columns:1fr;gap:24px}.owner-copy{padding:26px}.owner-photo{aspect-ratio:4/3}.owner-copy>p:last-child{font-size:17px}.about-intro{margin-bottom:32px}.about-page{padding-bottom:55px}.about-invitation{margin-top:40px}.about-invitation p{font-size:16px}}
 @media(max-width:390px){.header .wordmark{font-size:17px;gap:3px}.header .header-about{padding:10px 11px;margin-left:0}.header .icon-button{width:30px;padding:6px}.header-socials .social-link{font-size:11px;padding:8px 11px}.header{gap:8px}.header-socials .social-link svg{width:16px;height:16px}}
 @media(prefers-reduced-motion:reduce){.header-socials .social-link{transition:none}}
+/* Lens brands, promotions and a direct contact before the collection. */
+.hoya .lens-brands-panel{background:#f0f1ed;color:var(--ink);padding:36px;display:flex;flex-direction:column;justify-content:center;min-height:410px;gap:26px}
+.hoya .lens-brands-panel>.eyebrow{position:static;color:#656b69;font-size:12px;letter-spacing:1.5px;margin:0;line-height:1.5}
+.lens-brand-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.lens-brand{min-height:110px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:22px}
+.lens-brand img{display:block;width:100%;height:55px;object-fit:contain}.lens-brand-nikon{grid-column:1/-1;min-height:105px}.lens-brand-nikon img{width:80px;height:80px}.lens-brand-seiko img{filter:brightness(0)}
+.collection-contact{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:26px;color:var(--muted)}
+.collection-contact a{font-size:clamp(1.4rem,2.4vw,2rem);color:var(--ink);letter-spacing:-.04em;white-space:nowrap}.collection-contact a:hover{color:var(--blue)}
+.promotions{padding-top:90px;scroll-margin-top:150px}.promo-heading{margin-bottom:28px}.promo-heading .eyebrow{margin-bottom:16px}.promo-heading h2{max-width:800px}
+.promo-card{display:grid;grid-template-columns:.75fr 1.25fr;gap:50px;align-items:center;padding:48px;border-radius:26px;background:#edf0ff;border:1px solid #e2e6f8}
+.promo-badge{font-size:clamp(3rem,7vw,7rem);font-weight:500;letter-spacing:-.07em;color:#254be1;text-align:center;line-height:1.1;overflow-wrap:anywhere}
+.promo-copy{min-width:0}.promo-copy .eyebrow{color:#254be1;margin-bottom:16px;font-size:12px}.promo-copy h3{font-size:clamp(1.7rem,3vw,2.6rem);letter-spacing:-.04em;line-height:1.2;margin:0 0 20px}.promo-description{font-size:18px;color:#535d71;line-height:1.65;margin:0 0 18px;white-space:pre-line}.promo-terms{font-size:13px;color:#626d82;line-height:1.6;margin:0 0 25px;white-space:pre-line}
+.header>nav:not(.header-socials){gap:16px}.promotions-nav{font-weight:700}.trust-line>div:nth-child(2) strong{font-size:clamp(1.25rem,2vw,1.8rem);line-height:1.3}
+@media(max-width:720px){.hoya .lens-brands-panel{padding:24px;min-height:0;gap:22px}.lens-brand{padding:17px;min-height:95px}.lens-brand img{height:43px}.lens-brand-nikon img{width:65px;height:65px}.lens-brand-nikon{min-height:95px}.collection-contact{flex-direction:column;align-items:flex-start;gap:8px;padding-top:22px}.collection-contact span{font-size:14px}.collection-contact a{font-size:26px}.promotions{padding-top:65px}.promo-card{grid-template-columns:1fr;gap:24px;padding:28px}.promo-badge{text-align:left;font-size:64px}.promo-description{font-size:16px}.promo-copy .button{width:100%}}
+
+.hoya .lens-brands-panel{height:auto}.lens-brand-grid{flex-shrink:0}

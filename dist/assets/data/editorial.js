@@ -1,5 +1,7 @@
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const editorialDefaults = {
+ promoTitle:'Приятное начало знакомства',promoBadge:'−10%',promoName:'Скидка 10% на всё',promoDescription:'Зарегистрируйтесь в салоне при первом визите и получите скидку 10% на всё.',promoTerms:'Для новых клиентов при регистрации в салоне во время первого визита.',
+ hoyaText:'Линзы — важная часть ваших очков. Мы поможем подобрать линзы под ваши потребности и объясним выбор понятным языком.',
  heroLead:'Просто приходите, потому что вы достойны самого лучшего',
  collectionTitle:'Найдите свою пару очков!',
  trustTitle:'С 2002 года', trustText:'сохраняем здоровье ваших глаз!',
@@ -35,6 +37,7 @@ export function editorialData(data={}){
  if(/^Очки, в которых комфортно видеть\s+и приятно быть собой\.?$/.test(resolved.heroLead))resolved.heroLead=editorialDefaults.heroLead;
  if(/^Найдите свою пару\.?$/.test(resolved.collectionTitle))resolved.collectionTitle=editorialDefaults.collectionTitle;
  if(resolved.trustText==='Помогаем подобрать оправы и линзы')resolved.trustText=editorialDefaults.trustText;
+ if(resolved.hoyaText.includes('подобрать решение HOYA под ваши потребности'))resolved.hoyaText=resolved.hoyaText.replace('подобрать решение HOYA под ваши потребности','подобрать линзы под ваши потребности');
  return resolved;
 }
 export function applyHomepageImages(root,data,preview=false){

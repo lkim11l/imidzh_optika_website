@@ -43,3 +43,4 @@
 .editorial-upload{display:block;margin:0 0 12px}.editorial-upload input{margin-top:8px;background:white;max-width:100%}
 .editorial-save{border-top:1px solid #e1e5eb;padding-top:16px;margin-top:20px}.content-form textarea{min-height:92px;resize:vertical}.content-form textarea[name=aboutStory]{min-height:180px}.content-form label{line-height:1.5}.tabs{flex-wrap:wrap}
 @media(max-width:540px){.editorial-image{padding:14px}.editorial-image-preview{aspect-ratio:4/3}.editorial-save{padding-bottom:60px}}
+.promo-visibility{flex-direction:row;align-items:center;gap:12px;padding:16px;background:#eef1ff;border-radius:12px}.promo-visibility input{width:20px;height:20px;flex:none}

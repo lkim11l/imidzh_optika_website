@@ -1,5 +1,5 @@
 import {renderEditorialEditor} from './ui/editorial-editor.js';
-import {AdminPreview} from './ui/admin-preview.js?v=owners1';
+import {AdminPreview} from './ui/admin-preview.js?v=retail1';
 import {isConfigured,signIn,signOut,listRows,saveRow,uploadImage,request} from './data/supabase.js';
 import {AdminGallery} from './ui/admin-gallery.js?v=photos2';
 import {contentFields,loadContent,saveContent} from './data/content.js';
@@ -44,5 +44,5 @@ function renderBookings(bookings){$('#workspace-body').innerHTML='<div class="he
 function renderContent(row){
  $('#workspace-body').innerHTML='<div class="admin-preview-layout"><div class="admin-edit-pane" id="editorial-pane"></div><div id="content-preview-host" class="admin-preview-host"></div></div>';
  workspacePreview=new AdminPreview($('#content-preview-host'));
- disposeEditorial=renderEditorialEditor($('#editorial-pane'),row,{about:tab==='about',preview:workspacePreview,onDirty:value=>dirty=value,onBusy:value=>{busy=value;$('#logout').disabled=value;document.querySelectorAll('[data-tab]').forEach(button=>button.disabled=value);},message});
+ disposeEditorial=renderEditorialEditor($('#editorial-pane'),row,{about:tab==='about',promotions:tab==='promotions',preview:workspacePreview,onDirty:value=>dirty=value,onBusy:value=>{busy=value;$('#logout').disabled=value;document.querySelectorAll('[data-tab]').forEach(button=>button.disabled=value);},message});
 }
