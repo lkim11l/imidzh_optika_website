@@ -61,3 +61,19 @@
 @keyframes lens-brand-loop{to{transform:translateX(-50%)}}
 @media(max-width:720px){.hoya .lens-brands-panel{min-height:260px;padding:26px 0;gap:22px}.hoya .lens-brands-panel>.eyebrow{padding:0 24px}.lens-carousel .lens-brand{width:160px;flex-basis:160px;height:105px;min-height:105px;padding:18px}.lens-carousel .lens-brand img{height:54px}.lens-carousel .lens-brand-nikon img{width:70px;height:70px}}
 @media(prefers-reduced-motion:reduce){.lens-carousel{overflow-x:auto;mask-image:none;padding:0 20px}.lens-carousel-track{animation:none}.lens-carousel-group[aria-hidden=true]{display:none}}
+
+/* Three independently moving, seamless brand ribbons. */
+.brand-list.eyewear-brand-carousel{display:block;overflow:hidden;margin-top:38px;border:0;mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
+.eyewear-brand-row{overflow:hidden;width:100%;margin:8px 0}
+.eyewear-brand-track{display:flex;width:max-content;animation:eyewear-brand-loop var(--brand-duration,70s) linear infinite;will-change:transform}
+.eyewear-brand-row:nth-child(even) .eyewear-brand-track{animation-direction:reverse}
+.eyewear-brand-group{display:flex;flex-shrink:0;gap:36px;padding-right:36px}
+.brand-list .eyewear-brand{display:flex;flex:0 0 214px;width:214px;height:118px;align-items:center;justify-content:center;padding:12px;border:0;margin:0;min-width:0;color:#747775;transition:filter .2s}
+.eyewear-brand img{display:block;width:100%;height:82px;object-fit:contain;filter:grayscale(1);opacity:.82}
+.brand-wordmark{font-family:Georgia,serif;font-size:25px;line-height:1.1;text-align:center;letter-spacing:-.03em}
+.brand-list a.eyewear-brand:hover img,.brand-list a.eyewear-brand:focus-visible img{opacity:1;filter:grayscale(1) brightness(.65)}
+.brand-list a.eyewear-brand:focus-visible{outline:2px solid var(--blue);outline-offset:-4px;border-radius:10px}
+.eyewear-brand-row:focus-within .eyewear-brand-track{animation-play-state:paused}
+@keyframes eyewear-brand-loop{to{transform:translateX(-50%)}}
+@media(max-width:720px){.brand-list.eyewear-brand-carousel{margin-top:24px;mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent)}.eyewear-brand-group{gap:20px;padding-right:20px}.brand-list .eyewear-brand{flex-basis:160px;width:160px;height:94px;padding:12px}.eyewear-brand img{height:62px}.brand-wordmark{font-size:21px}.eyewear-brand-row{margin:2px 0}}
+@media(prefers-reduced-motion:reduce){.brand-list.eyewear-brand-carousel{mask-image:none}.eyewear-brand-row{overflow-x:auto}.eyewear-brand-track{animation:none;will-change:auto}.eyewear-brand-group[aria-hidden=true],.eyewear-brand[aria-hidden=true]{display:none}}

@@ -1,6 +1,6 @@
 import {loadEmailSettings,renderEmailSettings} from './ui/email-settings.js';
 import {renderEditorialEditor} from './ui/editorial-editor.js';
-import {AdminPreview} from './ui/admin-preview.js?v=retail1';
+import {AdminPreview} from './ui/admin-preview.js?v=brands3rows1';
 import {isConfigured,signIn,signOut,listRows,saveRow,uploadImage,request} from './data/supabase.js';
 import {AdminGallery} from './ui/admin-gallery.js?v=photos2';
 import {contentFields,loadContent,saveContent} from './data/content.js';

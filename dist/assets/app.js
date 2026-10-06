@@ -1,3 +1,4 @@
+import {brandCarouselHTML} from './ui/brand-carousel.js';
 import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
 import {applyContent} from './data/content.js';
@@ -169,10 +170,10 @@ try {
   [products,brands] = await Promise.all([productRepository.getProducts(),productRepository.getBrands()]);shopStore.initialize(products);if(!products.some(p=>p.isMock))mockNotice="";
   $('#featured-products').innerHTML = productGrid(products.filter(product => product.isFeatured).slice(0,4));$('#featured-products').setAttribute('aria-busy','false');
   homepageContent.then(content=>{
-    let displayed=[];try{if(content!==undefined)displayed=selectHomepageBrands(content?.data,products);}catch{}
-    $('#brand-list').innerHTML=displayed.map(brand=>`<a href="${esc(catalogURL({brands:[brand.filterName]}))}">${esc(brand.name)}</a>`).join('');
+    let displayed=[];try{displayed=selectHomepageBrands(content?.data,products);}catch{}
+    $('#brand-list').innerHTML=brandCarouselHTML(displayed,name=>catalogURL({brands:[name]}));
     $('#brands').hidden=!displayed.length;
-    if(!products.some(p=>p.isMock))$('#brands .prototype-note').hidden=true;
+    $('#brands .prototype-note').hidden=false;
   });
   await renderRoute({scroll:!!location.hash});
 } catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname.replace(/\/$/,'')==='/about'){await renderRoute({scroll:false});}else if(location.pathname !== '/'){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}

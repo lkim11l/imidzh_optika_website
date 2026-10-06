@@ -1,3 +1,4 @@
+import {eyewearBrands} from './eyewear-brands.js';
 /* Homepage brand curation never changes products or catalog filter options. */
 export const brandKey=name=>String(name??'').normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('ru');
 export const brandName=name=>String(name??'').normalize('NFKC').trim().replace(/\s+/g,' ');
@@ -19,13 +20,13 @@ export function validateHomepageBrands(value){
  });
 }
 export function initialHomepageBrands(data,products){
- if(Object.hasOwn(data??{},'homepageBrands'))return validateHomepageBrands(data.homepageBrands);
- return [...availableBrands(products).values()].sort((a,b)=>a.name.localeCompare(b.name,'ru')).map(({name})=>({name,enabled:true}));
+ const configured=Object.hasOwn(data??{},'homepageBrands');
+ const entries=configured?validateHomepageBrands(data.homepageBrands):[...availableBrands(products).values()].map(({name})=>({name,enabled:true}));
+ if(data?.homepageBrandsVersion===2)return entries;
+ const keys=new Set(entries.map(b=>brandKey(b.name)));
+ return [...entries,...eyewearBrands.filter(b=>!keys.has(brandKey(b.name))).map(({name})=>({name,enabled:true}))].slice(0,100);
 }
 export function selectHomepageBrands(data,products){
- const available=availableBrands(products);
- const configured=Object.hasOwn(data??{},'homepageBrands');
- const entries=initialHomepageBrands(data,products);
- const selected=entries.filter(b=>b.enabled&&available.has(brandKey(b.name))).map(b=>({name:b.name,filterName:available.get(brandKey(b.name)).canonical}));
- return configured?selected:selected.slice(0,8);
+ const available=availableBrands(products),logos=new Map(eyewearBrands.map(b=>[brandKey(b.name),b.logo]));
+ return initialHomepageBrands(data,products).filter(b=>b.enabled).map(b=>({name:b.name,filterName:available.get(brandKey(b.name))?.canonical,logo:logos.get(brandKey(b.name))}));
 }
