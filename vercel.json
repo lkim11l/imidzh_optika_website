@@ -26,7 +26,7 @@
       ]
     },
     {
-      "source": "/admin/:path*",
+      "source": "/admin(.*)",
       "headers": [
         {
           "key": "Cache-Control",
