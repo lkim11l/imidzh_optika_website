@@ -77,3 +77,11 @@
 @keyframes eyewear-brand-loop{to{transform:translateX(-50%)}}
 @media(max-width:720px){.brand-list.eyewear-brand-carousel{margin-top:24px;mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent)}.eyewear-brand-group{gap:20px;padding-right:20px}.brand-list .eyewear-brand{flex-basis:160px;width:160px;height:94px;padding:12px}.eyewear-brand img{height:62px}.brand-wordmark{font-size:21px}.eyewear-brand-row{margin:2px 0}}
 @media(prefers-reduced-motion:reduce){.brand-list.eyewear-brand-carousel{mask-image:none}.eyewear-brand-row{overflow-x:auto}.eyewear-brand-track{animation:none;will-change:auto}.eyewear-brand-group[aria-hidden=true],.eyewear-brand[aria-hidden=true]{display:none}}
+
+/* Lens and frame logos share the same quiet monochrome presentation. */
+.lens-carousel-group{gap:36px;padding-right:36px}
+.lens-carousel .lens-brand{flex-basis:214px;width:214px;height:118px;min-height:118px;padding:12px}
+.lens-carousel .lens-brand img{height:82px;filter:grayscale(1);opacity:.5;mix-blend-mode:multiply}
+.lens-carousel .lens-brand-nikon img{width:130px;height:82px}
+@media(max-width:720px){.lens-carousel-group{gap:20px;padding-right:20px}.lens-carousel .lens-brand{flex-basis:160px;width:160px;height:94px;min-height:94px;padding:12px}.lens-carousel .lens-brand img{height:62px}.lens-carousel .lens-brand-nikon img{width:100px;height:62px}}
+.lens-carousel .lens-brand-seiko img{filter:brightness(0)}
