@@ -33,10 +33,10 @@
 @media(max-width:390px){.header .wordmark{font-size:17px;gap:3px}.header .header-about{padding:10px 11px;margin-left:0}.header .icon-button{width:30px;padding:6px}.header-socials .social-link{font-size:11px;padding:8px 11px}.header{gap:8px}.header-socials .social-link svg{width:16px;height:16px}}
 @media(prefers-reduced-motion:reduce){.header-socials .social-link{transition:none}}
 /* Lens brands, promotions and a direct contact before the collection. */
-.hoya .lens-brands-panel{background:#f0f1ed;color:var(--ink);padding:36px;display:flex;flex-direction:column;justify-content:center;min-height:410px;gap:26px}
+.hoya .lens-brands-panel{background:transparent;border-radius:0;box-shadow:none;color:var(--ink);padding:36px;display:flex;flex-direction:column;justify-content:center;min-height:410px;gap:26px}
 .hoya .lens-brands-panel>.eyebrow{position:static;color:#656b69;font-size:12px;letter-spacing:1.5px;margin:0;line-height:1.5}
 .lens-brand-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.lens-brand{min-height:110px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:22px}
+.lens-brand{min-height:110px;background:transparent;border-radius:0;display:flex;align-items:center;justify-content:center;padding:22px}
 .lens-brand img{display:block;width:100%;height:55px;object-fit:contain}.lens-brand-nikon{grid-column:1/-1;min-height:105px}.lens-brand-nikon img{width:80px;height:80px}.lens-brand-seiko img{filter:brightness(0)}
 .collection-contact{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:26px;color:var(--muted)}
 .collection-contact a{font-size:clamp(1.4rem,2.4vw,2rem);color:var(--ink);letter-spacing:-.04em;white-space:nowrap}.collection-contact a:hover{color:var(--blue)}
@@ -58,9 +58,6 @@
 .lens-carousel .lens-brand{flex:0 0 184px;width:184px;height:120px;min-height:120px;padding:22px;grid-column:auto}
 .lens-carousel .lens-brand img{width:100%;height:60px;object-fit:contain}
 .lens-carousel .lens-brand-nikon img{width:80px;height:80px}
-.lens-carousel-pause{display:flex;align-items:center;gap:8px;align-self:flex-end;margin:0 30px 0 0;font-size:12px;color:#626976;cursor:pointer;min-height:32px}
-.lens-carousel-pause input{width:16px;height:16px;accent-color:#254be1;margin:0}
-.lens-brands-panel:has(.lens-carousel-pause input:checked) .lens-carousel-track{animation-play-state:paused}
 @keyframes lens-brand-loop{to{transform:translateX(-50%)}}
-@media(max-width:720px){.hoya .lens-brands-panel{min-height:260px;padding:26px 0;gap:22px}.hoya .lens-brands-panel>.eyebrow{padding:0 24px}.lens-carousel .lens-brand{width:160px;flex-basis:160px;height:105px;min-height:105px;padding:18px}.lens-carousel .lens-brand img{height:54px}.lens-carousel .lens-brand-nikon img{width:70px;height:70px}.lens-carousel-pause{margin-right:24px}}
-@media(prefers-reduced-motion:reduce){.lens-carousel{overflow-x:auto;mask-image:none;padding:0 20px}.lens-carousel-track{animation:none}.lens-carousel-group[aria-hidden=true]{display:none}.lens-carousel-pause{display:none}}
+@media(max-width:720px){.hoya .lens-brands-panel{min-height:260px;padding:26px 0;gap:22px}.hoya .lens-brands-panel>.eyebrow{padding:0 24px}.lens-carousel .lens-brand{width:160px;flex-basis:160px;height:105px;min-height:105px;padding:18px}.lens-carousel .lens-brand img{height:54px}.lens-carousel .lens-brand-nikon img{width:70px;height:70px}}
+@media(prefers-reduced-motion:reduce){.lens-carousel{overflow-x:auto;mask-image:none;padding:0 20px}.lens-carousel-track{animation:none}.lens-carousel-group[aria-hidden=true]{display:none}}
