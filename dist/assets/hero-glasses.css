@@ -66,3 +66,20 @@
  .hero-scroll-track{height:auto!important}
  .hero-scroll-track.hero-scroll-pinned>.hero-experiment{position:relative;top:auto}
 }
+
+/* MOBILE LABELS START */
+/* Mobile annotations: dedicated rows keep labels clear of every animation frame. */
+@media(max-width:900px){
+ .hero-experiment .hero-glasses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto;gap:12px 16px;aspect-ratio:auto;height:auto;margin-top:12px}
+ .hero-experiment .hero-glasses-intro{position:relative;inset:auto;grid-column:1/-1;grid-row:2;aspect-ratio:1.72;width:100%;min-width:0}
+ .hero-experiment .hero-glasses .hero-annotation{position:relative;inset:auto;display:flex;align-items:flex-start;gap:7px;min-width:0;font-size:.6875rem;line-height:1.5}
+ .hero-experiment .hero-glasses .hero-annotation>div{min-width:0;gap:3px}
+ .hero-experiment .hero-glasses .hero-annotation strong{font-size:.625rem;letter-spacing:.7px;overflow-wrap:break-word}
+ .hero-experiment .hero-glasses .annotation-number{font-size:.625rem}
+ .hero-experiment .annotation-01{grid-column:1;grid-row:1}
+ .hero-experiment .annotation-02{grid-column:2;grid-row:1}
+ .hero-experiment .annotation-04{grid-column:1;grid-row:3}
+ .hero-experiment .annotation-03{grid-column:2;grid-row:3}
+ .hero-experiment .hero-guides{display:none}
+}
+/* MOBILE LABELS END */
