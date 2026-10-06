@@ -8,7 +8,7 @@ const base=process.env.PREVIEW_URL||'http://127.0.0.1:4173';
  if(!process.env.LIVE_BOOKING_TEST)await page.route('**/rest/v1/rpc/optika_submit_booking',route=>route.fulfill({status:204,body:''}));
  await page.goto(base+'/');await page.locator('.header [data-booking]').click();await page.locator('#booking-form input[name=name]').fill('QA — тест подключения');await page.locator('#booking-form input[name=phone]').fill('+70000000000');await page.locator('#booking-form input[name=consent]').check();
  await page.locator('#booking-form button[type=submit]').click();await page.locator('#booking-result').waitFor();console.log(process.env.LIVE_BOOKING_TEST?'Real booking saved':'Booking success UI verified with mock transport');
- await page.goto(base+'/admin/');await page.screenshot({path:'qa-admin-login.png'});
+ await page.goto(base+'/cookie/');await page.screenshot({path:'qa-admin-login.png'});
  await page.setViewportSize({width:375,height:850});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:'qa-admin-mobile.png'});
  // UI mutation and conflict/error cases with an isolated mock backend; no real admin credentials.
  const mock=await browser.newPage({viewport:{width:1440,height:1000}});let catalog=[],content=null,allow=true;const calls=[];
@@ -23,7 +23,7 @@ const base=process.env.PREVIEW_URL||'http://127.0.0.1:4173';
  else {status=404;data={};}
  await route.fulfill({status,contentType:'application/json',body:status===204?'':JSON.stringify(data)});
  });
- await mock.goto(base+'/admin/');await mock.getByLabel('Электронная почта').fill('qa@example.invalid');await mock.getByLabel('Пароль',{exact:true}).fill('qa-placeholder-not-real');await mock.getByRole('button',{name:'Войти',exact:true}).click();await mock.getByRole('button',{name:'Добавить товар'}).click();
+ await mock.goto(base+'/cookie/');await mock.getByLabel('Электронная почта').fill('qa@example.invalid');await mock.getByLabel('Пароль',{exact:true}).fill('qa-placeholder-not-real');await mock.getByRole('button',{name:'Войти',exact:true}).click();await mock.getByRole('button',{name:'Добавить товар'}).click();
  await mock.locator('[name=brand]').fill('QA Brand');await mock.locator('[name=model]').fill('QA Model');await mock.locator('[name=slug]').fill('qa-model');await mock.locator('[name=price]').fill('15000');await mock.locator('[name=images]').fill('/assets/products/optical-01.webp');await mock.locator('[name=published]').check();await mock.getByRole('button',{name:'Сохранить товар'}).click();await mock.getByText('QA Brand',{exact:true}).waitFor();assert.equal(catalog[0].data.price,15000);
  await mock.getByRole('button',{name:'Изменить',exact:true}).click();await mock.locator('[name=price]').fill('18000');await mock.locator('[name=published]').uncheck();await mock.getByRole('button',{name:'Сохранить товар'}).click();await mock.getByText('Скрыт',{exact:true}).waitFor();assert.equal(catalog[0].data.price,18000);
  await mock.screenshot({path:'qa-admin-products.png'});

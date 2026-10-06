@@ -29,7 +29,7 @@ const base=process.env.PREVIEW_URL||'http://127.0.0.1:4173';
   else{status=404;data={};}
   await route.fulfill({status,contentType:'application/json',body:status===204?'':JSON.stringify(data)});
  });
- const admin=await context.newPage();await admin.goto(base+'/admin/');await admin.getByLabel('Электронная почта').fill('qa@example.invalid');await admin.getByLabel('Пароль',{exact:true}).fill('fake-password');await admin.getByRole('button',{name:'Войти',exact:true}).click();await admin.locator('#new-product').waitFor();
+ const admin=await context.newPage();await admin.goto(base+'/cookie/');await admin.getByLabel('Электронная почта').fill('qa@example.invalid');await admin.getByLabel('Пароль',{exact:true}).fill('fake-password');await admin.getByRole('button',{name:'Войти',exact:true}).click();await admin.locator('#new-product').waitFor();
  const brandsTab=async()=>{await admin.getByRole('button',{name:'Бренды',exact:true}).click();await admin.locator('#add-brand-form').waitFor();};
  const add=async name=>{await admin.locator('[name=brandName]').fill(name);await admin.getByRole('button',{name:'Добавить бренд',exact:true}).click();};
  const row=name=>admin.locator('.managed-brand').filter({has:admin.locator('strong',{hasText:new RegExp('^'+name+'$')})});

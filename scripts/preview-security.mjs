@@ -9,7 +9,7 @@ const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=
 http.createServer(async(req,res)=>{
  try{
   const url=new URL(req.url,'http://127.0.0.1');
-  for(const rule of config.headers||[])if(rule.source==='/(.*)'||(rule.source==='/admin/:path*'&&/^\/admin(?:\/|$)/.test(url.pathname)))for(const h of rule.headers)res.setHeader(h.key,h.value);
+  for(const rule of config.headers||[])if(rule.source==='/(.*)'||(['/cookie(.*)'].includes(rule.source)&&/^\/cookie(?:\/|$)/.test(url.pathname)))for(const h of rule.headers)res.setHeader(h.key,h.value);
   let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
   if(file!==root&&!file.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
   try{if((await stat(file)).isDirectory())file=path.join(file,'index.html');}catch{if(!path.extname(file))file=path.join(root,'404.html');}

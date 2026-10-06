@@ -1,0 +1,7 @@
+{
+  "existing": [],
+  "added": [
+    "vercel.json",
+    "scripts/preview-security.mjs"
+  ]
+}

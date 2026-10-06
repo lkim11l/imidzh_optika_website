@@ -1,0 +1,16 @@
+{
+  "existing": [
+    "dist/admin/index.html",
+    "vercel.json",
+    "scripts/preview-security.mjs",
+    "scripts/verify-admin-preview.cjs",
+    "scripts/verify-admin.cjs",
+    "scripts/verify-brands.cjs",
+    "scripts/verify-editorial.cjs",
+    "scripts/verify-email.cjs",
+    "scripts/verify-retail.cjs"
+  ],
+  "added": [
+    "dist/cookie/index.html"
+  ]
+}
