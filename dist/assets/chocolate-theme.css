@@ -1,0 +1,64 @@
+/* Shared storefront palette and readable supporting type. */
+:root{--chocolate:#38251f;--milk-chocolate:#805b47;--button-text:#fffaf4}
+body :is(.button,.icon-button,.social-link,.filter-toggle,.filter-chip,.reset-filters,.text-button,.quantity button,.close){background:var(--chocolate);color:var(--button-text);border-color:var(--chocolate);transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+body :is(.button,.icon-button,.social-link,.filter-toggle,.filter-chip,.reset-filters,.text-button,.quantity button,.close):hover:not(:disabled){background:var(--milk-chocolate);color:var(--button-text);border-color:var(--milk-chocolate);filter:none}
+body .category-tab.selected{background:var(--chocolate);color:var(--button-text)}
+body .category-tab:hover{background:var(--milk-chocolate);color:var(--button-text)}
+body .header-socials .yandex-link>span:first-child,body .header-socials .yandex-link .hero-rating-star{color:var(--button-text)}
+body .text-button{border-radius:30px;padding:12px 18px;text-decoration:none;line-height:1.55;min-height:48px}
+body .filter-toggle,body .reset-filters{border-radius:28px;padding:10px 16px}
+body .quantity button{border-radius:8px}
+body .close{border-radius:50%}
+body .gallery-thumb{border-color:#d8cbc2}
+body .gallery-thumb.selected{border-color:var(--chocolate);box-shadow:0 0 0 1px var(--chocolate)}
+body .gallery-thumb:hover{border-color:var(--milk-chocolate)}
+body .button.secondary{background:var(--chocolate);color:var(--button-text);border-color:var(--chocolate)}
+body .button.secondary:hover{background:var(--milk-chocolate);border-color:var(--milk-chocolate)}
+body .button,body .button.small,.hero-experiment .hero-ctas .button,body .appointment .button,body .product-detail-actions .button{font-size:17px;line-height:1.55;padding:17px 25px;min-height:56px}
+body .header .header-about{font-size:15px;padding:12px 20px;min-height:46px}
+body .text-button,.hero-experiment .hero-ctas .text-button,body .card .text-button{font-size:16px}
+body .eyebrow,.hero-experiment .eyebrow,body .hoya .lens-brands-panel>.eyebrow{font-size:14px;line-height:1.6;letter-spacing:1.2px}
+.hero-experiment .hero-services{font-size:15px;line-height:1.7;gap:10px 16px;margin-top:26px;color:#66615a}
+.hero-experiment .hero-annotation{font-size:14px;line-height:1.6;max-width:36%;color:#615b54}
+.hero-experiment .hero-annotation strong{font-size:12.5px;line-height:1.5;letter-spacing:1px}
+.hero-experiment .annotation-number{font-size:12px;color:#75685b}
+body .trust-line div span,body .trust-line p{font-size:17px;line-height:1.65}
+body .prototype-note,body .form-note,body .promo-terms,body .catalog-notice,body .results-count,body .gallery-thumb span,body .product-gallery .prototype-note,body .cart-summary .text-button,body .cart-item-end .text-button{font-size:15px;line-height:1.7}
+body .store-contact-details .contact-label,body .owner-copy .eyebrow{font-size:14px;line-height:1.6}
+body .store-map-link,body .footer,body .collection-contact span{font-size:16px;line-height:1.7}
+body .new-label,body .card-number,body .collection-tag{font-size:13px}
+body label,body .filter-option{font-size:16px;line-height:1.6}
+body .collection-heading>p,body .section-heading>p:last-child{font-size:18px;line-height:1.7}
+body .hero-note{font-size:15px;line-height:1.7}
+@media(max-width:1099px){body .header .header-about{font-size:14px;padding:11px 16px}body .hero-experiment .hero-glasses .hero-annotation{font-size:14px;line-height:1.55;max-width:none}body .hero-experiment .hero-glasses .hero-annotation strong{font-size:12px;letter-spacing:.5px}body .hero-experiment .hero-glasses .annotation-number{font-size:12px}}
+@media(max-width:720px){body .button,body .button.small,.hero-experiment .hero-ctas .button,body .appointment .button,body .product-detail-actions .button{font-size:16px;padding:16px 20px;min-height:56px}body .header .header-about{font-size:13px;padding:10px 13px;min-height:42px}body .eyebrow,.hero-experiment .eyebrow{font-size:13px}body .hero-services{font-size:14px;gap:9px 12px;margin-top:22px}.hero-services li+li::before{margin-right:12px}body .collection-heading>p,body .section-heading>p:last-child{font-size:17px}body .trust-line div span,body .trust-line p{font-size:16px}body .header-socials .social-link{font-size:13px}body .store-map-link,body .footer{font-size:15px}}
+@media(max-width:390px){body .header .header-about{font-size:12px;padding:10px 11px}body .header-socials .social-link{font-size:12px;padding:9px 11px}body .hero-experiment .hero-glasses{gap:16px 12px}body .hero-experiment .hero-glasses .hero-annotation{font-size:13px;gap:6px}}
+@media(prefers-reduced-motion:reduce){body :is(.button,.icon-button,.social-link,.filter-toggle,.filter-chip,.reset-filters,.text-button,.quantity button,.close){transition:none}}
+
+/* Match the more specific component rules without changing their layout. */
+body .header-socials .social-link,body .product-card .favorite-button,.hero-experiment .hero-ctas .text-button,body .card .text-button,body .cart-item-end .text-button{background:var(--chocolate);color:var(--button-text);border-color:var(--chocolate)}
+body .header-socials .social-link:hover,body .product-card .favorite-button:hover,.hero-experiment .hero-ctas .text-button:hover,body .card .text-button:hover,body .cart-item-end .text-button:hover{background:var(--milk-chocolate);color:var(--button-text);border-color:var(--milk-chocolate);filter:none}
+body .header-socials .social-link{background-image:none}
+body{overflow-x:clip}
+@media(max-width:720px){body .header .icon-button{height:34px;min-height:34px}body .hero-experiment .hero-services{font-size:14px}}
+@media(max-width:390px){body .header .icon-button{height:30px;min-height:30px}}
+@media(max-width:390px){body .header nav.header-socials{gap:6px}body .header .header-socials .social-link{font-size:12px;padding:9px;gap:5px}}
+
+/* Warm supporting surfaces and accents complete the chocolate palette. */
+:root{--blue:var(--chocolate);--ink:#302821;--muted:#6b625b;--line:#e5ddd4;--paper:#faf9f6;--cream:#f2ece3;--warm-border:#e3d6c7}
+body .promo-card{background:var(--cream);border-color:var(--warm-border)}
+body .promo-badge{color:var(--chocolate)}
+body .promo-copy .eyebrow{color:#73523d}
+body .promo-description{color:#5f5146}
+body .promo-terms{color:#73665b}
+body .header nav:not(.header-socials) a:hover{color:var(--milk-chocolate)}
+body .header nav:not(.header-socials) a[aria-current]{color:var(--chocolate)}
+body .card-large,body .appointment,body .demo-notice{background:var(--cream)}
+body .focus-mark,body .focus-mark span{border-color:#c9b59f}
+body :is(button,a,input,select,textarea):focus-visible{outline-color:var(--milk-chocolate)}
+body .product-card .favorite-button[aria-pressed=true] svg{color:var(--button-text)}
+
+/* Service cards use one shared warm surface. */
+body .cards .card{background:var(--cream);border:1px solid var(--warm-border)}
+body .cards .card h3{color:var(--ink)}
+body .cards .card p,body .cards .card-number{color:var(--muted)}
