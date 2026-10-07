@@ -56,7 +56,7 @@ body .header nav:not(.header-socials) a[aria-current]{color:var(--chocolate)}
 body .card-large,body .appointment,body .demo-notice{background:var(--cream)}
 body .focus-mark,body .focus-mark span{border-color:#c9b59f}
 body :is(button,a,input,select,textarea):focus-visible{outline-color:var(--milk-chocolate)}
-body .product-card .favorite-button[aria-pressed=true] svg{color:var(--button-text)}
+body .product-card .favorite-button[aria-pressed=true] svg{color:#111111}
 
 /* Service cards use one shared warm surface. */
 body .cards .card{background:var(--cream);border:1px solid var(--warm-border)}
@@ -68,5 +68,5 @@ body .header .header-actions .icon-button{background:#111111;color:#fff;border-c
 body .header .header-actions .icon-button:hover{background:#303030;color:#fff;border-color:#303030}
 
 /* Product favorite controls match the black utility buttons in the header. */
-body .product-card .favorite-button{background:#111111;color:#fff;border-color:#111111}
-body .product-card .favorite-button:hover{background:#303030;color:#fff;border-color:#303030}
+body .product-card .favorite-button{background:transparent;color:#111111;border-color:transparent}
+body .product-card .favorite-button:hover{background:transparent;color:#111111;border-color:transparent}
