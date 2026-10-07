@@ -70,3 +70,9 @@ body .header .header-actions .icon-button:hover{background:#303030;color:#fff;bo
 /* Product favorite controls match the black utility buttons in the header. */
 body .product-card .favorite-button{background:transparent;color:#111111;border-color:transparent}
 body .product-card .favorite-button:hover{background:transparent;color:#111111;border-color:transparent}
+
+/* Give every header control its own visible breathing room. */
+body .header .header-actions{gap:10px}
+body .header .header-about{margin-left:0}
+@media(max-width:720px){body .header .header-actions{gap:6px}}
+@media(max-width:350px){body .header .header-actions{gap:4px}body .header .header-about{padding-inline:8px}body .header .wordmark{font-size:16px}}
