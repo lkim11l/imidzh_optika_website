@@ -78,16 +78,16 @@ body .header .header-about{margin-left:0}
 @media(max-width:350px){body .header .header-actions{gap:4px}body .header .header-about{padding-inline:8px}body .header .wordmark{font-size:16px}}
 
 /* Search and favorites in the header have transparent backgrounds. */
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav),body .header .header-actions :is(.icon-button[data-search],.favorite-nav):hover{background:transparent;color:#111111;border-color:transparent}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button),body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):hover{background:transparent;color:#111111;border-color:transparent}
 
 /* Feedback for transparent header controls, without changing their hit areas. */
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav){transition:background-color .2s,color .2s,box-shadow .2s}
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav)>svg{transition:transform .2s;transform-origin:center}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button){transition:background-color .2s,color .2s,box-shadow .2s}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button)>svg{transition:transform .2s;transform-origin:center}
 @media(hover:hover){
- body .header .header-actions :is(.icon-button[data-search],.favorite-nav):hover{background:#eee6dc;color:#38251f;box-shadow:0 0 0 3px #eee6dc}
- body .header .header-actions :is(.icon-button[data-search],.favorite-nav):hover>svg{transform:scale(1.12)}
+ body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):hover{background:#eee6dc;color:#38251f;box-shadow:0 0 0 3px #eee6dc}
+ body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):hover>svg{transform:scale(1.12)}
 }
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav):active{background:#e3d6c7;box-shadow:none}
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav):active>svg{transform:scale(.94)}
-body .header .header-actions :is(.icon-button[data-search],.favorite-nav):focus-visible{background:#eee6dc;outline:2px solid var(--milk-chocolate);outline-offset:3px}
-@media(prefers-reduced-motion:reduce){body .header .header-actions :is(.icon-button[data-search],.favorite-nav),body .header .header-actions :is(.icon-button[data-search],.favorite-nav)>svg{transition:none}body .header .header-actions :is(.icon-button[data-search],.favorite-nav)>svg{transform:none!important}}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):active{background:#e3d6c7;box-shadow:none}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):active>svg{transform:scale(.94)}
+body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button):focus-visible{background:#eee6dc;outline:2px solid var(--milk-chocolate);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button),body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button)>svg{transition:none}body .header .header-actions :is(.icon-button[data-search],.favorite-nav,.mobile-menu-button)>svg{transform:none!important}}
