@@ -62,3 +62,11 @@ body .product-card .favorite-button[aria-pressed=true] svg{color:var(--button-te
 body .cards .card{background:var(--cream);border:1px solid var(--warm-border)}
 body .cards .card h3{color:var(--ink)}
 body .cards .card p,body .cards .card-number{color:var(--muted)}
+
+/* Header utility controls are black; About retains the chocolate accent. */
+body .header .header-actions .icon-button{background:#111111;color:#fff;border-color:#111111}
+body .header .header-actions .icon-button:hover{background:#303030;color:#fff;border-color:#303030}
+
+/* Product favorite controls match the black utility buttons in the header. */
+body .product-card .favorite-button{background:#111111;color:#fff;border-color:#111111}
+body .product-card .favorite-button:hover{background:#303030;color:#fff;border-color:#303030}

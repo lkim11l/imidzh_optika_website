@@ -83,3 +83,10 @@
  .hero-experiment .hero-guides{display:none}
 }
 /* MOBILE LABELS END */
+
+/* On phones, the text scrolls normally and only the glasses are pinned. */
+@media(max-width:900px){
+ .hero-experiment>.hero-scroll-track{min-width:0;width:100%;align-self:start}
+ .hero-experiment>.hero-scroll-track.hero-scroll-pinned>.hero-glasses{position:sticky;top:var(--hero-pin-top,136px);margin-top:0}
+}
+@media(prefers-reduced-motion:reduce){.hero-scroll-track.hero-scroll-pinned>.hero-glasses{position:relative;top:auto}}
