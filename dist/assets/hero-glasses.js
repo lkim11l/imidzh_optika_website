@@ -44,7 +44,7 @@
     if (!allowed() || !hero.getClientRects().length) return;
     arrange();
     const header = document.querySelector('.header-shell')?.getBoundingClientRect().height || 0;
-    if (pinTarget === hero) hero.style.setProperty('--hero-pin-min-height', `${Math.max(0, innerHeight - header)}px`);
+    if (pinTarget === hero) hero.style.setProperty('--hero-pin-min-height', `${Math.max(0, Math.min(660, innerHeight - header))}px`);
     const height = pinTarget.getBoundingClientRect().height;
     const fits = height <= innerHeight - header - 24;
     if (mobile.matches && !fits) {

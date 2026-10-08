@@ -1,0 +1,29 @@
+/* A shared header rhythm and balanced first-screen composition. */
+@media(min-width:1100px){
+ body .header{display:grid;grid-template-columns:152px minmax(0,1fr) auto auto;align-items:center;justify-content:normal;gap:24px;height:92px}
+ body .header .wordmark{width:152px;height:50px;margin:0}
+ body .header .wordmark>img{top:56%}
+ body .header>nav:not(.header-socials){justify-self:start;justify-content:flex-start;gap:22px;margin:0;padding-left:20px;font-size:14px;white-space:nowrap}
+ body .header nav.header-socials{gap:8px;padding:0;width:auto}
+ body .header .header-actions{gap:10px;margin:0}
+ body .header .header-about{min-height:44px;padding:11px 20px;margin:0}
+}
+@media(min-width:1280px){
+ body .header-socials .instagram-link>span,body .header-socials .telegram-link>span{display:inline}
+ body .header-socials .instagram-link,body .header-socials .telegram-link{width:auto;padding:9px 12px}
+}
+@media(min-width:1100px) and (max-width:1279px){body .header{gap:18px}body .header>nav:not(.header-socials){gap:18px;padding-left:8px}}
+@media(min-width:901px){
+ body .hero.hero-experiment{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);align-items:center;gap:48px;min-height:560px;padding:52px 0 64px}
+ body .hero-experiment .hero-copy{max-width:590px}
+ body .hero-experiment .eyebrow{margin:0 0 24px}
+ body .hero-experiment h1{font-size:clamp(38px,3.5vw,52px);line-height:1.13;letter-spacing:-1.8px;font-weight:500;margin:0 0 28px;text-wrap:balance}
+ body .hero-experiment .lead{max-width:440px;font-size:18px;line-height:1.65;margin:0 0 28px;text-wrap:pretty}
+ body .hero-experiment .hero-glasses{aspect-ratio:1.6;margin-top:-40px;align-self:center}
+ body .hero-experiment .hero-glasses-intro{inset:0}
+ body .hero-experiment .hero-services{gap:8px 14px;font-size:14px;line-height:1.7;margin-top:24px}
+ body .hero-experiment .hero-services li+li::before{margin-right:14px}
+}
+@media(min-width:901px) and (max-width:1099px){body .hero.hero-experiment{gap:28px;padding-top:40px;min-height:520px}body .hero-experiment h1{font-size:38px}body .hero-experiment .hero-glasses{margin-top:-24px}}
+@media(max-width:1099px){body .header .wordmark>img{top:54%}}
+@media(max-width:900px){body .hero-experiment h1{text-wrap:balance}body .hero-experiment .hero-glasses{margin-top:0}}
