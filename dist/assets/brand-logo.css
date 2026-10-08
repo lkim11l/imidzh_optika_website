@@ -1,0 +1,8 @@
+/* Display the supplied artwork without its surrounding square whitespace. */
+body .header .wordmark,body .footer .wordmark{position:relative;display:block;flex:0 0 auto;width:160px;height:48px;overflow:hidden;line-height:1;isolation:isolate}
+body .wordmark>img{position:absolute;display:block;width:145%;max-width:none;height:auto;left:50%;top:48%;transform:translate(-50%,-50%);mix-blend-mode:multiply}
+body .footer .wordmark{width:190px;height:57px}
+@media(max-width:1099px){body .header .wordmark{width:148px;height:44px}}
+@media(max-width:720px){body .header .wordmark{width:130px;height:39px}}
+@media(max-width:390px){body .header .wordmark{width:114px;height:35px}}
+@media(max-width:350px){body .header .wordmark{width:104px;height:32px}}

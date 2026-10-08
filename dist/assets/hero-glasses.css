@@ -90,3 +90,6 @@
  .hero-experiment>.hero-scroll-track.hero-scroll-pinned>.hero-glasses{position:sticky;top:var(--hero-pin-top,136px);margin-top:0}
 }
 @media(prefers-reduced-motion:reduce){.hero-scroll-track.hero-scroll-pinned>.hero-glasses{position:relative;top:auto}}
+
+/* Without callouts, the mobile illustration uses a single compact row. */
+@media(max-width:900px){body .hero-experiment .hero-glasses{display:block;aspect-ratio:1.72;height:auto}body .hero-experiment .hero-glasses-intro{position:relative;inset:auto;aspect-ratio:1.72;width:100%}}
