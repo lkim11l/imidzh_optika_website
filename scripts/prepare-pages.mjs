@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { mockProducts } from '../dist/assets/data/products.js';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = await readFile(path.join(root,'dist/index.html'),'utf8');
-const routes = ['about','product','catalog','catalog/optical','catalog/sunglasses','favorites','cart', ...mockProducts.map(product => 'product/'+product.slug)];
+const routes = ['lenses','about','product','catalog','catalog/optical','catalog/sunglasses','favorites','cart', ...mockProducts.map(product => 'product/'+product.slug)];
 // Real static route entrypoints: direct URLs and refresh work without rewrite rules.
 for(const route of routes) {
   const directory = path.join(root,'dist',route);

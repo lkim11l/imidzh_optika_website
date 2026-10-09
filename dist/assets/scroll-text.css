@@ -1,0 +1,7 @@
+/* Text appears once as it enters the viewport; page layout stays unchanged. */
+@media(prefers-reduced-motion:no-preference){
+ .scroll-text{opacity:0;transform:translate3d(0,12px,0);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.65,.3,1),color .2s;transition-delay:var(--text-enter-delay,0ms);}
+ .scroll-text.text-is-visible,.scroll-text:focus-visible,.scroll-text:focus-within{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){.scroll-text{opacity:1!important;transform:none!important;transition:none!important}}
+@media print{.scroll-text{opacity:1!important;transform:none!important}}

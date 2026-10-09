@@ -18,6 +18,10 @@
   track.className = 'hero-scroll-track';
   hero.before(track);
   track.append(hero);
+  const following = document.createElement('div');
+  following.className = 'hero-following-content';
+  while (track.nextSibling) following.append(track.nextSibling);
+  track.after(following);
   const oldVideo = visual.querySelector('.hero-video');
   if (oldVideo) { oldVideo.pause(); oldVideo.removeAttribute('src'); }
   let raf = 0, next = 0, active = 0, loaded = 0, drawn = -1;
@@ -44,7 +48,7 @@
     if (!allowed() || !hero.getClientRects().length) return;
     arrange();
     const header = document.querySelector('.header-shell')?.getBoundingClientRect().height || 0;
-    if (pinTarget === hero) hero.style.setProperty('--hero-pin-min-height', `${Math.max(0, Math.min(660, innerHeight - header))}px`);
+    if (pinTarget === hero) hero.style.setProperty('--hero-pin-min-height', `${Math.max(0, Math.min(520, innerHeight - header))}px`);
     const height = pinTarget.getBoundingClientRect().height;
     const fits = height <= innerHeight - header - 24;
     if (mobile.matches && !fits) {
@@ -63,12 +67,36 @@
     }
     track.dataset.start = String(start);
     track.dataset.distance = String(distance);
+    positionFollowing();
+  }
+  function positionFollowing() {
+    const progress = Math.max(0, Math.min(1, (scrollY - start) / distance));
+    const offset = !mobile.matches && allowed() ? distance * (1 - progress) : 0;
+    following.style.transform = offset ? `translateY(${-offset}px)` : '';
+    following.style.marginBottom = offset ? `${-offset}px` : '';
   }
   function render() {
     raf = 0;
-    if (!allowed() || document.hidden || !inView || loaded !== count) return;
+    if (!allowed() || document.hidden || !inView) return;
+    positionFollowing();
     // Finish before releasing the sticky section: last 12% holds the assembled frame.
     const progress = Math.max(0, Math.min(1, (scrollY - start) / (distance * .88)));
+    // Desktop copy follows exactly the same progress as the glasses sequence.
+    // Phone copy stays in normal flow and compacts while it is still visible.
+    const headerHeight = document.querySelector('.header-shell')?.getBoundingClientRect().height || 0;
+    const copyStart = hero.getBoundingClientRect().top + scrollY - headerHeight;
+    const copyProgress = mobile.matches
+      ? Math.max(0, Math.min(1, (scrollY - copyStart) / Math.max(180, hero.querySelector('.hero-copy').offsetHeight * .7)))
+      : progress;
+    const emphasis = 1 - copyProgress;
+    const value = emphasis.toFixed(4);
+    if (hero.style.getPropertyValue('--hero-emphasis') !== value) {
+      hero.style.setProperty('--hero-emphasis', value);
+      hero.style.setProperty('--hero-left-weight', `${1 + .4 * emphasis}fr`);
+      hero.style.setProperty('--hero-right-weight', `${1.08 - .08 * emphasis}fr`);
+      hero.dispatchEvent(new Event('hero:progress'));
+    }
+    if (loaded !== count) return;
     const index = Math.round(progress * (count - 1));
     if (drawn === index) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,6 +110,12 @@
   }
   function restore() {
     cancelAnimationFrame(raf); raf = 0; drawn = -1;
+    following.style.transform = '';
+    following.style.marginBottom = '';
+    hero.style.removeProperty('--hero-emphasis');
+    hero.style.removeProperty('--hero-left-weight');
+    hero.style.removeProperty('--hero-right-weight');
+    hero.dispatchEvent(new Event('hero:progress'));
     visual.classList.remove('hero-scroll-ready');
     track.classList.remove('hero-scroll-pinned');
     track.style.removeProperty('height');

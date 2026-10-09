@@ -1,3 +1,4 @@
+import {formatHeroTitle} from '../ui/customer-layout.js';
 import {editorialData,applyHomepageImages} from './editorial.js';
 import { request, isConfigured } from './supabase.js';
 export const promotionFields = [
@@ -25,8 +26,10 @@ export async function loadContent() {
  return (await request('/rest/v1/optika_content?id=eq.homepage&select=*'))[0] || null;
 }
 export async function applyContent() {
+ formatHeroTitle();
  const row=await loadContent();const data=editorialData(row?.data);
  for(const [key,,selector] of contentFields) {const el=document.querySelector(selector);if(el && typeof data[key]==='string' && data[key].trim()) {el.textContent=data[key];el.style.whiteSpace='pre-line';}}
+ formatHeroTitle();
  applyHomepageImages(document,data);
  document.querySelectorAll('#promotions,.promotions-nav').forEach(el=>el.hidden=data.promoEnabled===false);
  return row;

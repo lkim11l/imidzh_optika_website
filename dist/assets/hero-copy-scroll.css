@@ -1,0 +1,22 @@
+/* The original compact composition is the end state of the scroll sequence. */
+body .hero.hero-experiment{--hero-emphasis:1}
+@media(min-width:901px){
+ body .hero.hero-experiment{width:min(calc(1344px + 396px * var(--hero-emphasis)),calc(100% - 112px + 48px * var(--hero-emphasis)));grid-template-columns:minmax(0,var(--hero-left-weight,1.4fr)) minmax(0,var(--hero-right-weight,1fr))}
+ body .hero-experiment h1{font-size:calc(clamp(30px,3.05vw,44px) + clamp(12px,1.2vw,24px) * var(--hero-emphasis));margin-bottom:calc(20px + 4px * var(--hero-emphasis))}
+ body .hero-experiment .lead{font-size:calc(16px + 8px * var(--hero-emphasis));margin-bottom:calc(20px + 4px * var(--hero-emphasis))}
+ body .hero-experiment .hero-ctas .button{font-size:calc(16px + 6px * var(--hero-emphasis));padding:calc(16px + 8px * var(--hero-emphasis)) calc(20px + 6px * var(--hero-emphasis))}
+ body .hero-experiment .hero-services{font-size:calc(14px + 6px * var(--hero-emphasis));max-width:calc(540px + 180px * var(--hero-emphasis));margin-top:calc(24px + 4px * var(--hero-emphasis))}
+ body .hero-experiment .hero-services li{font-size:inherit}
+}
+@media(min-width:901px) and (max-width:1099px){body .hero-experiment h1{font-size:calc(32px + 4px * var(--hero-emphasis))}}
+@media(max-width:900px){
+ body .hero-experiment h1{font-size:calc(clamp(20px,6.65vw,42px) + 0px * var(--hero-emphasis))}
+ body .hero-experiment .lead{font-size:calc(12px + 6px * var(--hero-emphasis))}
+ body .hero-experiment .hero-ctas .button{font-size:calc(16px + 1px * var(--hero-emphasis));padding-top:calc(16px + 6px * var(--hero-emphasis));padding-bottom:calc(16px + 6px * var(--hero-emphasis))}
+}
+@media(prefers-reduced-motion:reduce){body .hero.hero-experiment{--hero-emphasis:1!important;--hero-left-weight:1.4fr!important;--hero-right-weight:1fr!important}}
+
+@media(min-width:901px) and (max-width:1099px){body .hero-experiment .hero-services{font-size:calc(14px + 1px * var(--hero-emphasis))}}
+@media(min-width:1100px) and (max-width:1350px){body .hero-experiment h1{font-size:calc(clamp(30px,3.05vw,44px) + 10px * var(--hero-emphasis))}}
+
+@media(min-width:901px){body .hero.hero-experiment{padding-top:24px;padding-bottom:24px}}

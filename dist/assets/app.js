@@ -1,3 +1,6 @@
+import {refreshTextReveals} from './ui/scroll-text.js';
+import {lensesPageHTML,arrangeLensDetails} from './ui/lenses-page.js';
+import {installHeroLeadFit} from './ui/customer-layout.js';
 import {brandCarouselHTML} from './ui/brand-carousel.js';
 import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
@@ -89,6 +92,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
   else if(path==='/product')await renderProduct(new URLSearchParams(location.search).get('slug')||'',generation);
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
+  else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
   else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
@@ -105,8 +109,7 @@ function renderSearch() {
   const query = $('#search-input').value.trim(), matches = filterProducts(products,{query,sort:'popular'});
   $('#search-results').innerHTML = `${query ? `<p class="search-summary">Найдено моделей: ${matches.length}</p>` : '<p class="search-summary">Можно начать с этих моделей</p>'}${matches.length ? `<div class="search-list">${matches.slice(0,5).map(product => `<a class="search-result" href="/product/?slug=${encodeURIComponent(product.slug)}">${ProductImage(product.images[0],{className:'search-thumb',loading:'eager'})}<span><strong>${esc(product.brand)}</strong><span>${esc(product.model)}</span></span><span class="search-price">${money(product.price)}</span></a>`).join('')}</div><a class="text-button search-all" href="${esc(catalogURL({query}))}">Все результаты (${matches.length})</a>` : '<p>Попробуйте другой бренд или название формы.</p>'}`;
 }
-const revealObserver = 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches ? new IntersectionObserver(entries => entries.forEach(entry => {if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target);}}),{threshold:0.06}) : null;
-function setupReveals() {if(!revealObserver || home.hidden)return;document.querySelectorAll('#home .card,#home .hoya,#home .category-editorial,#home .appointment,#home .store-section').forEach(element => {if(!element.classList.contains('reveal')){element.classList.add('reveal');revealObserver.observe(element);}});}
+function setupReveals() {refreshTextReveals();}
 document.addEventListener('click',event => {
   const button = event.target.closest('button');
   if(button) {
@@ -165,6 +168,7 @@ window.addEventListener('optika:statechange',() => {
   }
 });
 window.addEventListener('popstate',() => renderRoute({focus:true}));
+installHeroLeadFit();
 const homepageContent=applyContent().catch(()=>undefined);
 try {
   [products,brands] = await Promise.all([productRepository.getProducts(),productRepository.getBrands()]);shopStore.initialize(products);if(!products.some(p=>p.isMock))mockNotice="";
