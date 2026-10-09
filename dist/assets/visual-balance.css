@@ -48,3 +48,10 @@ body .hero-experiment .hero-services li+li::before{content:none;display:none;mar
  body .footer>p{width:auto}
  body .footer>span{justify-self:start}
 }
+
+/* Keep all three service labels on a single mobile baseline. */
+@media(max-width:1099px){
+ body .hero-experiment .hero-services{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:8px;width:100%}
+ body .hero-experiment .hero-services li{flex:0 0 auto;white-space:nowrap;font-size:clamp(10px,2.65vw,14px);line-height:1.6;letter-spacing:-.15px}
+}
+@media(max-width:350px){body .hero-experiment .hero-services{gap:5px}body .hero-experiment .hero-services li{font-size:9px;letter-spacing:-.1px}}
