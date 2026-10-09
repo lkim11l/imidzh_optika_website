@@ -13,7 +13,7 @@
   const count = 80, images = new Array(count);
   // Smaller decoded images keep phone memory use below the desktop sequence.
   const frameDirectory = matchMedia('(max-width: 900px)').matches
-    ? '/assets/hero/scroll-v2/mobile' : '/assets/hero/scroll-v2';
+    ? '/assets/hero/assembly-design-frames/mobile' : '/assets/hero/assembly-design-frames';
   const track = document.createElement('div');
   track.className = 'hero-scroll-track';
   hero.before(track);

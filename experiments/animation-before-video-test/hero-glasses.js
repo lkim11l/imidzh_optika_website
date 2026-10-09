@@ -1,0 +1,206 @@
+/* Isolated homepage experiment. Native sticky scrolling; no wheel/touch interception. */
+(() => {
+  const hero = document.querySelector('.hero-experiment');
+  const visual = hero?.querySelector('.hero-glasses');
+  const canvas = visual?.querySelector('.hero-scroll-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 900px)');
+  let pinTarget = hero;
+  const connection = navigator.connection;
+  const count = 80, images = new Array(count);
+  // Smaller decoded images keep phone memory use below the desktop sequence.
+  const frameDirectory = matchMedia('(max-width: 900px)').matches
+    ? '/assets/hero/scroll-v2/mobile' : '/assets/hero/scroll-v2';
+  const track = document.createElement('div');
+  track.className = 'hero-scroll-track';
+  hero.before(track);
+  track.append(hero);
+  const following = document.createElement('div');
+  following.className = 'hero-following-content';
+  while (track.nextSibling) following.append(track.nextSibling);
+  track.after(following);
+  const oldVideo = visual.querySelector('.hero-video');
+  if (oldVideo) { oldVideo.pause(); oldVideo.removeAttribute('src'); }
+  let raf = 0, next = 0, active = 0, loaded = 0, drawn = -1;
+  let failed = false, inView = false, start = 0, distance = 1;
+  const allowed = () => !reduced.matches && !connection?.saveData && !failed;
+  function arrange() {
+    // Keep mobile copy in normal flow; only the glasses wait for assembly.
+    if (mobile.matches && pinTarget !== visual) {
+      track.before(hero);
+      visual.before(track);
+      track.append(visual);
+      pinTarget = visual;
+      hero.style.removeProperty('--hero-pin-top');
+      hero.style.removeProperty('--hero-pin-min-height');
+    } else if (!mobile.matches && pinTarget !== hero) {
+      track.before(visual);
+      hero.before(track);
+      track.append(hero);
+      pinTarget = hero;
+      visual.style.removeProperty('--hero-pin-top');
+    }
+  }
+  function measure() {
+    if (!allowed() || !hero.getClientRects().length) return;
+    arrange();
+    const header = document.querySelector('.header-shell')?.getBoundingClientRect().height || 0;
+    if (pinTarget === hero) hero.style.setProperty('--hero-pin-min-height', `${Math.max(0, Math.min(520, innerHeight - header))}px`);
+    const height = pinTarget.getBoundingClientRect().height;
+    const fits = height <= innerHeight - header - 24;
+    if (mobile.matches && !fits) {
+      // Landscape/large text: never pin a visual taller than the usable viewport.
+      track.classList.remove('hero-scroll-pinned');
+      track.style.removeProperty('height');
+      start = track.getBoundingClientRect().top + scrollY - innerHeight * .65;
+      distance = Math.max(300, height * .85);
+    } else {
+      track.classList.add('hero-scroll-pinned');
+      const top = mobile.matches ? header + 12 : Math.min(header, innerHeight - height);
+      distance = mobile.matches ? Math.max(360, Math.min(600, innerHeight * .65)) : Math.max(600, Math.min(1100, innerHeight * .95));
+      track.style.height = `${height + distance}px`;
+      pinTarget.style.setProperty('--hero-pin-top', `${top}px`);
+      start = track.getBoundingClientRect().top + scrollY - top;
+    }
+    track.dataset.start = String(start);
+    track.dataset.distance = String(distance);
+    positionFollowing();
+  }
+  function positionFollowing() {
+    const progress = Math.max(0, Math.min(1, (scrollY - start) / distance));
+    const offset = !mobile.matches && allowed() ? distance * (1 - progress) : 0;
+    following.style.transform = offset ? `translateY(${-offset}px)` : '';
+    following.style.marginBottom = offset ? `${-offset}px` : '';
+  }
+  function render() {
+    raf = 0;
+    if (!allowed() || document.hidden || !inView) return;
+    positionFollowing();
+    // Finish before releasing the sticky section: last 12% holds the assembled frame.
+    const progress = Math.max(0, Math.min(1, (scrollY - start) / (distance * .88)));
+    // Desktop copy follows exactly the same progress as the glasses sequence.
+    // Phone copy stays in normal flow and compacts while it is still visible.
+    const headerHeight = document.querySelector('.header-shell')?.getBoundingClientRect().height || 0;
+    const copyStart = hero.getBoundingClientRect().top + scrollY - headerHeight;
+    const copyProgress = mobile.matches
+      ? Math.max(0, Math.min(1, (scrollY - copyStart) / Math.max(180, hero.querySelector('.hero-copy').offsetHeight * .7)))
+      : progress;
+    const emphasis = 1 - copyProgress;
+    const value = emphasis.toFixed(4);
+    if (hero.style.getPropertyValue('--hero-emphasis') !== value) {
+      hero.style.setProperty('--hero-emphasis', value);
+      hero.style.setProperty('--hero-left-weight', `${1 + .4 * emphasis}fr`);
+      hero.style.setProperty('--hero-right-weight', `${1.08 - .08 * emphasis}fr`);
+      hero.dispatchEvent(new Event('hero:progress'));
+    }
+    if (loaded !== count) return;
+    const index = Math.round(progress * (count - 1));
+    if (drawn === index) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(images[index], 0, 0, canvas.width, canvas.height);
+    drawn = index;
+    canvas.dataset.frame = String(index);
+    visual.classList.add('hero-scroll-ready');
+  }
+  function schedule() {
+    if (!raf && allowed() && inView && !document.hidden) raf = requestAnimationFrame(render);
+  }
+  function restore() {
+    cancelAnimationFrame(raf); raf = 0; drawn = -1;
+    following.style.transform = '';
+    following.style.marginBottom = '';
+    hero.style.removeProperty('--hero-emphasis');
+    hero.style.removeProperty('--hero-left-weight');
+    hero.style.removeProperty('--hero-right-weight');
+    hero.dispatchEvent(new Event('hero:progress'));
+    visual.classList.remove('hero-scroll-ready');
+    track.classList.remove('hero-scroll-pinned');
+    track.style.removeProperty('height');
+    hero.style.removeProperty('--hero-pin-top');
+    visual.style.removeProperty('--hero-pin-top');
+    hero.style.removeProperty('--hero-pin-min-height');
+  }
+  // Keep a continuous glass surface beneath transparent highlights in the source frames.
+  // Detect each lens from its blue rim; never fill the background or the empty frame openings.
+  function prepareFrame(image) {
+    const surface = document.createElement('canvas');
+    surface.width = image.naturalWidth; surface.height = image.naturalHeight;
+    const paint = surface.getContext('2d', {willReadFrequently: true});
+    paint.drawImage(image, 0, 0);
+    const {data} = paint.getImageData(0, 0, surface.width, surface.height);
+    const sx = surface.width / 960, sy = surface.height / 540;
+    const hull = points => {
+      points.sort((a,b) => a[0]-b[0] || a[1]-b[1]);
+      const cross = (o,a,b) => (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+      const half = list => {const result=[];for(const point of list){while(result.length>1 && cross(result.at(-2),result.at(-1),point)<=0)result.pop();result.push(point);}return result;};
+      const lower=half(points), upper=half([...points].reverse());
+      return lower.slice(0,-1).concat(upper.slice(0,-1));
+    };
+    const paths=[];
+    for (const [left,top,right,bottom] of [[40,170,365,405],[380,230,675,520]]) {
+      const points=[];
+      for(let y=Math.round(top*sy);y<bottom*sy;y+=2){
+        let first=-1,last=-1;
+        for(let x=Math.round(left*sx);x<right*sx;x++){
+          const i=(y*surface.width+x)*4;
+          if(data[i+3]>100 && data[i+2]-data[i]>8 && data[i+2]>=data[i+1]){if(first<0)first=x;last=x;}
+        }
+        if(first>=0){points.push([first,y],[last,y]);}
+      }
+      if(points.length<12)continue;
+      const boundary=hull(points), path=new Path2D();
+      path.moveTo(...boundary[0]);for(const point of boundary.slice(1))path.lineTo(...point);path.closePath();paths.push(path);
+    }
+    paint.clearRect(0,0,surface.width,surface.height);
+    for(const path of paths){
+      const glass=paint.createLinearGradient(0,180*sy,0,510*sy);
+      glass.addColorStop(0,'#ffffff');glass.addColorStop(.55,'#fafdff');glass.addColorStop(1,'#ffffff');
+      paint.fillStyle=glass;paint.fill(path);
+    }
+    paint.drawImage(image,0,0);
+    return surface;
+  }
+  function fillQueue() {
+    if (!allowed()) return;
+    while (active < 4 && next < count) {
+      const index = next++, img = new Image(); active++;
+      img.onload = async () => {
+        try {
+          if (img.decode) await img.decode();
+          images[index] = prepareFrame(img); loaded++; active--;
+          fillQueue(); schedule();
+        } catch { active--; failed = true; restore(); }
+      };
+      img.onerror = () => { active--; failed = true; restore(); };
+      img.src = `${frameDirectory}/${String(index).padStart(2, '0')}.webp`;
+    }
+  }
+  function sync() {
+    if (!allowed()) { restore(); return; }
+    track.classList.add('hero-scroll-pinned');
+    measure();
+    if (inView) { fillQueue(); schedule(); }
+  }
+  addEventListener('scroll', schedule, {passive: true});
+  addEventListener('resize', () => { measure(); schedule(); }, {passive: true});
+  mobile.addEventListener('change', sync);
+  document.addEventListener('visibilitychange', sync);
+  reduced.addEventListener('change', sync);
+  connection?.addEventListener?.('change', sync);
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(() => { measure(); schedule(); });
+    observer.observe(hero);
+    const header = document.querySelector('.header-shell');
+    if (header) observer.observe(header);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      inView = entries[0].isIntersecting; sync();
+    }, {rootMargin: '200px'}).observe(track);
+  } else { inView = true; }
+  sync();
+  setTimeout(() => hero.classList.add('hero-is-settled'), 1450);
+})();
