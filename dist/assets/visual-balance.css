@@ -27,3 +27,24 @@
 @media(min-width:901px) and (max-width:1099px){body .hero.hero-experiment{gap:28px;padding-top:40px;min-height:520px}body .hero-experiment h1{font-size:38px}body .hero-experiment .hero-glasses{margin-top:-24px}}
 @media(max-width:1099px){body .header .wordmark>img{top:54%}}
 @media(max-width:900px){body .hero-experiment h1{text-wrap:balance}body .hero-experiment .hero-glasses{margin-top:0}}
+
+/* Service names must not carry a separator onto a new row. */
+body .hero-experiment .hero-services{column-gap:20px;row-gap:8px;align-items:baseline}
+body .hero-experiment .hero-services li{margin:0;padding:0;min-width:0}
+body .hero-experiment .hero-services li+li::before{content:none;display:none;margin:0}
+@media(max-width:1099px){
+ body .hero-experiment .hero-services{display:grid;grid-template-columns:1fr;gap:6px;margin-top:24px;text-align:left}
+ body .hero-experiment .hero-services li{font-size:14px;line-height:1.65}
+}
+@media(max-width:900px){body .hero.hero-experiment{max-width:none}}
+@media(max-width:720px){
+ body .header{align-items:center}
+ body .header nav.header-socials{gap:8px}
+ body .hero.hero-experiment{gap:20px}
+ body .hero-experiment .hero-copy{width:100%;min-width:0}
+ body .footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;column-gap:20px;row-gap:16px}
+ body .footer>.wordmark,body .footer>p,body .footer>.footer-phone,body .footer>span{grid-column:1/-1;margin:0}
+ body .footer>a:not(.wordmark){line-height:1.6;align-self:start}
+ body .footer>p{width:auto}
+ body .footer>span{justify-self:start}
+}
