@@ -13,7 +13,16 @@
   const count = 80, images = new Array(count);
   // Smaller decoded images keep phone memory use below the desktop sequence.
   const frameDirectory = matchMedia('(max-width: 900px)').matches
-    ? '/assets/hero/assembly-design-frames/mobile' : '/assets/hero/assembly-design-frames';
+    ? '/assets/hero/assembly-latest-final/mobile' : '/assets/hero/assembly-latest-final';
+  canvas.width = mobile.matches ? 960 : 1280;
+  canvas.height = canvas.width * 9 / 16;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  const previews = new Array(count);
+  let previewNext = 0, previewActive = 0, previewLoaded = 0, drawnImage = null;
+  const previewDirectory = '/assets/hero/assembly-latest-final/mobile';
+  const pendingFrames = new Set();
+  let targetFrame = 0;
   const track = document.createElement('div');
   track.className = 'hero-scroll-track';
   hero.before(track);
@@ -24,7 +33,7 @@
   track.after(following);
   const oldVideo = visual.querySelector('.hero-video');
   if (oldVideo) { oldVideo.pause(); oldVideo.removeAttribute('src'); }
-  let raf = 0, next = 0, active = 0, loaded = 0, drawn = -1;
+  let raf = 0, active = 0, drawn = -1;
   let failed = false, inView = false, start = 0, distance = 1;
   const allowed = () => !reduced.matches && !connection?.saveData && !failed;
   function arrange() {
@@ -96,11 +105,15 @@
       hero.style.setProperty('--hero-right-weight', `${1.08 - .08 * emphasis}fr`);
       hero.dispatchEvent(new Event('hero:progress'));
     }
-    if (loaded !== count) return;
     const index = Math.round(progress * (count - 1));
-    if (drawn === index) return;
+    targetFrame = index;
+    fillQueue();
+    const frame = images[index] || previews[index];
+    if (!frame) return;
+    if (drawn === index && drawnImage === frame) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(images[index], 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    drawnImage = frame;
     drawn = index;
     canvas.dataset.frame = String(index);
     visual.classList.add('hero-scroll-ready');
@@ -109,7 +122,7 @@
     if (!raf && allowed() && inView && !document.hidden) raf = requestAnimationFrame(render);
   }
   function restore() {
-    cancelAnimationFrame(raf); raf = 0; drawn = -1;
+    cancelAnimationFrame(raf); raf = 0; drawn = -1; drawnImage = null;
     following.style.transform = '';
     following.style.marginBottom = '';
     hero.style.removeProperty('--hero-emphasis');
@@ -123,26 +136,47 @@
     visual.style.removeProperty('--hero-pin-top');
     hero.style.removeProperty('--hero-pin-min-height');
   }
-  function fillQueue() {
-    if (!allowed()) return;
-    while (active < 4 && next < count) {
-      const index = next++, img = new Image(); active++;
-      img.onload = async () => {
-        try {
-          if (img.decode) await img.decode();
-          images[index] = img; loaded++; active--;
-          fillQueue(); schedule();
-        } catch { active--; failed = true; restore(); }
+  // Prepare the whole sequence for instant movement; HD frames improve detail separately.
+  function fillPreviews() {
+    if(!allowed() || !inView || document.hidden)return;
+    while(previewActive<3 && previewNext<count){
+      const index=previewNext++,img=new Image();previewActive++;
+      img.onload=async()=>{
+        try{await img.decode();previews[index]=img;previewActive--;previewLoaded++;
+          if(previewLoaded===count)canvas.dataset.previewReady='true';
+          fillPreviews();schedule();
+        }catch{previewActive--;}
       };
-      img.onerror = () => { active--; failed = true; restore(); };
-      img.src = `${frameDirectory}/${String(index).padStart(2, '0')}.webp`;
+      img.onerror=()=>{previewActive--;fillPreviews();};
+      img.src=`${previewDirectory}/${String(index).padStart(2,'0')}.webp`;
+    }
+  }
+  // Decode only nearby HD frames, keeping memory bounded on phones and laptops.
+  function fillQueue() {
+    if (!allowed() || !inView || document.hidden) return;
+    for(let i=0;i<count;i++)if(images[i] && Math.abs(i-targetFrame)>8 && i!==drawn)images[i]=undefined;
+    const wanted=[targetFrame];
+    for(let step=1;step<=5;step++)wanted.push(targetFrame+step,targetFrame-step);
+    for(const index of wanted){
+      if(active>=3)break;
+      if(index<0 || index>=count || images[index] || pendingFrames.has(index))continue;
+      const img=new Image();active++;pendingFrames.add(index);
+      img.onload=async()=>{
+        try{
+          await img.decode();active--;pendingFrames.delete(index);
+          if(!allowed())return;
+          images[index]=img;fillQueue();schedule();
+        }catch{active--;pendingFrames.delete(index);failed=true;restore();}
+      };
+      img.onerror=()=>{active--;pendingFrames.delete(index);failed=true;restore();};
+      img.src=`${frameDirectory}/${String(index).padStart(2,'0')}.webp`;
     }
   }
   function sync() {
     if (!allowed()) { restore(); return; }
     track.classList.add('hero-scroll-pinned');
     measure();
-    if (inView) { fillQueue(); schedule(); }
+    if (inView) { fillPreviews(); fillQueue(); schedule(); }
   }
   addEventListener('scroll', schedule, {passive: true});
   addEventListener('resize', () => { measure(); schedule(); }, {passive: true});
