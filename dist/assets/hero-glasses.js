@@ -13,14 +13,14 @@
   const count = 80, images = new Array(count);
   // Smaller decoded images keep phone memory use below the desktop sequence.
   const frameDirectory = matchMedia('(max-width: 900px)').matches
-    ? '/assets/hero/assembly-latest-final/mobile' : '/assets/hero/assembly-latest-final';
-  canvas.width = mobile.matches ? 960 : 1280;
+    ? '/assets/hero/assembly-design-hd/mobile' : '/assets/hero/assembly-design-hd';
+  canvas.width = mobile.matches ? 960 : 1920;
   canvas.height = canvas.width * 9 / 16;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
   const previews = new Array(count);
   let previewNext = 0, previewActive = 0, previewLoaded = 0, drawnImage = null;
-  const previewDirectory = '/assets/hero/assembly-latest-final/mobile';
+  const previewDirectory = '/assets/hero/assembly-design-hd/mobile';
   const pendingFrames = new Set();
   let targetFrame = 0;
   const track = document.createElement('div');
