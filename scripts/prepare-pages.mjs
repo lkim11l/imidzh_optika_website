@@ -1,3 +1,5 @@
+import CleanCSS from 'clean-css';
+import {createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -5,7 +7,18 @@ import {mockProducts} from '../dist/assets/data/products.js';
 import {guidePages,guidePageHTML} from '../dist/assets/ui/lens-guides.js';
 import {lensesPageHTML} from '../dist/assets/ui/lenses-page.js';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const source=await readFile(path.join(root,'dist/index.html'),'utf8');
+let source=await readFile(path.join(root,'dist/index.html'),'utf8');
+const styleSources=JSON.parse(await readFile(path.join(root,'scripts/style-sources.json'),'utf8'));
+const rawCSS=(await Promise.all(styleSources.map(file=>readFile(path.join(root,'dist',file),'utf8')))).join('\n');
+const compressed=new CleanCSS({level:1,rebase:false}).minify(rawCSS);
+if(compressed.errors.length)throw new Error(compressed.errors.join('\n'));
+const css=compressed.styles;
+const stylesheet='/assets/site.'+createHash('sha256').update(css).digest('hex').slice(0,12)+'.css';
+await writeFile(path.join(root,'dist',stylesheet),css);
+source=source.replace(/<link rel="stylesheet" href="\/assets\/[^"]+">/g,'');
+source=source.replace('</head>','<link rel="stylesheet" href="'+stylesheet+'">\n</head>');
+await writeFile(path.join(root,'dist/index.html'),source);
+
 const routes=['lenses','about','product','catalog','catalog/optical','catalog/sunglasses','favorites','cart',...Object.keys(guidePages).map(p=>p.slice(1)),...mockProducts.map(p=>'product/'+p.slug)];
 const titles={lenses:'Линзы для очков: виды и подбор — Имидж Оптика',about:'О салоне — Имидж Оптика',catalog:'Каталог очков — Имидж Оптика','catalog/optical':'Оправы для зрения — Имидж Оптика','catalog/sunglasses':'Солнцезащитные очки — Имидж Оптика',favorites:'Избранное — Имидж Оптика',cart:'Каталог — Имидж Оптика',product:'Модель очков — Имидж Оптика'};
 const esc=s=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');

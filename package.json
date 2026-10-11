@@ -12,5 +12,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3"
   }
 }

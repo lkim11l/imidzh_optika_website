@@ -43,7 +43,7 @@ export function editorialData(data={}){
  return resolved;
 }
 export function applyHomepageImages(root,data,preview=false){
- for(const [key,label,selector,fallback] of homepageImages){const img=root.querySelector(selector);if(img){img.src=imageSource(data[key],preview)||fallback;if(data[key])img.alt=label;}}
+ for(const [key,label,selector,fallback] of homepageImages){const img=root.querySelector(selector);if(img){img.src=imageSource(data[key],preview)||fallback;if(data[key]){img.removeAttribute('srcset');img.removeAttribute('sizes');img.alt=label;}}}
 }
 export function aboutHTML(raw={},preview=false){
  const data=editorialData(raw);

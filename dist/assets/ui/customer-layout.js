@@ -6,7 +6,18 @@ export function formatHeroTitle(root=document){
 }
 export function installHeroLeadFit(){
  const lead=document.querySelector('.hero .lead');if(!lead)return;
- const fit=()=>{const title=lead.closest('.hero').querySelector('h1');if(title){title.style.removeProperty('font-size');const lines=[...title.querySelectorAll('.hero-title-line')];const widest=Math.max(0,...lines.map(line=>line.scrollWidth));if(widest>title.clientWidth)title.style.fontSize=`${parseFloat(getComputedStyle(title).fontSize)*title.clientWidth/widest*.995}px`;}const services=lead.closest('.hero').querySelector('.hero-services');if(services&&innerWidth>900){services.style.removeProperty('font-size');if(services.scrollWidth>services.clientWidth)services.style.fontSize=`${parseFloat(getComputedStyle(services).fontSize)*services.clientWidth/services.scrollWidth*.97}px`;}lead.style.removeProperty('font-size');const size=parseFloat(getComputedStyle(lead).fontSize);if(lead.scrollWidth>lead.clientWidth)lead.style.fontSize=`${size*lead.clientWidth/lead.scrollWidth}px`;};
- lead.closest('.hero')?.addEventListener('hero:progress',fit);
- new ResizeObserver(fit).observe(lead);new MutationObserver(fit).observe(lead,{childList:true,subtree:true,characterData:true});document.fonts.ready.then(fit);fit();
+ const hero=lead.closest('.hero');let queued=false;
+ const fit=()=>{
+  queued=false;if(!hero.getClientRects().length)return;
+  const title=hero.querySelector('h1'),services=hero.querySelector('.hero-services');
+  title?.style.removeProperty('font-size');if(services&&innerWidth>900)services.style.removeProperty('font-size');lead.style.removeProperty('font-size');
+  const measurements=[];
+  if(title){const widest=Math.max(0,...[...title.querySelectorAll('.hero-title-line')].map(line=>line.scrollWidth));measurements.push([title,widest,title.clientWidth,parseFloat(getComputedStyle(title).fontSize),.995]);}
+  if(services&&innerWidth>900)measurements.push([services,services.scrollWidth,services.clientWidth,parseFloat(getComputedStyle(services).fontSize),.97]);
+  measurements.push([lead,lead.scrollWidth,lead.clientWidth,parseFloat(getComputedStyle(lead).fontSize),1]);
+  for(const [el,width,available,size,factor] of measurements)if(width>available)el.style.fontSize=`${size*available/width*factor}px`;
+ };
+ const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(fit);}};
+ hero.addEventListener('hero:progress',schedule);
+ new ResizeObserver(schedule).observe(lead);new MutationObserver(schedule).observe(lead,{childList:true,subtree:true,characterData:true});document.fonts.ready.then(schedule);schedule();
 }

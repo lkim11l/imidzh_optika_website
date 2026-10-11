@@ -95,3 +95,6 @@
 @media(max-width:900px){body .hero-experiment .hero-glasses{display:block;aspect-ratio:1.72;height:auto}body .hero-experiment .hero-glasses-intro{position:relative;inset:auto;aspect-ratio:1.72;width:100%}}
 
 .hero-experiment .hero-scroll-canvas{filter:drop-shadow(0 10px 12px #6c4a2014)}
+
+/* Show the largest mobile image immediately; assembly on scroll stays enabled. */
+@media(max-width:900px){.hero-experiment .hero-glasses-intro{animation:none;opacity:1;transform:none}}

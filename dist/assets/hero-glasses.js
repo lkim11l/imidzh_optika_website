@@ -156,7 +156,7 @@ function initializeHero() {
   }
   // Decode only nearby HD frames, keeping memory bounded on phones and laptops.
   function fillQueue() {
-    if (!allowed() || !inView || document.hidden) return;
+    if (!sequenceStarted || !allowed() || !inView || document.hidden) return;
     for(let i=0;i<count;i++)if(images[i] && Math.abs(i-targetFrame)>8 && i!==drawn)images[i]=undefined;
     const wanted=[targetFrame];
     for(let step=1;sequenceStarted && step<=5;step++)wanted.push(targetFrame+step,targetFrame-step);

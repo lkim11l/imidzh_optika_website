@@ -4,7 +4,7 @@ const pending=new Set();let frame=0;
 const show=el=>{el.classList.add('text-is-visible');observer?.unobserve(el);pending.delete(el);};
 const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting)show(entry.target);},{threshold:.06,rootMargin:'0px 0px -24px 0px'}):null;
 function eligible(el){
- if(!el.textContent.trim()||el.closest('.hero-copy,dialog,.header-shell,.brand-marquee,.brand-carousel,.lens-carousel,svg'))return false;
+ if(!el.textContent.trim()||el.closest('.hero-copy,.lens-guide,dialog,.header-shell,.brand-marquee,.brand-carousel,.lens-carousel,svg'))return false;
  if(el.parentElement?.closest(selector))return false;
  const closed=el.closest('details:not([open])');
  if(closed&&!el.closest('summary'))return false;
@@ -12,15 +12,16 @@ function eligible(el){
 }
 export function refreshTextReveals(){
  if(frame)return;frame=requestAnimationFrame(()=>{frame=0;
-  document.querySelectorAll('#main-content '+selector.split(',').join(',#main-content ')+',.footer '+selector.split(',').join(',.footer ')).forEach(el=>{
-   if(el.classList.contains('scroll-text')||!eligible(el))return;
-   if(reduced.matches||!observer)return;
-   const siblings=[...el.parentElement.children].filter(n=>n.matches(selector));
-   el.style.setProperty('--text-enter-delay',`${Math.min(3,Math.max(0,siblings.indexOf(el)))*55}ms`);
+  const elements=[...document.querySelectorAll('#main-content '+selector.split(',').join(',#main-content ')+',.footer '+selector.split(',').join(',.footer '))].filter(el=>!el.classList.contains('scroll-text')&&eligible(el));
+  if(reduced.matches||!observer)return;
+  // Read layout for all candidates before adding classes to any of them.
+  const prepared=elements.map(el=>({el,above:el.getBoundingClientRect().bottom<0,index:[...el.parentElement.children].filter(n=>n.matches(selector)).indexOf(el)}));
+  for(const {el,above,index} of prepared){
+   el.style.setProperty('--text-enter-delay',`${Math.min(3,Math.max(0,index))*55}ms`);
    el.classList.add('scroll-text');
-   if(el.getBoundingClientRect().bottom<0){show(el);return;}
+   if(above){show(el);continue;}
    pending.add(el);observer.observe(el);
-  });
+  }
  });
 }
 new MutationObserver(records=>{
