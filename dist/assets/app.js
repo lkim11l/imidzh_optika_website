@@ -1,3 +1,5 @@
+import {guidePages,guidePageHTML} from './ui/lens-guides.js';
+import {installRussianPhone,russianDigits} from './ui/russian-phone.js';
 import {refreshTextReveals} from './ui/scroll-text.js';
 import {lensesPageHTML,arrangeLensDetails} from './ui/lenses-page.js';
 import {installHeroLeadFit} from './ui/customer-layout.js';
@@ -92,9 +94,15 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
   else if(path==='/product')await renderProduct(new URLSearchParams(location.search).get('slug')||'',generation);
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
+  else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path);}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
   else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/favorites')renderFavorites();else renderNotFound();
-  if(generation !== routeGeneration)return;updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
+  if(generation !== routeGeneration)return;
+  const canonical=document.querySelector('link[rel=canonical]');if(canonical)canonical.href='https://optikim.ru'+path;
+  const description=document.querySelector('meta[name=description]');if(description)description.content=guidePages[path]?.description||({ '/':'Имидж Оптика с 2002 года. Индивидуальный подбор оправ и линз.', '/lenses':'Виды очковых линз и руководства по выбору. Индивидуальный подбор в Имидж Оптике.' }[path]||document.title);
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content',document.title);document.querySelector('meta[property="og:description"]')?.setAttribute('content',description?.content||document.title);document.querySelector('meta[property="og:url"]')?.setAttribute('content','https://optikim.ru'+path);
+  document.querySelector('meta[name=robots]')?.setAttribute('content', (['/favorites','/cart','/product'].includes(path)||path.startsWith('/product/')||(!guidePages[path]&&!['/','/lenses','/about','/catalog','/catalog/optical','/catalog/sunglasses'].includes(path)))?'noindex,follow':'index,follow');
+  updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
 }
 async function navigate(url, options = {}) {document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
@@ -145,14 +153,15 @@ document.querySelectorAll('dialog').forEach(dialog => {
   dialog.addEventListener('click',event => {if(event.target !== dialog)return;const rect = dialog.getBoundingClientRect();if(event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)dialog.close();});
   dialog.addEventListener('close',() => dialog.querySelectorAll('form').forEach(form => form.reset()));
 });
+const validatePhone=installRussianPhone($('#booking-form input[name=phone]'));
 let bookingRequestId=null;
 $('#booking-form').addEventListener('submit',async event => {
- event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;
+ event.preventDefault();const form=event.currentTarget;validatePhone();if(!form.reportValidity())return;
  if(!supabaseConfig.bookingsEnabled){$('#booking-error').textContent='Приём заявок ещё не подключён.';return;}
  const button=form.querySelector('button[type=submit]');if(button.disabled)return;
  button.disabled=true;$('#booking-error').textContent='Отправляем заявку…';
  const values=new FormData(form);bookingRequestId ||= crypto.randomUUID();
- try{await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body:{request_id:bookingRequestId,customer_name:values.get('name').trim(),customer_phone:values.get('phone').replace(/[^+0-9]/g,''),accepted:values.get('consent')==='on'}});bookingRequestId=null;form.reset();form.hidden=true;$('#booking-result').hidden=false;$('#booking-done').focus();}
+ try{await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body:{request_id:bookingRequestId,customer_name:values.get('name').trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on'}});bookingRequestId=null;form.reset();form.hidden=true;$('#booking-result').hidden=false;$('#booking-done').focus();}
  catch(error){$('#booking-error').textContent='Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';}
  finally{button.disabled=false;}
 });
@@ -170,6 +179,8 @@ window.addEventListener('optika:statechange',() => {
 window.addEventListener('popstate',() => renderRoute({focus:true}));
 installHeroLeadFit();
 const homepageContent=applyContent().catch(()=>undefined);
+const collectionRoute=()=>/^\/(catalog|product|favorites)(\/|$)/.test(location.pathname);
+if(!collectionRoute())await renderRoute({scroll:!!location.hash});
 try {
   [products,brands] = await Promise.all([productRepository.getProducts(),productRepository.getBrands()]);shopStore.initialize(products);if(!products.some(p=>p.isMock))mockNotice="";
   $('#featured-products').innerHTML = productGrid(products.filter(product => product.isFeatured).slice(0,4));$('#featured-products').setAttribute('aria-busy','false');
@@ -179,5 +190,5 @@ try {
     $('#brands').hidden=!displayed.length;
     $('#brands .prototype-note').hidden=false;
   });
-  await renderRoute({scroll:!!location.hash});
-} catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname.replace(/\/$/,'')==='/about'){await renderRoute({scroll:false});}else if(location.pathname !== '/'){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}
+  if(collectionRoute())await renderRoute({scroll:!!location.hash});
+} catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname.replace(/\/$/,'')==='/about'){await renderRoute({scroll:false});}else if(collectionRoute()){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}

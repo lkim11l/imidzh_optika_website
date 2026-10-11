@@ -8,7 +8,7 @@ export function brandCarouselHTML(brands,urlForBrand=()=>null){
    const repeats=Math.max(1,Math.ceil(8/items.length));
    return `<div class="eyewear-brand-group" ${copy?'aria-hidden="true"':''}>${Array.from({length:repeats},(_,repeat)=>items.map(brand=>{
     const hidden=copy||repeat>0,url=brand.filterName?urlForBrand(brand.filterName):null;
-    const content=brand.logo?`<img src="${esc(brand.logo)}" alt="${hidden?'':esc(brand.name)}" loading="eager" decoding="async" width="200" height="90">`:`<span class="brand-wordmark">${esc(brand.name)}</span>`;
+    const content=brand.logo?`<img src="${esc(brand.logo)}" alt="${hidden?'':esc(brand.name)}" loading="lazy" decoding="async" width="200" height="90">`:`<span class="brand-wordmark">${esc(brand.name)}</span>`;
     return url?`<a class="eyewear-brand" href="${esc(url)}" ${hidden?'tabindex="-1" aria-hidden="true"':''}>${content}</a>`:`<div class="eyewear-brand" ${hidden?'aria-hidden="true"':''}>${content}</div>`;
    }).join('')).join('')}</div>`;
   }

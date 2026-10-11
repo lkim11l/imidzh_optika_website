@@ -1,9 +1,11 @@
 /* Isolated homepage experiment. Native sticky scrolling; no wheel/touch interception. */
-(() => {
+function initializeHero() {
   const hero = document.querySelector('.hero-experiment');
   const visual = hero?.querySelector('.hero-glasses');
   const canvas = visual?.querySelector('.hero-scroll-canvas');
   if (!canvas) return;
+  // A direct article visit must not load or initialize the hidden homepage animation.
+
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -22,7 +24,7 @@
   let previewNext = 0, previewActive = 0, previewLoaded = 0, drawnImage = null;
   const previewDirectory = '/assets/hero/assembly-design-hd/mobile';
   const pendingFrames = new Set();
-  let targetFrame = 0;
+  let targetFrame = 0, sequenceStarted = false;
   const track = document.createElement('div');
   track.className = 'hero-scroll-track';
   hero.before(track);
@@ -107,6 +109,7 @@
     }
     const index = Math.round(progress * (count - 1));
     targetFrame = index;
+    if(index>0 && !sequenceStarted){sequenceStarted=true;fillPreviews();}
     fillQueue();
     const frame = images[index] || previews[index];
     if (!frame) return;
@@ -138,7 +141,7 @@
   }
   // Prepare the whole sequence for instant movement; HD frames improve detail separately.
   function fillPreviews() {
-    if(!allowed() || !inView || document.hidden)return;
+    if(!sequenceStarted || !allowed() || !inView || document.hidden)return;
     while(previewActive<3 && previewNext<count){
       const index=previewNext++,img=new Image();previewActive++;
       img.onload=async()=>{
@@ -156,7 +159,7 @@
     if (!allowed() || !inView || document.hidden) return;
     for(let i=0;i<count;i++)if(images[i] && Math.abs(i-targetFrame)>8 && i!==drawn)images[i]=undefined;
     const wanted=[targetFrame];
-    for(let step=1;step<=5;step++)wanted.push(targetFrame+step,targetFrame-step);
+    for(let step=1;sequenceStarted && step<=5;step++)wanted.push(targetFrame+step,targetFrame-step);
     for(const index of wanted){
       if(active>=3)break;
       if(index<0 || index>=count || images[index] || pendingFrames.has(index))continue;
@@ -197,4 +200,9 @@
   } else { inView = true; }
   sync();
   setTimeout(() => hero.classList.add('hero-is-settled'), 1450);
-})();
+}
+const homeForHero=document.querySelector('#home');
+if(homeForHero?.hidden){
+ const watcher=new MutationObserver(()=>{if(!homeForHero.hidden){watcher.disconnect();initializeHero();}});
+ watcher.observe(homeForHero,{attributes:true,attributeFilter:['hidden']});
+}else initializeHero();
