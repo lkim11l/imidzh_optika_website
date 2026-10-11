@@ -175,3 +175,9 @@ body .appointment>*:not(.appointment-art){position:relative;z-index:1}
 @media(max-width:1100px){body .appointment-art-left{width:280px;left:-165px}body .appointment-art-right{width:235px;right:-120px}}
 @media(max-width:720px){body .appointment .appointment-art{opacity:.35}body .appointment-art-left{width:210px;left:-128px;top:10px;transform:none}body .appointment-art-right{width:185px;right:-108px;top:auto;bottom:-25px;transform:none}body .appointment{background:radial-gradient(ellipse at 0% 0%,#ddc39825,transparent 55%),radial-gradient(ellipse at 100% 100%,#dcc6a425,transparent 55%),var(--cream)}}
 @media(prefers-reduced-motion:reduce){body .appointment .appointment-art{transition:none}}
+
+/* Quiet close control; fixed square hit area prevents an oval button. */
+body dialog .close{display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:10px;background:transparent;color:var(--chocolate,#38251d);line-height:1;box-shadow:none;transform:none}
+body dialog .close:hover:not(:disabled){background:#f2ece3;color:var(--chocolate,#38251d);border-color:transparent;transform:none}
+body dialog .close:focus-visible{outline:2px solid var(--chocolate,#38251d);outline-offset:2px}
+body dialog .close svg{display:block;width:20px;height:20px;pointer-events:none}
