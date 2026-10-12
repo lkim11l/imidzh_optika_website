@@ -181,3 +181,18 @@ body dialog .close{display:grid;place-items:center;width:44px;height:44px;min-wi
 body dialog .close:hover:not(:disabled){background:#f2ece3;color:var(--chocolate,#38251d);border-color:transparent;transform:none}
 body dialog .close:focus-visible{outline:2px solid var(--chocolate,#38251d);outline-offset:2px}
 body dialog .close svg{display:block;width:20px;height:20px;pointer-events:none}
+
+/* Compact contact card and booking form. */
+body .collection-contact.callback-card{width:min(520px,calc(100% - 40px));display:flex;flex-direction:row;gap:18px;padding:24px 28px;margin:28px auto 0;border:1px solid var(--warm-border);border-radius:24px;background:#fff;align-items:center;justify-content:center;text-align:center}
+body .callback-card>svg{flex:0 0 32px;width:32px;height:32px;color:#9b7957}
+body .callback-card .callback-details{min-width:0}
+body .callback-card a{font-size:26px;font-weight:600;letter-spacing:-.5px;justify-content:center}
+body .callback-card p{margin:2px 0 8px;color:#77716a;font-size:16px;line-height:1.5}
+body .callback-card .text-button{display:inline-flex;min-height:44px;align-items:center;justify-content:center;background:transparent;border:0;padding:8px 12px;color:var(--chocolate);text-decoration:underline;text-underline-offset:5px;font-size:16px;cursor:pointer}
+body #booking-dialog #booking-form{margin-top:24px}
+body #booking-dialog #booking-error:empty{display:none}
+body #booking-dialog #booking-form button[type=submit]{margin-top:8px}
+body .catalog-page .catalog-heading h1{font-size:clamp(30px,4.3vw,58px);max-width:960px;text-wrap:balance;line-height:1.15}
+body .catalog-page .catalog-heading>p:last-child{max-width:760px}
+@media(max-width:720px){body .collection-contact.callback-card{gap:12px;padding:18px 16px}body .callback-card a{font-size:23px}body .callback-card p{font-size:15px}body .header nav[aria-label="Основная навигация"]{gap:14px}}
+@media(max-width:360px){body .collection-contact.callback-card{padding:16px 12px;gap:8px}body .callback-card>svg{width:24px;height:24px;flex-basis:24px}body .callback-card a{font-size:20px}body .callback-card p{font-size:14px}}
