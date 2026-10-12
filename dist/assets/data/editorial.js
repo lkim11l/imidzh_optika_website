@@ -14,6 +14,7 @@ export const editorialDefaults = {
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
+ ['heroImage','Изображение первого экрана','.hero-photo img','/assets/hero-portrait-v1.webp'],
  ['opticalImage','Оправы для зрения','#collection .optical-photo img','/assets/optical-lifestyle.webp'],
  ['sunglassesImage','Солнцезащитные очки','#collection .category-editorial:nth-child(2) img','/assets/sunglasses-editorial.webp']
 ];

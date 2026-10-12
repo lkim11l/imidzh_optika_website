@@ -31,3 +31,7 @@ Style/medium: realistic editorial photography, authentic natural skin texture, n
 Composition/framing: landscape 3:2; medium close portrait, head and shoulders fully visible; enough breathing space around the head and shoulders to crop to a category rectangle; optical glasses clearly visible and well fitted.
 Lighting/mood: soft natural daylight, quietly refined and approachable.
 Constraints: exactly one image. Fictional person, not a real employee or customer portrait. Clear optical lenses, no sunglasses, no medical context, no logos, no text, no watermark, no jewelry focus, no 3D.
+
+## Static homepage portrait
+
+`dist/assets/hero-portrait-v1.webp` and its 768/640 variants: generated with OpenAI ImageGen on 2026-10-11 for this site. Fictional editorial model wearing glasses; not a customer, owner or catalogue product. Converted to responsive WebP assets. The homepage image can be replaced in the admin content editor.

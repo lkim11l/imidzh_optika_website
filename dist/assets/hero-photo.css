@@ -1,0 +1,8 @@
+/* Static homepage image, shared with the admin preview. */
+body .hero.hero-static{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:48px;min-height:0;padding:48px 0 64px;align-items:center}
+body .hero-static .hero-copy>*{animation:none;opacity:1;transform:none}
+body .hero-static .hero-copy{max-width:590px}
+body .hero-static .hero-photo{width:100%;min-width:0;margin:0;aspect-ratio:3/2;overflow:hidden;border-radius:28px;background:#eee6db}
+body .hero-static .hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+@media(max-width:1099px) and (min-width:901px){body .hero.hero-static{gap:28px;padding:36px 0 48px}}
+@media(max-width:900px){body .hero.hero-static{grid-template-columns:1fr;gap:28px;padding:28px 0 40px}body .hero-static .hero-photo{border-radius:22px}body .hero-static .hero-copy{max-width:none}}
