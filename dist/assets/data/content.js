@@ -1,5 +1,6 @@
 import {formatHeroTitle} from '../ui/customer-layout.js';
 import {editorialData,applyHomepageImages} from './editorial.js';
+import {applyHeroSlides} from './hero-slides.js';
 import { request, isConfigured } from './supabase.js';
 export const promotionFields = [
  ['promoTitle','Заголовок раздела','#promo-heading',160],
@@ -31,6 +32,7 @@ export async function applyContent() {
  for(const [key,,selector] of contentFields) {const el=document.querySelector(selector);if(el && typeof data[key]==='string' && data[key].trim()) {el.textContent=data[key];el.style.whiteSpace='pre-line';}}
  formatHeroTitle();
  applyHomepageImages(document,data);
+ applyHeroSlides(document,data);
  document.querySelectorAll('#promotions,.promotions-nav').forEach(el=>el.hidden=data.promoEnabled===false);
  return row;
 }

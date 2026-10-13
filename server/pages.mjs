@@ -4,6 +4,7 @@ import {productGrid} from '../dist/assets/ui/components.js';
 import {guidePages,guidePageHTML} from '../dist/assets/ui/lens-guides.js';
 import {lensesPageHTML} from '../dist/assets/ui/lenses-page.js';
 import {aboutHTML} from '../dist/assets/data/editorial.js';
+import {heroSlidesHTML} from '../dist/assets/data/hero-slides.js';
 import {pageMetadata,productPath,pageSchemas,siteURL,categoryNames} from '../dist/assets/data/seo.js';
 export {pageMetadata,productPath,siteURL};
 export const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -24,6 +25,7 @@ export function renderPage(shell,path,products,editorial={}) {
   if(!known) meta.index=false;
   const content = product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');
+  if(path==='/')html=html.replace(/<!-- hero-slides:start -->[\s\S]*?<!-- hero-slides:end -->/,()=>`<!-- hero-slides:start -->${heroSlidesHTML(editorial)}<!-- hero-slides:end -->`);
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));
   for(const [key,value] of Object.entries({'og:title':meta.title,'og:description':meta.description,'og:url':siteURL+meta.path}))html=html.replace(new RegExp(`(<meta property="${key}" content=")[^"]*`),(_,prefix)=>prefix+esc(value));
   html=html.replace(/<meta property="og:image"[^>]*>/g,'');

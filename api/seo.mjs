@@ -28,7 +28,7 @@ export default async function handler(req,res) {
       if(error.code!=='ENOENT')throw error;
       return readFile(new URL('../dist/index.html',import.meta.url),'utf8');
     });
-    const editorial=page==='about'?await readEditorial():{};
+    const editorial=(page==='about'||page==='')?await readEditorial():{};
     const result=renderPage(shell,'/'+page,products,editorial);
     res.statusCode=result.status;
     if(result.status===404){res.setHeader('X-Robots-Tag','noindex');res.setHeader('Vercel-CDN-Cache-Control','no-store');}
