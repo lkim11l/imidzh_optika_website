@@ -36,5 +36,5 @@ export function renderPage(shell,path,products,editorial={}) {
   }
   const schemas=pageSchemas(path,meta,product);
   html=html.replace('</head>',()=>`<script type="application/ld+json" id="seo-data">${json(schemas)}</script>\n</head>`);
-  return {html,status:known?200:404};
+  return {html:html.replace(/[ \t]+$/gm,''),status:known?200:404};
 }
