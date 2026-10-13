@@ -71,13 +71,13 @@
       ]
     }
   ],
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build && node scripts/prepare-vercel.mjs",
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
     "api/seo.mjs": {
-      "includeFiles": "dist/index.html",
+      "includeFiles": "dist/seo-shell.html",
       "maxDuration": 30
     }
   },

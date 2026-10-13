@@ -24,7 +24,10 @@ export default async function handler(req,res) {
     res.setHeader('Cache-Control','public, max-age=0, must-revalidate');
     res.setHeader('Vercel-CDN-Cache-Control','public, s-maxage=30');
     if(page==='sitemap.xml') {res.statusCode=200;return res.end(req.method==='HEAD'?'':sitemap(products));}
-    const shell=await readFile(new URL('../dist/index.html',import.meta.url),'utf8');
+    const shell=await readFile(new URL('../dist/seo-shell.html',import.meta.url),'utf8').catch(error=>{
+      if(error.code!=='ENOENT')throw error;
+      return readFile(new URL('../dist/index.html',import.meta.url),'utf8');
+    });
     const editorial=page==='about'?await readEditorial():{};
     const result=renderPage(shell,'/'+page,products,editorial);
     res.statusCode=result.status;
