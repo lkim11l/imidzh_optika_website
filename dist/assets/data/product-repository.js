@@ -1,6 +1,6 @@
 import {usesSupabaseCatalog,listRows,normalizeRow} from './supabase.js';
 let catalogPromise;
-const catalog=()=>catalogPromise ||= listRows().then(rows=>rows.map(normalizeRow)).catch(error=>{catalogPromise=null;throw error;});
+const catalog=()=>catalogPromise ||= listRows().then(rows=>rows.map(normalizeRow).filter(product=>product.isMock!==true)).catch(error=>{catalogPromise=null;throw error;});
 import { mockProducts, brands } from './products.js';
 /**
  * Data boundary. Replace this provider with an API adapter later.

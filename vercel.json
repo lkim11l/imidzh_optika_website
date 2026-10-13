@@ -60,6 +60,68 @@
           "value": "public, max-age=604800"
         }
       ]
+    },
+    {
+      "source": "/(cookie|favorites|cart)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "functions": {
+    "api/seo.mjs": {
+      "includeFiles": "dist/index.html",
+      "maxDuration": 30
+    }
+  },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.optikim.ru"
+        }
+      ],
+      "destination": "https://optikim.ru/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/seo?page="
+    },
+    {
+      "source": "/catalog",
+      "destination": "/api/seo?page=catalog"
+    },
+    {
+      "source": "/catalog/:category",
+      "destination": "/api/seo?page=catalog/:category"
+    },
+    {
+      "source": "/product",
+      "destination": "/api/seo?page=product"
+    },
+    {
+      "source": "/product/:slug",
+      "destination": "/api/seo?page=product/:slug"
+    },
+    {
+      "source": "/about",
+      "destination": "/api/seo?page=about"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/seo?page=sitemap.xml"
     }
   ]
 }

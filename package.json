@@ -5,15 +5,18 @@
   "description": "Имидж Оптика — responsive staging website",
   "scripts": {
     "start": "node scripts/preview.mjs",
-    "build": "node scripts/prepare-pages.mjs"
+    "build": "node scripts/prepare-pages.mjs",
+    "test:seo": "node --test tests/seo.test.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.2"
+    "@supabase/supabase-js": "^2.117.2",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "clean-css": "^5.3.3"
-  }
+  },
+  "type": "module"
 }

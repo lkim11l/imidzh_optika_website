@@ -1,8 +1,11 @@
 import { shopStore } from '../state/store.js';
+import {optimizedImageURL,productImageSrcset} from '../data/product-images.js';
 export const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 export const money = value => new Intl.NumberFormat('ru-RU', {style:'currency',currency:'RUB',maximumFractionDigits:0}).format(value);
 export function ProductImage(image, {id = '', className = '', loading = 'lazy'} = {}) {
-  const source = image?.src ? ` src="${escapeHTML(image.src)}"` : '';
+  const sizes=id==='gallery-image'?'(max-width:900px) calc(100vw - 40px), 50vw':'(max-width:650px) calc((100vw - 64px) / 2), (max-width:900px) calc((100vw - 88px) / 3), 25vw';
+  const srcset=productImageSrcset(image?.src);
+  const source = image?.src ? ` src="${escapeHTML(optimizedImageURL(image.src))}"${srcset?` srcset="${escapeHTML(srcset)}" sizes="${sizes}"`:''}${id==='gallery-image'?' fetchpriority="high"':''}` : '';
   return `<span class="product-media ${escapeHTML(className)}" data-product-image data-image-state="loading"><img${id ? ` id="${escapeHTML(id)}"` : ''}${source} alt="${escapeHTML(image?.alt || 'Очки — изображение модели')}" width="640" height="640" loading="${loading === 'eager' ? 'eager' : 'lazy'}" decoding="async"><span class="image-fallback" aria-hidden="true">Изображение скоро</span></span>`;
 }
 export function modelCount(count) {
@@ -24,7 +27,7 @@ export function productCard(product) {
   const favorite = shopStore.isFavorite(product.id);
   const photo = product.images[0];
   return `<article class="product-card" data-product-id="${escapeHTML(product.id)}">
-    <a class="product-card-link" href="/product/?slug=${encodeURIComponent(product.slug)}"><span class="product-image">${ProductImage(photo)}</span><div class="product-info"><span class="product-brand">${escapeHTML(product.brand)}</span><h3>${escapeHTML(product.model)}</h3><p class="product-price">${money(product.price)}${product.oldPrice ? `<s>${money(product.oldPrice)}</s>` : ''}</p></div></a>
+    <a class="product-card-link" href="/product/${encodeURIComponent(product.slug)}"><span class="product-image">${ProductImage(photo)}</span><div class="product-info"><span class="product-brand">${escapeHTML(product.brand)}</span><h3>${escapeHTML(product.model)}</h3><p class="product-price">${money(product.price)}${product.oldPrice ? `<s>${money(product.oldPrice)}</s>` : ''}</p></div></a>
     <button class="favorite-button icon-button${favorite ? ' is-favorite' : ''}" data-favorite="${escapeHTML(product.id)}" aria-label="${favorite ? 'Убрать из избранного' : 'В избранное'}: ${escapeHTML(product.brand)} ${escapeHTML(product.model)}" aria-pressed="${favorite}">${icon('heart')}</button>
   </article>`;
 }

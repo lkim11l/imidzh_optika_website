@@ -1,3 +1,7 @@
+# Имидж Оптика — optikim.ru
+
+Current production routing and SEO behavior are documented in [SEO-DEPLOYMENT.md](SEO-DEPLOYMENT.md). The public catalog now uses published real Supabase products, server-rendered clean URLs and a live sitemap. The historical prototype notes below describe the original implementation and are not deployment instructions.
+
 # Имидж Оптика — staging boutique prototype
 
 Existing static responsive site extended in place. No framework, bundler, state library or runtime dependencies were introduced. Files in `dist/` are the published site. This project is separate from optika77.ru and CS-Cart. No production DNS, server, theme, catalog or order data is modified. All route entrypoints have `noindex,nofollow`; hosted access remains private.
