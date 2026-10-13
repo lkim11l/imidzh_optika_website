@@ -5,7 +5,6 @@ export function installHeroCarousel() {
   let slides = [...carousel.querySelectorAll('.hero-slide')], generation = 0;
   const stage = carousel.querySelector('.hero-carousel-stage');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
   let current = 0, timer, busy = false, visible = false;
   let paused = reduced.matches || !!navigator.connection?.saveData;
 
@@ -66,26 +65,4 @@ export function installHeroCarousel() {
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, {threshold:.15}).observe(carousel);
   carousel.classList.add('is-enhanced');
 
-  // Animate only while the pointer moves; no permanent rendering loop.
-  let frame = 0, targetX = 50, targetY = 50, x = 50, y = 50;
-  function paintGlow() {
-    x += (targetX - x) * .18;
-    y += (targetY - y) * .18;
-    hero.style.setProperty('--glow-x', `${x}%`);
-    hero.style.setProperty('--glow-y', `${y}%`);
-    frame = Math.abs(targetX - x) + Math.abs(targetY - y) > .1 ? requestAnimationFrame(paintGlow) : 0;
-  }
-  hero.addEventListener('pointermove', event => {
-    if (!finePointer.matches || reduced.matches || event.pointerType !== 'mouse') return;
-    const bounds = hero.getBoundingClientRect();
-    targetX = (event.clientX - bounds.left) / bounds.width * 100;
-    targetY = (event.clientY - bounds.top) / bounds.height * 100;
-    hero.classList.add('has-pointer-glow');
-    if (!frame) frame = requestAnimationFrame(paintGlow);
-  });
-  hero.addEventListener('pointerleave', () => {
-    hero.classList.remove('has-pointer-glow');
-    cancelAnimationFrame(frame);
-    frame = 0;
-  });
 }
