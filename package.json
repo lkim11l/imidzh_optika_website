@@ -4,6 +4,8 @@
   "private": true,
   "description": "Имидж Оптика — responsive staging website",
   "scripts": {
+    "start:timeweb": "node server/timeweb.mjs",
+    "build:timeweb": "node scripts/configure-timeweb.mjs && npm run build",
     "start": "node scripts/preview.mjs",
     "build": "node scripts/prepare-pages.mjs",
     "test:seo": "node --test tests/*.test.mjs"
