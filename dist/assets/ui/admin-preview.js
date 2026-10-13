@@ -1,3 +1,4 @@
+import {applyHeroSlides} from '../data/hero-slides.js';
 import {formatHeroTitle} from './customer-layout.js';
 import {brandCarouselHTML} from './brand-carousel.js';
 import {aboutHTML,aboutFields,aboutImages,homepageImages,editorialData,applyHomepageImages} from '../data/editorial.js';
@@ -54,11 +55,11 @@ export class AdminPreview {
   this.host.querySelector('.preview-caption').textContent=state.published?`Будет в каталоге${p.isFeatured?' · выбрано для главной':''}${p.isNew?' · новинка':''}${p.isMock?' · демонстрационный товар':''}. Приоритет: ${Number(p.popularity)||0}. Изменения появятся на сайте после сохранения.`:'Товар скрыт на сайте. Здесь виден его черновик. Для публикации включите «Опубликовать товар на сайте» и сохраните.';
  }
  async updateContent(data,key='heroTitle',dirty=false){
-  data=editorialData(data);const previewFields=[...contentFields,...homepageImages];const sequence=++this.sequence;this.status(dirty,previewFields.find(f=>f[0]===key)?.[1]||'Главная страница');
+  data=editorialData(data);const previewFields=[...contentFields,...homepageImages,['heroCarousel','Фотографии карусели','.hero-carousel-stage']];const sequence=++this.sequence;this.status(dirty,previewFields.find(f=>f[0]===key)?.[1]||'Главная страница');
   try{const original=await template();if(this.disposed||sequence!==this.sequence)return;const root=original.querySelector('#home').cloneNode(true);
    for(const [field,,selector] of contentFields){const el=root.querySelector(selector);if(el&&typeof data[field]==='string'&&data[field].trim()){el.textContent=data[field];el.style.whiteSpace='pre-line';}}
    formatHeroTitle(root);
-   applyHomepageImages(root,data,true);const selected=root.querySelector(previewFields.find(f=>f[0]===key)?.[2]||'.hero h1');const section=selected?.closest('section,.trust-line');if(!section)throw new Error('Блок не найден в макете главной страницы.');
+   applyHomepageImages(root,data,true);applyHeroSlides(root,data,true);const selected=root.querySelector(previewFields.find(f=>f[0]===key)?.[2]||'.hero h1');const section=selected?.closest('section,.trust-line');if(!section)throw new Error('Блок не найден в макете главной страницы.');
    if(key.startsWith('promo')){section.hidden=false;this.host.querySelector('.preview-caption').textContent=data.promoEnabled===false?'Акция выключена: раздел и ссылка в меню будут скрыты после сохранения.':'Черновик акции. Изменения появятся на сайте после сохранения.';}selected.setAttribute('data-preview-target','');this.pendingFocus=this.contentKey!==key;this.contentKey=key;this.show(inertHTML(section));
   }catch(e){if(sequence===this.sequence&&!this.disposed)this.host.querySelector('.preview-error').textContent=e.message;}
  }

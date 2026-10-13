@@ -12,7 +12,8 @@ export function validImageURL(src) {
 }
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export class AdminGallery {
-  constructor(root, onChange) {
+  constructor(root, onChange, {carousel=false,replaceInput}={}) {
+    this.carousel=carousel;this.replaceInput=replaceInput;
     this.root = root; this.onChange = onChange; this.items = []; this.busy = false; this.replacing = null;
     root.addEventListener('click', event => {
       const button = event.target.closest('[data-photo-action]');
@@ -21,7 +22,7 @@ export class AdminGallery {
       if (index < 0) return;
       const action = button.dataset.photoAction;
       if (action === 'crop') {this.cropItem(this.items[index]);return;}
-      if (action === 'replace') { this.replacing = this.items[index].key; document.querySelector('#replace-photo').click(); return; }
+      if (action === 'replace') { this.replacing = this.items[index].key; (this.replaceInput||document.querySelector('#replace-photo')).click(); return; }
       if (action === 'remove') { this.release(this.items[index]); this.items.splice(index, 1); }
       else if (action === 'main') { this.items.unshift(...this.items.splice(index, 1)); }
       else {
@@ -81,11 +82,11 @@ export class AdminGallery {
   }
   render() {
     const count = this.items.length;
-    this.root.innerHTML = `<div class="gallery-heading"><strong>Фотографии товара</strong><span>${count} / ${MAX_IMAGES}</span></div><p class="hint">Первая фотография — главная: она появится в каталоге. Остальные — в галерее товара.</p>` +
+    this.root.innerHTML = `<div class="gallery-heading"><strong>${this.carousel?'Фотографии карусели':'Фотографии товара'}</strong><span>${count} / ${MAX_IMAGES}</span></div><p class="hint">${this.carousel?'Первая фотография открывает карусель. Меняйте порядок кнопками «Раньше» и «Позже».':'Первая фотография — главная: она появится в каталоге. Остальные — в галерее товара.'}</p>` +
       (count ? `<div class="photo-grid">${this.items.map((item,index) => {
         const src = item.preview || item.image.src;
         const button = (action,label,disabled=false) => `<button type="button" data-photo-action="${action}" data-photo-key="${item.key}" aria-label="${label}, фото ${index+1}" ${this.busy || this.cropping || disabled ? 'disabled' : ''}>${label}</button>`;
-        return `<article class="photo-card ${index===0?'is-cover':''}"><div class="photo-preview"><img src="${esc(src || '')}" alt="${esc(item.image.alt || item.file?.name || `Фото ${index+1}`)}"><span class="photo-error" hidden>Не удалось загрузить фото</span></div><div class="photo-meta"><strong>${index===0?'Главная фотография':`Фото ${index+1}`}</strong><small>${item.file ? (item.image.src?'Загружено · сохраните товар':esc(item.file.name)) : 'Сохранённая фотография'}</small></div><div class="photo-actions">${button('main','Сделать главной',index===0)}${button('crop','Обрезать')}${button('replace','Заменить')}${button('remove','Удалить')}${button('previous','Раньше',index===0)}${button('next','Позже',index===count-1)}</div></article>`;
+        return `<article class="photo-card ${index===0?'is-cover':''}"><div class="photo-preview"><img src="${esc(src || '')}" alt="${esc(item.image.alt || item.file?.name || `Фото ${index+1}`)}"><span class="photo-error" hidden>Не удалось загрузить фото</span></div><div class="photo-meta"><strong>${index===0?'Главная фотография':`Фото ${index+1}`}</strong><small>${item.file ? (item.image.src?'Загружено · сохраните изменения':esc(item.file.name)) : 'Сохранённая фотография'}</small></div><div class="photo-actions">${button('main','Сделать главной',index===0)}${button('crop','Обрезать')}${button('replace','Заменить')}${button('remove','Удалить')}${button('previous','Раньше',index===0)}${button('next','Позже',index===count-1)}</div></article>`;
       }).join('')}</div>` : '<div class="gallery-empty">Добавьте фотографии — здесь появятся их превью.</div>');
     this.root.querySelectorAll('.photo-preview img').forEach(img => {
       img.onerror = () => {img.hidden = true; img.nextElementSibling.hidden = false;};
