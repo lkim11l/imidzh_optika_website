@@ -3,23 +3,27 @@ export function installHeroCarousel() {
   const carousel = hero?.querySelector('[data-hero-carousel]');
   if (!carousel) return;
   const slides = [...carousel.querySelectorAll('.hero-slide')];
-  const dots = [...carousel.querySelectorAll('[data-hero-slide]')];
-  const pauseButton = carousel.querySelector('[data-hero-pause]');
+  const stage = carousel.querySelector('.hero-carousel-stage');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-  let current = 0, timer, busy = false, visible = false, hovered = false;
+  let current = 0, timer, busy = false, visible = false;
   let paused = reduced.matches || !!navigator.connection?.saveData;
 
   function schedule() {
     clearTimeout(timer);
-    if (!paused && !hovered && visible && !document.hidden && !busy) {
-      timer = setTimeout(() => show(current + 1), 7000);
+    if (!paused && visible && !document.hidden && !busy) {
+      prepareImage((current + 1) % slides.length).catch(() => {});
+      timer = setTimeout(() => show(current + 1), 2000);
     }
   }
-  function updatePause() {
-    pauseButton.setAttribute('aria-label', paused ? 'Включить автоматическую смену фотографий' : 'Приостановить смену фотографий');
-    pauseButton.setAttribute('aria-pressed', String(paused));
-    pauseButton.textContent = paused ? '▷' : 'Ⅱ';
+  function prepareImage(index) {
+    const image = slides[index].querySelector('img');
+    if (image.dataset.src) {
+      image.srcset = image.dataset.srcset;
+      image.src = image.dataset.src;
+      delete image.dataset.src;
+    }
+    return image.decode();
   }
   async function show(index) {
     if (busy) return;
@@ -27,20 +31,13 @@ export function installHeroCarousel() {
     if (next === current) return;
     busy = true;
     clearTimeout(timer);
-    const image = slides[next].querySelector('img');
-    if (image.dataset.src) {
-      image.srcset = image.dataset.srcset;
-      image.src = image.dataset.src;
-      delete image.dataset.src;
-    }
     try {
-      await image.decode();
+      await prepareImage(next);
       slides[current].classList.remove('is-active');
       slides[current].setAttribute('aria-hidden', 'true');
       current = next;
       slides[current].classList.add('is-active');
       slides[current].setAttribute('aria-hidden', 'false');
-      dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === current)));
       hero.dataset.heroTone = String(current);
     } catch {
       // Keep the current photograph visible if the next one cannot be loaded.
@@ -49,38 +46,19 @@ export function installHeroCarousel() {
       schedule();
     }
   }
-  carousel.querySelector('[data-hero-prev]').addEventListener('click', () => show(current - 1));
-  carousel.querySelector('[data-hero-next]').addEventListener('click', () => show(current + 1));
-  dots.forEach((dot, i) => dot.addEventListener('click', () => show(i)));
-  pauseButton.addEventListener('click', () => { paused = !paused; updatePause(); schedule(); });
+  stage.setAttribute('role', 'button');
+  stage.setAttribute('tabindex', '0');
+  stage.setAttribute('aria-label', 'Следующая фотография. Enter или пробел — переключить, Escape — приостановить или продолжить смену');
+  stage.addEventListener('click', () => show(current + 1));
   carousel.addEventListener('keydown', event => {
-    if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
+    if (event.key === 'Escape') { paused = !paused; schedule(); return; }
+    if (!['ArrowLeft','ArrowRight','Enter',' '].includes(event.key)) return;
     event.preventDefault();
-    show(current + (event.key === 'ArrowRight' ? 1 : -1));
+    show(current + (event.key === 'ArrowLeft' ? -1 : 1));
   });
-  carousel.addEventListener('focusin', event => {
-    if (event.target === pauseButton) return;
-    paused = true; updatePause(); schedule();
-  });
-  carousel.addEventListener('pointerenter', event => {
-    if (event.pointerType === 'mouse') { hovered = true; schedule(); }
-  });
-  carousel.addEventListener('pointerleave', () => { hovered = false; schedule(); });
-  let touch;
-  carousel.addEventListener('pointerdown', event => {
-    if (event.pointerType === 'touch') touch = {x:event.clientX,y:event.clientY};
-  });
-  carousel.addEventListener('pointerup', event => {
-    if (!touch || event.pointerType !== 'touch') return;
-    const dx = event.clientX - touch.x, dy = event.clientY - touch.y;
-    touch = null;
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) show(current + (dx < 0 ? 1 : -1));
-  });
-  carousel.addEventListener('pointercancel', () => { touch = null; });
   document.addEventListener('visibilitychange', schedule);
-  reduced.addEventListener('change', () => { if (reduced.matches) paused = true; updatePause(); schedule(); });
+  reduced.addEventListener('change', () => { paused = reduced.matches || !!navigator.connection?.saveData; schedule(); });
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, {threshold:.15}).observe(carousel);
-  updatePause();
   carousel.classList.add('is-enhanced');
 
   // Animate only while the pointer moves; no permanent rendering loop.
