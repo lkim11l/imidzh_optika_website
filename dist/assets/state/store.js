@@ -30,4 +30,4 @@ export const shopStore = {
   removeFromCart(id) { cart = cart.filter(item => item.id !== id); write(CART_KEY,cart); notify(); },
   canPersist() { return storageAvailable; }
 };
-window.addEventListener('storage', event => { if(event.key === FAVORITES_KEY || event.key === CART_KEY || event.key === null) {load(); notify();} });
+if(typeof window !== 'undefined')window.addEventListener('storage', event => { if(event.key === FAVORITES_KEY || event.key === CART_KEY || event.key === null) {load(); notify();} });

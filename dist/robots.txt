@@ -1,5 +1,3 @@
 User-agent: *
-Disallow: /cookie
-Disallow: /favorites
-Disallow: /cart
+Allow: /
 Sitemap: https://optikim.ru/sitemap.xml

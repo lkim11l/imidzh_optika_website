@@ -1,0 +1,8 @@
+backup-*/
+node_modules/
+.git/
+tests/
+qa-*.png
+mobile-*.json
+*.zip
+*.tar.gz
