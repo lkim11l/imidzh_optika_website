@@ -6,3 +6,32 @@ body .hero-static .hero-photo{width:100%;min-width:0;margin:0;aspect-ratio:3/2;o
 body .hero-static .hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 @media(max-width:1099px) and (min-width:901px){body .hero.hero-static{gap:28px;padding:36px 0 48px}}
 @media(max-width:900px){body .hero.hero-static{grid-template-columns:1fr;gap:28px;padding:28px 0 40px}body .hero-static .hero-photo{border-radius:22px}body .hero-static .hero-copy{max-width:none}}
+
+/* A warm halo bridges the photography and the ivory page. */
+body .hero.hero-static{position:relative;isolation:isolate;--glow-x:65%;--glow-y:45%}
+.hero-static::before,.hero-static::after{content:"";position:absolute;inset:-32px -16px;z-index:-1;pointer-events:none;border-radius:50%;transition:opacity 1.2s}
+.hero-static::before{background:radial-gradient(ellipse at 78% 45%,#d1ae7950,transparent 62%),radial-gradient(ellipse at 45% 90%,#e5c9a626,transparent 65%);opacity:.65;animation:hero-ambient 12s ease-in-out infinite alternate}
+.hero-static[data-hero-tone="1"]::before{opacity:.9}
+.hero-static[data-hero-tone="2"]::before{opacity:1}
+.hero-static::after{background:radial-gradient(ellipse 380px 290px at var(--glow-x) var(--glow-y),#e9bd7370,transparent 74%);opacity:0}
+.hero-static.has-pointer-glow::after{opacity:1}
+body .hero-static .hero-carousel{position:relative;overflow:visible;background:transparent;aspect-ratio:auto;border-radius:0}
+.hero-carousel-stage{position:relative;aspect-ratio:3/2;overflow:hidden;border-radius:32px;background:#eee6db;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 95%,transparent),linear-gradient(0deg,transparent,#000 6%,#000 96%,transparent);mask-composite:intersect}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease-in-out;pointer-events:none}
+.hero-slide.is-active{opacity:1;z-index:1}
+body .hero-static .hero-slide img{transform:scale(1.015);transition:transform 8s linear}
+body .hero-static .hero-slide.is-active img{transform:scale(1.065)}
+.hero-carousel-controls{display:none;position:absolute;z-index:2;left:50%;bottom:22px;transform:translateX(-50%);align-items:center;gap:2px;padding:4px 7px;border:1px solid #fff8e970;border-radius:40px;background:#fff8efde;box-shadow:0 8px 28px #38251f14;color:#38251f}
+.hero-carousel.is-enhanced .hero-carousel-controls{display:flex}
+.hero-carousel-controls button{display:grid;place-items:center;width:44px;height:44px;min-width:44px;padding:0;border:0;border-radius:50%;background:transparent;color:#38251f;cursor:pointer;transition:background .2s,color .2s}
+.hero-carousel-controls button:hover{background:#dec8ae70}
+.hero-carousel-controls button:focus-visible{outline:2px solid #805b47;outline-offset:2px}
+.hero-carousel-arrow{font-size:23px}
+.hero-carousel-pause{font-size:18px;border-left:1px solid #38251f20!important;border-radius:0 30px 30px 0!important;margin-left:4px}
+.hero-carousel-dots{display:flex;align-items:center}
+.hero-carousel-dots button{width:30px;min-width:30px}
+.hero-carousel-dots button::after{content:"";width:6px;height:6px;border-radius:20px;background:#805b4770;transition:width .6s,background .6s}
+.hero-carousel-dots button[aria-pressed="true"]::after{width:20px;background:#38251f}
+@keyframes hero-ambient{from{transform:translate3d(-1%,0,0) scale(.98)}to{transform:translate3d(1%,2%,0) scale(1.04)}}
+@media(max-width:900px){.hero-static::before,.hero-static::after{inset:0 -16px}.hero-carousel-stage{border-radius:24px}.hero-carousel-controls{bottom:14px}.hero-static::before{animation-duration:18s}}
+@media(prefers-reduced-motion:reduce){.hero-static::before{animation:none}.hero-static::after{display:none}.hero-slide{transition:none}body .hero-static .hero-slide img,body .hero-static .hero-slide.is-active img{transform:none;transition:none}}

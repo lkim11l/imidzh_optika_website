@@ -6,6 +6,7 @@ import {installRussianPhone,russianDigits} from './ui/russian-phone.js';
 import {refreshTextReveals} from './ui/scroll-text.js';
 import {lensesPageHTML,arrangeLensDetails} from './ui/lenses-page.js';
 import {installHeroLeadFit} from './ui/customer-layout.js';
+import {installHeroCarousel} from './ui/hero-carousel.js';
 import {brandCarouselHTML} from './ui/brand-carousel.js';
 import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
@@ -17,6 +18,7 @@ import { shopStore } from './state/store.js';
 import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, modelCount } from './ui/components.js?v=no-cart1';
 import { installProductImages, setProductImageSource } from './ui/product-image.js';
 installProductImages();
+installHeroCarousel();
 
 const $ = selector => document.querySelector(selector);
 const home = $('#home'), view = $('#route-view'), main = $('#main-content');
