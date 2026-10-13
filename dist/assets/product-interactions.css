@@ -1,0 +1,20 @@
+body .product-card .favorite-button,
+body .gallery-main .favorite-button,
+body .product-card .favorite-button:hover,
+body .gallery-main .favorite-button:hover {
+ background:transparent;
+ border-color:transparent;
+ color:#36231d;
+ box-shadow:none;
+}
+.gallery-main.show-detail {cursor:zoom-in;}
+.gallery-main.show-detail .product-media>img,
+.gallery-main.show-detail>img {
+ transform:scale(1.8);
+ transform-origin:var(--detail-x,50%) var(--detail-y,50%);
+ transition:transform .35s ease,transform-origin .14s ease-out;
+}
+@media(prefers-reduced-motion:reduce) {
+ .gallery-main.show-detail .product-media>img,
+ .gallery-main.show-detail>img {transition:none;}
+}

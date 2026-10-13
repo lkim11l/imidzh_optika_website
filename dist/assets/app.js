@@ -136,6 +136,17 @@ document.addEventListener('click',event => {
   if(destination)location.assign(destination);else navigate(url.pathname + url.search + url.hash);
 });
 document.addEventListener('change',event => {if(event.target.id === 'sort-select')navigate(catalogURL({...filtersFromURL(),sort:event.target.value}),{scroll:false});});
+let detailFrame=0;
+document.addEventListener('pointermove',event=>{
+ const gallery=event.target.closest('#gallery-main.show-detail');
+ if(!gallery||event.pointerType==='touch'||event.target.closest('button'))return;
+ const rect=gallery.getBoundingClientRect(),x=Math.max(0,Math.min(100,(event.clientX-rect.left)/rect.width*100)),y=Math.max(0,Math.min(100,(event.clientY-rect.top)/rect.height*100));
+ cancelAnimationFrame(detailFrame);detailFrame=requestAnimationFrame(()=>{gallery.style.setProperty('--detail-x',x+'%');gallery.style.setProperty('--detail-y',y+'%');});
+});
+document.addEventListener('pointerout',event=>{
+ const gallery=event.target.closest('#gallery-main');if(!gallery||gallery.contains(event.relatedTarget))return;
+ cancelAnimationFrame(detailFrame);gallery.style.removeProperty('--detail-x');gallery.style.removeProperty('--detail-y');
+});
 $('#filter-form').addEventListener('input',previewFilters);
 $('#filter-form').addEventListener('submit',event => {event.preventDefault();const filters = filterFormValues();if(filters.min != null && filters.max != null && filters.min > filters.max){$('#price-error').hidden = false;$('#filter-form input[name=min]').focus();return;}navigate(catalogURL(filters),{scroll:false});});
 $('#search-input').addEventListener('input',renderSearch);
