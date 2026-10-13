@@ -7,6 +7,7 @@ import {refreshTextReveals} from './ui/scroll-text.js';
 import {lensesPageHTML,arrangeLensDetails} from './ui/lenses-page.js';
 import {installHeroLeadFit} from './ui/customer-layout.js';
 import {installHeroCarousel} from './ui/hero-carousel.js';
+import {installSiteGlow} from './ui/site-glow.js';
 import {brandCarouselHTML} from './ui/brand-carousel.js';
 import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
@@ -19,6 +20,7 @@ import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, 
 import { installProductImages, setProductImageSource } from './ui/product-image.js';
 installProductImages();
 installHeroCarousel();
+installSiteGlow();
 
 const $ = selector => document.querySelector(selector);
 const home = $('#home'), view = $('#route-view'), main = $('#main-content');

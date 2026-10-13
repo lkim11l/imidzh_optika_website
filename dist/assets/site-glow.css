@@ -1,0 +1,12 @@
+/* One feathered light follows the cursor across every public page. */
+body .hero.hero-static::before,body .hero.hero-static::after {content:none;}
+.site-pointer-glow {
+ position:fixed;left:0;top:0;width:1200px;height:1000px;
+ z-index:6;pointer-events:none;user-select:none;
+ background:radial-gradient(ellipse at center,rgba(233,189,115,.24) 0%,rgba(233,189,115,.12) 25%,rgba(233,189,115,.035) 48%,transparent 70%);
+ opacity:0;transition:opacity .65s ease;contain:strict;
+}
+.site-pointer-glow.is-visible {opacity:1;will-change:transform;}
+@media(hover:none),(pointer:coarse),(prefers-reduced-motion:reduce) {
+ .site-pointer-glow {display:none;}
+}
