@@ -1,7 +1,9 @@
 // Provider-independent message: plain text keeps visitor input inert.
 export function messageFor(job) {
- return {from:job.sender,to:[job.recipient],subject:'Новая заявка на проверку зрения — Имидж Оптика',
- text:`Новая заявка на проверку зрения\n\nИмя: ${job.customer_name}\nТелефон: ${job.customer_phone}\nДата: ${job.booking_created_at}\nНомер заявки: ${job.booking_id}\n\nЗаявка также сохранена в панели администратора. Свяжитесь с клиентом, чтобы согласовать время.`};
+ const fitting=job.kind==='fitting',title=fitting?'Новая заявка на примерку':'Новая заявка на проверку зрения';
+ const product=fitting?`\nМодель: ${job.product_label || ''}\nСтраница: https://optikim.ru${job.product_path || '/catalog'}`:'';
+ return {from:job.sender,to:[job.recipient],subject:`${title} — Имидж Оптика`,
+ text:`${title}\n\nИмя: ${job.customer_name}\nТелефон: ${job.customer_phone}${product}\nДата: ${job.booking_created_at}\nНомер заявки: ${job.booking_id}\n\nЗаявка также сохранена в панели администратора. Свяжитесь с клиентом, чтобы согласовать время.`};
 }
 export async function sendNotification(job,{apiKey,fetcher=fetch}) {
  let response;
