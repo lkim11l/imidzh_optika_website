@@ -7,6 +7,7 @@ const base=process.env.SEO_BASE_URL||'http://127.0.0.1:4173';
   const plain=await browser.newContext({javaScriptEnabled:false});const page=await plain.newPage();
   const xml=await (await page.request.get(base+'/sitemap.xml')).text();
   const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1].replace('https://optikim.ru',base));
+  assert.ok(urls.length>=8,'Sitemap must be XML with public URLs; a login page is not a sitemap');
   for(const url of urls){
    const response=await page.goto(url,{waitUntil:'domcontentloaded'});assert.equal(response.status(),200,url);
    assert.equal(await page.locator('link[rel=canonical]').getAttribute('href'),url.replace(base,'https://optikim.ru'));
