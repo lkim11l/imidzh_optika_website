@@ -17,7 +17,7 @@ Deno.serve(async(request:Request)=>{
   if(!configured)return Response.json({error:'Email provider is not configured'},{status:503});
   let sent=0,failed=0;
   for(let i=0;i<2;i++){
-   const [job]=await db('rpc/optika_claim_email',{sender_address:sender});if(!job)break;
+   const [job]=await db('rpc/optika_claim_email_v2',{sender_address:sender});if(!job)break;
    let id=null,error=null;
    try{if(smtp){
      const transport=nodemailer.createTransport({host:env('SMTP_HOST'),port:465,secure:true,auth:{user:env('SMTP_USER'),pass:env('SMTP_PASSWORD')},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000,disableFileAccess:true,disableUrlAccess:true});

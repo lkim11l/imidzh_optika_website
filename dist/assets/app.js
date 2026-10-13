@@ -109,7 +109,8 @@ function updateCountsAndHearts() {
   document.querySelectorAll('[data-favorite]').forEach(button => {const product = productById(button.dataset.favorite), selected = shopStore.isFavorite(button.dataset.favorite);button.classList.toggle('is-favorite',selected);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected ? 'Убрать из избранного' : 'В избранное'}: ${product?.brand || ''} ${product?.model || ''}`);});
 }
 function startBooking(callback=false) {const destination = safeDestination(window.OPTIKA_CONFIG.bookingUrl);if(destination&&!callback) {location.assign(destination);return;}$('#booking-title').textContent=callback?'Заказать звонок':'Начнем с вас.';$('#booking-dialog .eyebrow').textContent=callback?'ОБРАТНЫЙ ЗВОНОК':'ПРОВЕРКА ЗРЕНИЯ';$('#booking-form button[type=submit]').textContent=callback?'Заказать звонок':'Записаться бесплатно';$('#booking-result p').textContent=callback?'Мы свяжемся с вами по указанному телефону.':'Время проверки зрения необходимо согласовать с салоном.';$('#booking-error').textContent='';$('#booking-form').hidden = false;$('#booking-result').hidden = true;openDialog($('#booking-dialog'));}
-function startRequest(productId) {const product = productById(productId);$('#request-product').textContent = product ? `${product.brand} · ${product.model}` : '';$('#request-form').hidden = false;$('#request-result').hidden = true;openDialog($('#request-dialog'));}
+let fittingProductId=null,fittingRequestId=null;
+function startRequest(productId) {const product = productById(productId);if(!product||product.isMock)return;fittingProductId=product.id;fittingRequestId=null;$('#request-product').textContent = `${product.brand} · ${product.model}`;$('#request-error').textContent='';$('#request-form').hidden = false;$('#request-result').hidden = true;openDialog($('#request-dialog'));}
 function renderSearch() {
   const query = $('#search-input').value.trim(), matches = filterProducts(products,{query,sort:'popular'});
   $('#search-results').innerHTML = `${query ? `<p class="search-summary">Найдено моделей: ${matches.length}</p>` : '<p class="search-summary">Можно начать с этих моделей</p>'}${matches.length ? `<div class="search-list">${matches.slice(0,5).map(product => `<a class="search-result" href="/product/${encodeURIComponent(product.slug)}">${ProductImage(product.images[0],{className:'search-thumb',loading:'eager'})}<span><strong>${esc(product.brand)}</strong><span>${esc(product.model)}</span></span><span class="search-price">${money(product.price)}</span></a>`).join('')}</div><a class="text-button search-all" href="${esc(catalogURL({query}))}">Все результаты (${matches.length})</a>` : '<p>Попробуйте другой бренд или название формы.</p>'}`;
@@ -164,7 +165,18 @@ $('#booking-form').addEventListener('submit',async event => {
 });
 $('#booking-form').addEventListener('input',()=>{bookingRequestId=null;});
 $('#booking-done').addEventListener('click',() => $('#booking-dialog').close());
-$('#request-form').addEventListener('submit',event => {event.preventDefault();const form = event.currentTarget;if(!form.reportValidity())return;form.reset();form.hidden = true;$('#request-result').hidden = false;$('#request-result button').focus();});
+const validateFittingPhone=installRussianPhone($('#request-form input[name=phone]'));
+$('#request-form').addEventListener('submit',async event => {
+ event.preventDefault();const form=event.currentTarget;validateFittingPhone();if(!form.reportValidity())return;
+ if(!supabaseConfig.bookingsEnabled||!fittingProductId){$('#request-error').textContent='Приём заявок временно недоступен.';return;}
+ const button=form.querySelector('button[type=submit]');if(button.disabled)return;
+ button.disabled=true;$('#request-error').textContent='Отправляем заявку…';
+ const values=new FormData(form);fittingRequestId ||= crypto.randomUUID();
+ try{await supabaseRequest('/rest/v1/rpc/optika_submit_fitting',{method:'POST',body:{request_id:fittingRequestId,customer_name:values.get('name').trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on',selected_product:fittingProductId}});fittingRequestId=null;form.reset();form.hidden=true;$('#request-result').hidden=false;$('#request-result button').focus();}
+ catch{$('#request-error').textContent='Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';}
+ finally{button.disabled=false;}
+});
+$('#request-form').addEventListener('input',()=>{fittingRequestId=null;});
 window.addEventListener('optika:statechange',() => {
   const wasFavorite = document.activeElement?.hasAttribute('data-favorite');
   updateCountsAndHearts();
