@@ -11,7 +11,7 @@ import {adminStatus} from './admin-status.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.mp4':'video/mp4','.ico':'image/x-icon'};
 const origin=new URL(supabaseConfig.url).origin;
-export function createApp({seoHandler=seo,imageHandler=productImage,staging=process.env.STAGING!=='false'}={}) {
+export function createApp({seoHandler=seo,imageHandler=productImage,statusHandler=adminStatus,backendHandler=backendProxy,staging=process.env.STAGING!=='false'}={}) {
  return http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('X-Frame-Options','SAMEORIGIN');
@@ -21,8 +21,8 @@ export function createApp({seoHandler=seo,imageHandler=productImage,staging=proc
   if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');
-   if(url.pathname==='/api/admin/status')return await adminStatus(req,res);
-   if(url.pathname.startsWith('/api/backend/'))return await backendProxy(req,res);
+   if(url.pathname==='/api/admin/status')return await statusHandler(req,res);
+   if(url.pathname.startsWith('/api/backend/'))return await backendHandler(req,res);
    if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{Allow:'GET, HEAD'});return res.end();}
    if(url.pathname==='/healthz'){res.setHeader('Cache-Control','no-store');return res.end(req.method==='HEAD'?'':'ok');}
    if(!staging&&String(req.headers.host).split(':')[0]==='www.optikim.ru'){res.writeHead(308,{Location:'https://optikim.ru'+url.pathname+url.search});return res.end();}
