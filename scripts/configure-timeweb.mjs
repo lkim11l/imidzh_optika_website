@@ -6,5 +6,5 @@ if(parsed.protocol!=='https:'||parsed.hostname.endsWith('.supabase.co'))throw ne
 if(key.startsWith('sb_secret_'))throw new Error('Secret key is forbidden in browser configuration');
 if(key.split('.').length===3){let payload;try{payload=JSON.parse(Buffer.from(key.split('.')[1],'base64url'));}catch{throw new Error('Invalid JWT key');}if(payload.role!=='anon')throw new Error('Only anon JWT may be published');}
 else if(!key.startsWith('sb_publishable_'))throw new Error('Expected a publishable key or anon JWT');
-await writeFile(new URL('../dist/assets/data/supabase-config.js',import.meta.url),`export const supabaseConfig = Object.freeze(${JSON.stringify({url:parsed.origin,publishableKey:key,catalogEnabled:true,bookingsEnabled:true},null,2)});\n`);
+await writeFile(new URL('../dist/assets/data/supabase-config.js',import.meta.url),`export const supabaseConfig = Object.freeze(${JSON.stringify({url:parsed.origin,apiBase:'/api/backend',publishableKey:key,catalogEnabled:true,bookingsEnabled:true},null,2)});\n`);
 console.log('Russian endpoint configured; build next.');

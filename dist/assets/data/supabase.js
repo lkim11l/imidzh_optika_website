@@ -11,7 +11,7 @@ export async function request(path, {method='GET', body, authenticated=false, he
   const auth = authenticated ? {Authorization:`Bearer ${session.access_token}`} : {};
   let response;
   try {
-    response = await fetch(config.url + path, {method, headers:{apikey:config.publishableKey,...auth,...(body && !(body instanceof Blob) ? {'Content-Type':'application/json'} : {}),...headers},body:body instanceof Blob ? body : body === undefined ? undefined : JSON.stringify(body),signal:AbortSignal.timeout(20000)});
+    response = await fetch((config.apiBase || config.url) + path, {method, headers:{apikey:config.publishableKey,...auth,...(body && !(body instanceof Blob) ? {'Content-Type':'application/json'} : {}),...headers},body:body instanceof Blob ? body : body === undefined ? undefined : JSON.stringify(body),signal:AbortSignal.timeout(20000)});
   } catch {throw new Error('Не удалось связаться с Supabase. Проверьте соединение и повторите попытку.');}
   const result = await response.json().catch(()=>null);
   if(!response.ok) {

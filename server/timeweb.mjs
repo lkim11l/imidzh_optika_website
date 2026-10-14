@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import seo from '../api/seo.mjs';
 import productImage from '../api/product-image.mjs';
 import {supabaseConfig} from '../dist/assets/data/supabase-config.js';
+import {backendProxy} from './backend-proxy.mjs';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.mp4':'video/mp4','.ico':'image/x-icon'};
@@ -19,6 +20,7 @@ export function createApp({seoHandler=seo,imageHandler=productImage,staging=proc
   if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');
+   if(url.pathname.startsWith('/api/backend/'))return await backendProxy(req,res);
    if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{Allow:'GET, HEAD'});return res.end();}
    if(url.pathname==='/healthz'){res.setHeader('Cache-Control','no-store');return res.end(req.method==='HEAD'?'':'ok');}
    if(!staging&&String(req.headers.host).split(':')[0]==='www.optikim.ru'){res.writeHead(308,{Location:'https://optikim.ru'+url.pathname+url.search});return res.end();}
