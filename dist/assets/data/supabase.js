@@ -12,9 +12,11 @@ export async function request(path, {method='GET', body, authenticated=false, he
   let response;
   try {
     response = await fetch((config.apiBase || config.url) + path, {method, headers:{apikey:config.publishableKey,...auth,...(body && !(body instanceof Blob) ? {'Content-Type':'application/json'} : {}),...headers},body:body instanceof Blob ? body : body === undefined ? undefined : JSON.stringify(body),signal:AbortSignal.timeout(20000)});
-  } catch {throw new Error('Не удалось связаться с Supabase. Проверьте соединение и повторите попытку.');}
+  } catch {throw new Error(config.apiBase ? 'Сервер сайта не ответил вовремя. Повторите попытку.' : 'Не удалось связаться с базой. Проверьте соединение и повторите попытку.');}
   const result = await response.json().catch(()=>null);
   if(!response.ok) {
+    if(response.status===502 || response.status===503 || response.status===504) throw new Error('Сервер сайта не может связаться с базой Татнет. Повторите попытку позже.');
+    if(response.status===429) throw new Error('Слишком много попыток. Подождите немного и повторите вход.');
     if(response.status===401 && authenticated) clearSession();
     if(response.status===409) throw new Error('Товар с такими данными уже существует. Обновите список товаров.');
     if(response.status===401 || response.status===403) throw new Error('Нет доступа. Проверьте вход и права администратора.');
@@ -23,6 +25,14 @@ export async function request(path, {method='GET', body, authenticated=false, he
     throw new Error('Операция не выполнена. Проверьте настройки Supabase и повторите попытку.');
   }
   return result;
+}
+export async function checkAdminConnection(){
+ if(!config.apiBase)return {ready:false,reason:'version'};
+ try{
+  const response=await fetch('/api/admin/status',{cache:'no-store',signal:AbortSignal.timeout(12000)});
+  if(response.status===404)return {ready:false,reason:'version'};
+  const result=await response.json();return {...result,reason:result.ready?'ready':result.services?.catalog&&!result.services?.auth?'auth':'backend'};
+ }catch{return {ready:false,reason:'network'};}
 }
 export async function signIn(email,password) {
   clearSession();
