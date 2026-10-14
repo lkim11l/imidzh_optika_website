@@ -18,6 +18,7 @@ export async function request(path, {method='GET', body, authenticated=false, he
     if(response.status===401 && authenticated) clearSession();
     if(response.status===409) throw new Error('Товар с такими данными уже существует. Обновите список товаров.');
     if(response.status===401 || response.status===403) throw new Error('Нет доступа. Проверьте вход и права администратора.');
+    if(response.status===400 && path.startsWith('/auth/v1/token')) throw new Error('Не удалось войти. Проверьте электронную почту и пароль.');
     if(response.status===400) throw new Error('Проверьте данные формы и настройки базы.');
     throw new Error('Операция не выполнена. Проверьте настройки Supabase и повторите попытку.');
   }
