@@ -1,7 +1,7 @@
 import {contentFields,promotionFields,saveContent} from '../data/content.js';
 import {aboutFields,aboutImages,homepageImages,editorialData,imageSource} from '../data/editorial.js';
 import {heroSlides} from '../data/hero-slides.js';
-import {AdminGallery,validateImageFile} from './admin-gallery.js?v=photos2';
+import {AdminGallery,validateImageFile} from './admin-gallery.js?v=tatnet-photos1';
 import {uploadImage} from '../data/supabase.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function renderEditorialEditor(root,row,{about=false,promotions=false,preview,onDirty,onBusy,message}){

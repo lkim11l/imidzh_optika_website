@@ -1,3 +1,4 @@
+import {optimizedImageURL} from '../data/product-images.js';
 import {cropPhoto} from './photo-crop.js?v=1';
 // The first item is the storefront cover. New files remain local until Save.
 export const MAX_IMAGES = 12;
@@ -84,7 +85,7 @@ export class AdminGallery {
     const count = this.items.length;
     this.root.innerHTML = `<div class="gallery-heading"><strong>${this.carousel?'Фотографии карусели':'Фотографии товара'}</strong><span>${count} / ${MAX_IMAGES}</span></div><p class="hint">${this.carousel?'Первая фотография открывает карусель. Меняйте порядок кнопками «Раньше» и «Позже».':'Первая фотография — главная: она появится в каталоге. Остальные — в галерее товара.'}</p>` +
       (count ? `<div class="photo-grid">${this.items.map((item,index) => {
-        const src = item.preview || item.image.src;
+        const src = item.preview || optimizedImageURL(item.image.src,640);
         const button = (action,label,disabled=false) => `<button type="button" data-photo-action="${action}" data-photo-key="${item.key}" aria-label="${label}, фото ${index+1}" ${this.busy || this.cropping || disabled ? 'disabled' : ''}>${label}</button>`;
         return `<article class="photo-card ${index===0?'is-cover':''}"><div class="photo-preview"><img src="${esc(src || '')}" alt="${esc(item.image.alt || item.file?.name || `Фото ${index+1}`)}"><span class="photo-error" hidden>Не удалось загрузить фото</span></div><div class="photo-meta"><strong>${index===0?'Главная фотография':`Фото ${index+1}`}</strong><small>${item.file ? (item.image.src?'Загружено · сохраните изменения':esc(item.file.name)) : 'Сохранённая фотография'}</small></div><div class="photo-actions">${button('main','Сделать главной',index===0)}${button('crop','Обрезать')}${button('replace','Заменить')}${button('remove','Удалить')}${button('previous','Раньше',index===0)}${button('next','Позже',index===count-1)}</div></article>`;
       }).join('')}</div>` : '<div class="gallery-empty">Добавьте фотографии — здесь появятся их превью.</div>');
