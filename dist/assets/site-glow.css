@@ -1,8 +1,9 @@
 /* One feathered light follows the cursor across every public page. */
+body {isolation:isolate;}
 body .hero.hero-static::before,body .hero.hero-static::after {content:none;}
 .site-pointer-glow {
  position:fixed;left:0;top:0;width:1200px;height:1000px;
- z-index:6;pointer-events:none;user-select:none;
+ z-index:-1;pointer-events:none;user-select:none;
  background:radial-gradient(ellipse at center,rgba(233,189,115,.24) 0%,rgba(233,189,115,.12) 25%,rgba(233,189,115,.035) 48%,transparent 70%);
  opacity:0;transition:opacity .65s ease;contain:strict;
 }
