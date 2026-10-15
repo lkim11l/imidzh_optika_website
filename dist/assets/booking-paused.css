@@ -1,0 +1,12 @@
+#bookings-paused{position:fixed;inset:0;width:min(480px,calc(100vw - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:48px 36px 30px;border:1px solid #eae4df;border-radius:28px;background:#fffefa;color:#38251f;box-shadow:0 24px 80px #23181324;text-align:center;overflow:auto}
+#bookings-paused::backdrop{background:#241d1966;backdrop-filter:blur(5px)}
+#bookings-paused .paused-close{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:#f0ebe5;color:#594c44;cursor:pointer}
+#bookings-paused .paused-close:hover{background:#e7ddd3}
+#bookings-paused .paused-eyebrow{margin:14px 0 14px;color:#8a7567;font-size:10px;font-weight:700;line-height:1.5;letter-spacing:1.5px}
+#bookings-paused h2{margin:0 0 14px;font-size:32px;line-height:1.18;letter-spacing:-1.1px;font-weight:550}
+#bookings-paused .paused-description{margin:0 auto 26px;max-width:340px;font-size:16px;line-height:1.65;color:#786e65}
+#bookings-paused .paused-call{display:flex;width:100%;gap:10px;min-height:54px;padding:14px 20px;border-radius:15px;background:#38251f;color:#fffaf4;font-size:15px;line-height:1.5;font-weight:650}
+#bookings-paused .paused-call:hover{background:#805b47;transform:none}
+#bookings-paused .paused-phone{display:block;margin:17px 0 3px;color:#38251f;font-size:17px;line-height:1.5;font-weight:600;letter-spacing:.15px}
+#bookings-paused .paused-hours{margin:0;color:#8a8077;font-size:12px;line-height:1.6}
+@media(max-width:480px){#bookings-paused{padding:44px 24px 26px;border-radius:24px}#bookings-paused h2{font-size:28px;letter-spacing:-.8px}#bookings-paused .paused-description{font-size:15px}#bookings-paused .paused-eyebrow{font-size:9px;letter-spacing:1.1px}}
