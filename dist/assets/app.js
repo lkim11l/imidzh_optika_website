@@ -2,6 +2,7 @@ import {catalogPageHTML} from './ui/catalog-page.js';
 import {productDetailHTML} from './ui/product-detail.js';
 import {pageMetadata,productPath,pageSchemas,siteURL} from './data/seo.js';
 import {guidePages,guidePageHTML} from './ui/lens-guides.js';
+import {installRussianPhone,russianDigits} from './ui/russian-phone.js';
 import {refreshTextReveals} from './ui/scroll-text.js';
 import {lensesPageHTML,arrangeLensDetails} from './ui/lenses-page.js';
 import {installHeroLeadFit} from './ui/customer-layout.js';
@@ -11,6 +12,8 @@ import {brandCarouselHTML} from './ui/brand-carousel.js';
 import {aboutHTML} from './data/editorial.js';
 import {selectHomepageBrands} from './data/homepage-brands.js';
 import {applyContent} from './data/content.js';
+import {request as supabaseRequest} from './data/supabase.js?v=tatnet-requests1';
+import {supabaseConfig} from './data/supabase-config.js?v=tatnet-requests1';
 import { productRepository, filterProducts } from './data/product-repository.js';
 import { shopStore } from './state/store.js';
 import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, modelCount } from './ui/components.js?v=no-cart1';
@@ -107,10 +110,9 @@ function updateCountsAndHearts() {
   document.querySelectorAll('[data-favorite-count]').forEach(count => {count.textContent = favorites;count.hidden = !favorites;});
   document.querySelectorAll('[data-favorite]').forEach(button => {const product = productById(button.dataset.favorite), selected = shopStore.isFavorite(button.dataset.favorite);button.classList.toggle('is-favorite',selected);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected ? 'Убрать из избранного' : 'В избранное'}: ${product?.brand || ''} ${product?.model || ''}`);});
 }
-function showBookingsPaused(){let dialog=$('#bookings-paused');if(!dialog){dialog=document.createElement('dialog');dialog.id='bookings-paused';dialog.setAttribute('aria-labelledby','bookings-paused-title');dialog.innerHTML='<button class="paused-close" type="button" aria-label="Закрыть"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><p class="paused-eyebrow">ОНЛАЙН-ЗАПИСЬ ПРИОСТАНОВЛЕНА</p><h2 id="bookings-paused-title">Позвоните в салон</h2><p class="paused-description">Поможем выбрать удобное время и ответим на вопросы о наличии очков.</p><a class="button paused-call" href="tel:+74956416676"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2a14 14 0 0 1-7-7l2-2-2-5Z"/></svg>Позвонить в салон</a><a class="paused-phone" href="tel:+74956416676">+7 (495) 641-66-76</a><p class="paused-hours">Ежедневно · 10:00–20:00</p>';dialog.querySelector('button').onclick=()=>dialog.close();document.body.append(dialog);}openDialog(dialog);}
-function startBooking(){showBookingsPaused();}
-
-function startRequest(productId){const product=productById(productId);if(product&&!product.isMock)showBookingsPaused();}
+function startBooking(callback=false) {$('#booking-title').textContent=callback?'Заказать звонок':'Начнем с вас.';$('#booking-dialog .eyebrow').textContent=callback?'ОБРАТНЫЙ ЗВОНОК':'ПРОВЕРКА ЗРЕНИЯ';$('#booking-form button[type=submit]').textContent=callback?'Заказать звонок':'Записаться бесплатно';$('#booking-result p').textContent=callback?'Мы свяжемся с вами по указанному телефону.':'Время проверки зрения необходимо согласовать с салоном.';$('#booking-error').textContent='';$('#booking-form').hidden = false;$('#booking-result').hidden = true;openDialog($('#booking-dialog'));}
+let fittingProductId=null,fittingRequestId=null;
+function startRequest(productId) {const product = productById(productId);if(!product||product.isMock)return;fittingProductId=product.id;fittingRequestId=null;$('#request-product').textContent = `${product.brand} · ${product.model}`;$('#request-error').textContent='';$('#request-form').hidden = false;$('#request-result').hidden = true;openDialog($('#request-dialog'));}
 function renderSearch() {
   const query = $('#search-input').value.trim(), matches = filterProducts(products,{query,sort:'popular'});
   $('#search-results').innerHTML = `${query ? `<p class="search-summary">Найдено моделей: ${matches.length}</p>` : '<p class="search-summary">Можно начать с этих моделей</p>'}${matches.length ? `<div class="search-list">${matches.slice(0,5).map(product => `<a class="search-result" href="/product/${encodeURIComponent(product.slug)}">${ProductImage(product.images[0],{className:'search-thumb',loading:'eager'})}<span><strong>${esc(product.brand)}</strong><span>${esc(product.model)}</span></span><span class="search-price">${money(product.price)}</span></a>`).join('')}</div><a class="text-button search-all" href="${esc(catalogURL({query}))}">Все результаты (${matches.length})</a>` : '<p>Попробуйте другой бренд или название формы.</p>'}`;
@@ -162,9 +164,32 @@ document.querySelectorAll('dialog').forEach(dialog => {
   dialog.addEventListener('click',event => {if(event.target !== dialog)return;const rect = dialog.getBoundingClientRect();if(event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)dialog.close();});
   dialog.addEventListener('close',() => dialog.querySelectorAll('form').forEach(form => form.reset()));
 });
-for(const id of ['booking-form','request-form']){const form=$('#'+id);form.hidden=true;form.addEventListener('submit',event=>{event.preventDefault();showBookingsPaused();});}
-$('#booking-done').addEventListener('click',()=>$('#booking-dialog').close());
-
+const validatePhone=installRussianPhone($('#booking-form input[name=phone]'));
+let bookingRequestId=null;
+$('#booking-form').addEventListener('submit',async event => {
+ event.preventDefault();const form=event.currentTarget;validatePhone();if(!form.reportValidity())return;
+ if(!supabaseConfig.bookingsEnabled){$('#booking-error').textContent='Приём заявок ещё не подключён.';return;}
+ const button=form.querySelector('button[type=submit]');if(button.disabled)return;
+ button.disabled=true;$('#booking-error').textContent='Отправляем заявку…';
+ const values=new FormData(form);bookingRequestId ||= crypto.randomUUID();
+ try{await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body:{request_id:bookingRequestId,customer_name:values.get('name').trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on'}});bookingRequestId=null;form.reset();form.hidden=true;$('#booking-result').hidden=false;$('#booking-done').focus();}
+ catch(error){$('#booking-error').textContent='Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';}
+ finally{button.disabled=false;}
+});
+$('#booking-form').addEventListener('input',()=>{bookingRequestId=null;});
+$('#booking-done').addEventListener('click',() => $('#booking-dialog').close());
+const validateFittingPhone=installRussianPhone($('#request-form input[name=phone]'));
+$('#request-form').addEventListener('submit',async event => {
+ event.preventDefault();const form=event.currentTarget;validateFittingPhone();if(!form.reportValidity())return;
+ if(!supabaseConfig.bookingsEnabled||!fittingProductId){$('#request-error').textContent='Приём заявок временно недоступен.';return;}
+ const button=form.querySelector('button[type=submit]');if(button.disabled)return;
+ button.disabled=true;$('#request-error').textContent='Отправляем заявку…';
+ const values=new FormData(form);fittingRequestId ||= crypto.randomUUID();
+ try{await supabaseRequest('/rest/v1/rpc/optika_submit_fitting',{method:'POST',body:{request_id:fittingRequestId,customer_name:values.get('name').trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on',selected_product:fittingProductId}});fittingRequestId=null;form.reset();form.hidden=true;$('#request-result').hidden=false;$('#request-result button').focus();}
+ catch{$('#request-error').textContent='Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';}
+ finally{button.disabled=false;}
+});
+$('#request-form').addEventListener('input',()=>{fittingRequestId=null;});
 window.addEventListener('optika:statechange',() => {
   const wasFavorite = document.activeElement?.hasAttribute('data-favorite');
   updateCountsAndHearts();

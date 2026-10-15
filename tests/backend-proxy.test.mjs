@@ -5,8 +5,8 @@ import {backendProxy} from '../server/backend-proxy.mjs';
 function request(url,method='GET',headers={},body=''){const req=Readable.from(body?[Buffer.from(body)]:[]);Object.assign(req,{url,method,headers:{host:'pilot.test',...headers}});return req;}
 function response(){return {statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;},end(body){this.body=body;}};}
 
-test('paused bookings and email endpoints cannot be forwarded',async()=>{
- for(const [route,method] of [['rpc/optika_submit_booking','POST'],['rpc/optika_submit_fitting','POST'],['optika_bookings','GET'],['optika_email_settings','PATCH'],['optika_email_queue','GET']]){
+test('email endpoints remain unavailable',async()=>{
+ for(const [route,method] of [['optika_email_settings','PATCH'],['optika_email_queue','GET']]){
   const res=response();await backendProxy(request('/api/backend/rest/v1/'+route,method),res,()=>{throw Error('must not fetch');});assert.equal(res.statusCode,404);
  }
 });

@@ -3,6 +3,9 @@ const methods=new Map([
  ['/auth/v1/token',['POST']],['/auth/v1/logout',['POST']],
  ['/rest/v1/optika_products',['GET','POST','PATCH']],
  ['/rest/v1/optika_content',['GET','POST','PATCH']],
+ ['/rest/v1/optika_bookings',['GET','PATCH']],
+ ['/rest/v1/rpc/optika_submit_booking',['POST']],
+ ['/rest/v1/rpc/optika_submit_fitting',['POST']],
  ['/rest/v1/rpc/optika_is_admin',['POST']]
 ]);
 export async function backendProxy(req,res,fetcher=fetch){
