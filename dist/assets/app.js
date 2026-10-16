@@ -9,7 +9,7 @@ import {installHeroLeadFit} from './ui/customer-layout.js';
 import {installHeroCarousel} from './ui/hero-carousel.js';
 import {installSiteGlow} from './ui/site-glow.js';
 import {brandCarouselHTML} from './ui/brand-carousel.js';
-import {aboutHTML} from './data/editorial.js';
+import {aboutHTML} from './data/editorial.js?v=about-photos2';
 import {selectHomepageBrands} from './data/homepage-brands.js';
 import {applyContent} from './data/content.js';
 import {request as supabaseRequest} from './data/supabase.js?v=tatnet-requests1';
