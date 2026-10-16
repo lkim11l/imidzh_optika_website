@@ -1,6 +1,6 @@
 import {optimizedImageURL} from './data/product-images.js';
 import {makeProductSlug} from './ui/product-address.js';
-import {renderEditorialEditor} from './ui/editorial-editor.js?v=tatnet-requests1';
+import {renderEditorialEditor} from './ui/editorial-editor.js?v=eduard-home1';
 import {AdminPreview} from './ui/admin-preview.js?v=brands3rows1';
 import {isConfigured,signIn,signOut,listRows,saveRow,uploadImage,request} from './data/supabase.js';
 import {AdminGallery} from './ui/admin-gallery.js?v=tatnet-photos1';

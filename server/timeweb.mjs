@@ -17,7 +17,7 @@ export function createApp({seoHandler=seo,imageHandler=productImage,statusHandle
   res.setHeader('X-Frame-Options','SAMEORIGIN');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(), payment=(), usb=()');
-  res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self'; connect-src 'self' ${origin}; frame-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'`);
+  res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self'; connect-src 'self' ${origin}; frame-src 'self' https://yandex.ru https://yandex.com https://api-maps.yandex.ru; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'`);
   if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');

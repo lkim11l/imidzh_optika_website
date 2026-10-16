@@ -1,0 +1,73 @@
+/* The founder, real products and typography lead the homepage. */
+body .hero.founder-hero{display:grid;grid-template-columns:1fr 1.05fr;gap:64px;align-items:center;padding:44px 0 64px;min-height:0}
+.founder-copy{padding:28px 0;min-width:0;text-align:left}
+.founder-copy>.eyebrow{font-size:11px;letter-spacing:2px;margin:0 0 30px;color:#806b58}
+body .founder-hero h1{font-size:clamp(38px,4.2vw,64px);font-weight:450;line-height:1.1;letter-spacing:-2.8px;text-align:left;margin:0 0 28px;max-width:650px}
+.founder-intro{font-size:17px;line-height:1.8;max-width:470px;color:#72685e;margin-bottom:30px}
+.founder-actions{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.founder-actions .button{gap:24px;font-size:14px;border-radius:4px;padding:19px 24px}
+.founder-catalog{font-size:13px;border-bottom:1px solid #b5a491;padding:9px 0}
+.founder-signature{display:flex;align-items:center;gap:26px;margin-top:45px;padding-top:25px;border-top:1px solid #dfd7cb;max-width:470px}
+.founder-signature>span{font-family:Georgia,serif;font-style:italic;font-size:31px;color:#4b382a}
+.founder-signature p{font-size:11px;line-height:1.7;letter-spacing:.3px;color:#817264;margin:0;border-left:1px solid #d9cbbb;padding-left:26px}
+.founder-portrait{margin:0;position:relative;min-width:0;background:#ddd0bd}
+.founder-portrait>img{display:block;width:100%;height:600px;object-fit:cover;object-position:55% center}
+.founder-portrait figcaption{display:flex;justify-content:space-between;gap:15px;position:absolute;bottom:0;left:0;right:0;background:#35271feb;color:#fff6e9;padding:22px 25px;align-items:center}
+.founder-portrait figcaption>span{font-size:9px;letter-spacing:1.8px}
+.founder-portrait figcaption a{font-size:12px}
+body :is(#home,.preview-page) .trust-line{border-block:1px solid #ded4c7;background:none;border-radius:0;padding:27px 0;box-shadow:none}
+body :is(#home,.preview-page) .trust-line strong{font-size:19px;font-weight:500}
+body :is(#home,.preview-page) .trust-line span{font-size:12px}
+body :is(#home,.preview-page) .promo-card{display:grid;grid-template-columns:minmax(280px,.85fr) 1.3fr;gap:0;padding:0;border-radius:4px;overflow:hidden;background:#eee7db;border:1px solid #dfd1be;box-shadow:none}
+.promo-invitation{position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:40px;background:#33251e;color:#f6ead7;min-height:350px;border-right:1px solid #a58a64}
+.invitation-label{font-size:10px;letter-spacing:2px;border-bottom:1px solid #77604d;padding-bottom:19px;width:100%}
+body :is(#home,.preview-page) .promo-badge{border:0;border-radius:0;box-shadow:none;background:none;padding:16px 0;font-family:Georgia,serif;font-size:clamp(70px,9vw,134px);font-weight:400;line-height:1;color:#f2ddba;letter-spacing:-6px;width:auto;height:auto;display:block}
+.invitation-footer{font-size:20px;letter-spacing:5px;width:100%;padding-top:16px;border-top:1px solid #77604d}
+.invitation-footer i{font-family:inherit;font-style:normal;letter-spacing:3px;font-size:8px;margin-left:12px}
+body :is(#home,.preview-page) .promo-copy{padding:45px 48px;align-self:center}
+body :is(#home,.preview-page) .promo-copy h3{font-weight:450;font-size:clamp(26px,3vw,43px);letter-spacing:-1.5px;line-height:1.2;margin:20px 0}
+body :is(#home,.preview-page) .promo-copy .eyebrow{font-size:10px;letter-spacing:1.5px;color:#806746}
+body :is(#home,.preview-page) .promo-description,body :is(#home,.preview-page) .promo-terms{font-size:15px;line-height:1.7}
+body :is(#home,.preview-page) .promo-copy .button{border-radius:3px;font-size:13px;padding:15px 21px}
+body :is(#home,.preview-page) .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-block:1px solid #d9d0c4}
+body :is(#home,.preview-page) .cards .card{background:none;border:0;border-radius:0;min-height:330px;padding:35px 30px;display:flex;flex-direction:column;align-items:flex-start;box-shadow:none}
+body :is(#home,.preview-page) .cards .card+.card{border-left:1px solid #d9d0c4}
+body :is(#home,.preview-page) .card-number{position:static;font-family:Georgia,serif;font-style:italic;font-size:29px;color:#ae9677;margin-bottom:34px}
+body :is(#home,.preview-page) .cards h3{font-size:25px;font-weight:450;letter-spacing:-.7px;line-height:1.25;margin:0 0 24px;min-height:63px}
+body :is(#home,.preview-page) .cards p{font-size:14px;line-height:1.8;margin:0 0 20px}
+body :is(#home,.preview-page) .cards .text-button{background:none!important;color:#493727!important;border:0;border-bottom:1px solid #ad9678;border-radius:0;padding:10px 0;font-size:13px;white-space:normal}
+body :is(#home,.preview-page) .card-large>div{display:flex;flex:1;flex-direction:column;align-items:flex-start}
+body :is(#home,.preview-page) .category-photo{border-radius:3px;overflow:hidden;aspect-ratio:1.4;width:100%;min-width:0}
+body :is(#home,.preview-page) .category-type{background:#e8dfd2;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:38px;color:#433127}
+.category-type>.eyebrow{font-size:9px;letter-spacing:2px;margin:0}
+.category-type p{font-size:clamp(29px,3.6vw,53px);line-height:1.15;letter-spacing:-2px;margin:18px 0}
+.category-type em{font-family:Georgia,serif;font-weight:400}
+.category-type-note{font-size:11px;letter-spacing:1px;border-top:1px solid #bfae95;padding-top:18px;width:100%}
+body :is(#home,.preview-page) .real-product-photo{background:#faf9f6}
+body :is(#home,.preview-page) .real-product-photo img{width:100%;height:100%;object-fit:cover}
+body :is(#home,.preview-page) .category-caption{padding:24px 0;border-bottom:1px solid #d9d0c4}
+body :is(#home,.preview-page) .category-caption h3{font-size:23px;font-weight:450}
+body :is(#home,.preview-page) .repair-section{border-radius:3px;background:#ece5da;border:0;gap:0;padding:0;overflow:hidden;grid-template-columns:1fr 1.2fr}
+.repair-craft{background:#3a2d25;color:#f0e4d1;padding:42px;min-height:370px;display:flex;flex-direction:column;justify-content:space-between}
+.repair-craft>.eyebrow{font-size:9px;letter-spacing:2px;color:#bfa68a}
+.repair-craft>p{font-size:clamp(27px,3vw,44px);line-height:1.25;letter-spacing:-1.5px;margin:30px 0}
+.repair-craft em{font-family:Georgia,serif;color:#dcc3a0;font-weight:400}
+.craft-details{border-top:1px solid #695343;padding-top:20px;display:flex;gap:15px;flex-wrap:wrap;font-size:10px;color:#d6c6b3}
+body :is(#home,.preview-page) .repair-copy{padding:40px 45px}
+body :is(#home,.preview-page) .repair-copy h2{font-size:42px;letter-spacing:-1.5px;font-weight:450}
+body :is(#home,.preview-page) .repair-copy>p:not(.eyebrow){font-size:16px;line-height:1.8}
+body :is(#home,.preview-page) .repair-copy .button{border-radius:3px;font-size:13px}
+body :is(#home,.preview-page) .store-section{grid-template-columns:.8fr 1.2fr;gap:0;align-items:stretch}
+body :is(#home,.preview-page) .store-placeholder.store-contacts{border-radius:3px 0 0 3px;background:#e9e3d8;padding:40px;gap:25px}
+body :is(#home,.preview-page) .store-contacts h3{font-weight:450;font-size:42px;letter-spacing:-1.6px}
+.salon-map{position:relative;min-height:560px;background:#ebe9e2;display:flex;flex-direction:column}
+.salon-map iframe{border:0;width:100%;height:100%;min-height:510px;flex:1;display:block}
+.salon-map>a{display:block;background:#34271f;color:#fff3df;padding:17px 22px;font-size:12px}
+body :is(#home,.preview-page) .appointment{border-radius:3px;border:0;background:#e9dfce;padding:65px 30px}
+body :is(#home,.preview-page) .appointment h2{font-weight:450;letter-spacing:-2px}
+body :is(#home,.preview-page) .button{box-shadow:none}
+body .founder-hero .founder-intro{text-align:left}
+@media(max-width:1100px){body .hero.founder-hero{gap:30px}.founder-portrait>img{height:540px}body .founder-hero h1{font-size:46px}.founder-intro{font-size:15px}.founder-actions{gap:14px}.founder-signature{margin-top:28px}body :is(#home,.preview-page) .cards .card{padding:28px 20px}body :is(#home,.preview-page) .promo-copy{padding:32px}}
+@media(max-width:760px){body .hero.founder-hero{grid-template-columns:1fr;gap:0;padding:25px 0 35px}.founder-copy{padding:10px 0 30px}.founder-copy>.eyebrow{margin-bottom:20px;font-size:9px}body .founder-hero h1{font-size:42px;letter-spacing:-1.8px;margin-bottom:20px}.founder-intro{font-size:14px;line-height:1.75;max-width:none}.founder-actions .button{font-size:13px;padding:17px 19px}.founder-catalog{font-size:12px}.founder-signature{margin-top:27px;padding-top:20px}.founder-portrait>img{height:auto;aspect-ratio:1.05;object-position:center}.founder-portrait figcaption{padding:18px}.founder-portrait figcaption>span{font-size:8px;letter-spacing:1px}body :is(#home,.preview-page) .trust-line{gap:20px;padding:23px 0;grid-template-columns:1fr}body :is(#home,.preview-page) .trust-line>div{border:0;padding:0}body :is(#home,.preview-page) .trust-line strong{font-size:17px}body :is(#home,.preview-page) .promo-card{grid-template-columns:1fr}.promo-invitation{min-height:240px;padding:26px}.invitation-label{font-size:9px}body :is(#home,.preview-page) .promo-badge{font-size:92px;letter-spacing:-5px}.invitation-footer{font-size:16px}body :is(#home,.preview-page) .promo-copy{padding:28px 25px}body :is(#home,.preview-page) .promo-copy h3{font-size:30px}body :is(#home,.preview-page) .cards{grid-template-columns:1fr}body :is(#home,.preview-page) .cards .card{min-height:0;padding:28px 0}body :is(#home,.preview-page) .cards .card+.card{border-left:0;border-top:1px solid #d9d0c4}body :is(#home,.preview-page) .card-number{font-size:23px;margin-bottom:20px}body :is(#home,.preview-page) .cards h3{min-height:0;font-size:26px;margin-bottom:16px}body :is(#home,.preview-page) .cards h3 br{display:none}body :is(#home,.preview-page) .cards p{max-width:480px}.category-type p{font-size:36px}.category-type{padding:25px!important}body :is(#home,.preview-page) .category-caption h3{font-size:20px}body :is(#home,.preview-page) .repair-section{grid-template-columns:1fr}.repair-craft{min-height:280px;padding:30px}.repair-craft>p{font-size:37px}body :is(#home,.preview-page) .repair-copy{padding:30px}body :is(#home,.preview-page) .repair-copy h2{font-size:35px}body :is(#home,.preview-page) .store-section{grid-template-columns:1fr}body :is(#home,.preview-page) .store-placeholder.store-contacts{padding:30px}.salon-map{min-height:420px}.salon-map iframe{min-height:380px}body :is(#home,.preview-page) .store-contacts h3{font-size:36px}}
+@media(max-width:380px){body .founder-hero h1{font-size:36px}.founder-actions{align-items:flex-start;flex-direction:column}.founder-portrait figcaption>span{max-width:130px}.founder-signature{gap:20px}.founder-signature p{padding-left:20px}}
+@media(max-width:760px){body .hero.founder-hero{gap:22px}.founder-copy{display:contents}.founder-copy>.eyebrow{order:0;text-align:left;margin:5px 0 0}.founder-hero h1{order:1}.founder-portrait{order:2}.founder-intro{order:3;text-align:left;margin:0}.founder-actions{order:4}.founder-signature{order:5;width:100%;margin-top:3px}body .founder-hero h1{font-size:36px;line-height:1.15;margin:0;letter-spacing:-1.7px}.founder-portrait>img{aspect-ratio:1.1}.founder-portrait figcaption{padding:14px}.founder-portrait figcaption a{font-size:11px}}

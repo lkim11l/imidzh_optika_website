@@ -29,7 +29,7 @@ export function renderPage(shell,path,products,editorial={}) {
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));
   for(const [key,value] of Object.entries({'og:title':meta.title,'og:description':meta.description,'og:url':siteURL+meta.path}))html=html.replace(new RegExp(`(<meta property="${key}" content=")[^"]*`),(_,prefix)=>prefix+esc(value));
   html=html.replace(/<meta property="og:image"[^>]*>/g,'');
-  const preview=product?.images?.[0]?.src||'/assets/hero-portrait-v1.webp';
+  const preview=product?.images?.[0]?.src||'/assets/eduard-editorial-v2.webp';
   html=html.replace('</head>',()=>`<meta property="og:image" content="${esc(new URL(preview,siteURL).href)}">\n</head>`);
   if(path!=='/') {
     html=html.replace('<div id="home">','<div id="home" hidden>').replace('<div id="route-view" hidden></div>',()=>`<div id="route-view">${content}</div>`);
