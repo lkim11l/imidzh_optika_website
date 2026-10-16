@@ -96,4 +96,23 @@ body .founder-immersive .founder-intro{position:relative;z-index:4;margin:0;max-
 @media(max-width:370px){body .founder-immersive h1{font-size:29px}.founder-immersive .founder-actions{gap:14px}.founder-immersive .founder-catalog{font-size:9px}.founder-immersive .founder-signature>span{font-size:42px}.founder-immersive .founder-signature{gap:15px}body .founder-immersive .founder-intro{font-size:14px}}
 
 body .founder-immersive .immersive-heading>.eyebrow{text-align:left}
+body .founder-immersive .founder-actions .button{background:var(--chocolate,#38251f);border-color:var(--chocolate,#38251f);color:var(--button-text,#fff8ee);border-radius:999px;text-transform:none;font-weight:600;font-size:15px;min-height:54px;padding:17px 26px;min-width:190px;gap:30px}
+body .founder-immersive .founder-actions .button:hover{background:var(--milk-chocolate,#654b3b);border-color:var(--milk-chocolate,#654b3b)}
+@media(max-width:1099px){
+ body .header{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand actions" "social social";gap:8px 10px;height:auto;min-height:0;padding:10px 0 11px;align-items:center;flex-wrap:nowrap}
+ body .header>.wordmark{grid-area:brand;width:clamp(104px,30vw,140px);height:42px;margin:0;max-width:100%}
+ body .header>nav:not(.header-socials){display:none}
+ body .header .header-actions{grid-area:actions;display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:4px;margin:0;min-width:0}
+ body .header .header-actions .icon-button{width:32px;min-width:32px;height:36px;min-height:36px;padding:6px}
+ body .header .header-actions .icon-button>svg{width:20px;height:20px}
+ body .header .header-actions .mobile-menu-button{display:flex;align-items:center;justify-content:center}
+ body .header .header-actions .header-about{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;font-size:12px;line-height:1.2;white-space:nowrap;border-radius:22px;margin:0}
+ body .header nav.header-socials{grid-area:social;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-content:stretch;gap:6px;width:100%;padding:0;margin:0;min-width:0}
+ body .header .header-socials .social-link{display:flex;align-items:center;justify-content:center;width:auto;min-width:0;max-width:100%;height:34px;min-height:34px;padding:7px 6px;gap:4px;font-size:clamp(10px,2.8vw,12px);line-height:1.1;border-radius:22px;white-space:nowrap}
+ body .header .header-socials .instagram-link>span,body .header .header-socials .telegram-link>span{display:inline}
+ body .header .header-socials .social-link>svg{width:15px;height:15px;flex:0 0 15px}
+ body .header .header-socials .social-effects{display:none}
+}
+@media(max-width:760px){body .founder-immersive .founder-actions .button{font-size:14px;min-width:175px;min-height:50px;padding:15px 22px;gap:25px}.founder-immersive .founder-actions{gap:18px;align-items:center}.founder-immersive .founder-catalog{font-size:11px}}
+@media(max-width:350px){body .header .header-actions{gap:2px}body .header .header-actions .header-about{padding:8px 9px}body .header>.wordmark{height:35px}body .founder-immersive .founder-actions .button{min-width:162px;font-size:13px;padding-inline:18px}.founder-immersive .founder-actions{gap:12px}.founder-immersive .founder-catalog{font-size:10px}.founder-immersive .founder-portrait{top:300px;height:374px}}
 @media(min-width:761px) and (max-width:1100px){body .hero.founder-immersive{height:820px;min-height:820px;max-height:820px}body .founder-immersive h1{font-size:38px}.founder-immersive .founder-portrait{width:100%;right:-15%;height:78%;bottom:0}.founder-immersive .founder-band{top:44%}.founder-immersive .founder-actions{gap:18px}.founder-immersive .founder-catalog{font-size:11px}}

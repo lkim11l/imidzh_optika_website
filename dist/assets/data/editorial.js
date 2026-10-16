@@ -9,7 +9,7 @@ export const editorialDefaults = {
  trustTitle:'С 2002 года', trustText:'сохраняем здоровье ваших глаз!',
  aboutTitle:'Индивидуальный на 100% подход к каждому клиенту!',
  aboutStory:'У нас нет наёмных продавцов-консультантов — всех наших клиентов ведём мы, владельцы Эдуард и Наталья с 25-летним стажем. За счёт этого и получается действительно индивидуальный подход. Обращаясь к нам, вы гарантированно получаете лучшую услугу в оптическом смысле! За свои деньги!',
- eduardName:'Эдуард', eduardRole:'Совладелец · 25 лет опыта',
+ eduardName:'Эдуард', eduardRole:'Владелец · 25 лет опыта',
  eduardBio:'Лично веду наших клиентов и помогаю подобрать оправы и линзы с учётом их потребностей.',
  nataliaName:'Наталья', nataliaRole:'Совладелец · 25 лет опыта',
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
@@ -35,6 +35,7 @@ export function imageSource(value,preview=false){
 }
 export function editorialData(data={}){
  const resolved={...data};
+ if(typeof resolved.eduardRole==='string')resolved.eduardRole=resolved.eduardRole.replace(/совладелец/gi,'Владелец');
  if(/^правильные инструменты для качественного зрения!?$/i.test(String(resolved.heroTitle||'').trim()))resolved.heroTitle=editorialDefaults.heroTitle;
  if(typeof resolved.heroLead==='string' && /^просто приходите, потому что вы достойны самого лучшего!?$/i.test(resolved.heroLead.trim()))resolved.heroLead=editorialDefaults.heroLead;
  for(const [key,value] of Object.entries(editorialDefaults))if(typeof resolved[key]!=='string'||!resolved[key].trim())resolved[key]=value;
