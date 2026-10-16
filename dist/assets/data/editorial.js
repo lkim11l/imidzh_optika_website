@@ -4,7 +4,7 @@ export const editorialDefaults = {
  promoTitle:'Приятное начало знакомства',promoBadge:'−10%',promoName:'Скидка 10% на всё',promoDescription:'Зарегистрируйтесь в салоне при первом визите и получите скидку 10% на всё.',promoTerms:'Для новых клиентов при регистрации в салоне во время первого визита.',
  hoyaText:'Линзы — важная часть ваших очков. Мы поможем подобрать линзы под ваши потребности и объясним выбор понятным языком.',
  heroTitle:'Хорошие очки.\nЛичное отношение.',
- heroLead:'Я Эдуард, совладелец «Имидж Оптики». Вместе с Натальей мы помогаем найти очки, в которых хорошо видеть и приятно быть собой.',
+ heroLead:'Мы с Натальей лично подбираем оправы и линзы. Для нас важно, чтобы в очках вам было удобно — каждый день.',
  collectionTitle:'Найдите свою пару очков!',
  trustTitle:'С 2002 года', trustText:'сохраняем здоровье ваших глаз!',
  aboutTitle:'Индивидуальный на 100% подход к каждому клиенту!',
@@ -15,7 +15,7 @@ export const editorialDefaults = {
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
- ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-editorial-v2.webp'],
+ ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-cutout-v3.webp'],
  ['collectionSunPhoto','Фотография солнцезащитных очков','.real-product-photo img','/assets/sunglasses-real-v1.webp']
 ];
 export const aboutFields = [
