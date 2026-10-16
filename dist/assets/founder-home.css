@@ -96,6 +96,19 @@ body .founder-immersive .founder-intro{position:relative;z-index:4;margin:0;max-
 @media(max-width:370px){body .founder-immersive h1{font-size:29px}.founder-immersive .founder-actions{gap:14px}.founder-immersive .founder-catalog{font-size:9px}.founder-immersive .founder-signature>span{font-size:42px}.founder-immersive .founder-signature{gap:15px}body .founder-immersive .founder-intro{font-size:14px}}
 
 body .founder-immersive .immersive-heading>.eyebrow{text-align:left}
+/* A quieter type hierarchy: regular Cyrillic, natural case and open leading. */
+body,body button,body input,body textarea,body select{font-family:'Onest',Arial,sans-serif}
+body h1,body h2,body h3,body .founder-signature>span{font-family:'Onest',Arial,sans-serif}
+body .founder-immersive h1{text-transform:none;font-weight:400;font-size:clamp(44px,4.6vw,74px);line-height:1.09;letter-spacing:-.035em}
+body .founder-immersive .founder-intro{text-transform:none;font-weight:400;font-size:clamp(21px,1.8vw,28px);line-height:1.45;letter-spacing:-.015em}
+body .founder-immersive .founder-signature>span{font-weight:350;letter-spacing:-.035em}
+body .founder-immersive .founder-signature p{font-weight:400;line-height:1.65}
+body :is(#home,.preview-page) h2{font-weight:400;letter-spacing:-.035em;line-height:1.15}
+body .header>nav:not(.header-socials){font-weight:400}
+body :is(#home,.preview-page) .button{font-weight:500;letter-spacing:0}
+@media(min-width:761px) and (max-width:1100px){body .founder-immersive h1{font-size:42px}body .founder-immersive .founder-intro{font-size:22px}}
+@media(max-width:760px){body .founder-immersive h1{font-size:36px;line-height:1.12;letter-spacing:-.035em}body .founder-immersive .founder-intro{font-size:18px;line-height:1.5;letter-spacing:-.01em}.founder-immersive .founder-portrait{top:236px;height:438px}body .founder-immersive .founder-signature>span{font-size:47px}body .founder-immersive .founder-signature p{font-size:11px}}
+@media(max-width:350px){body .founder-immersive h1{font-size:30px}body .founder-immersive .founder-intro{font-size:17px}.founder-immersive .founder-portrait{top:270px;height:404px}}
 body .founder-immersive .founder-actions .button{background:var(--chocolate,#38251f);border-color:var(--chocolate,#38251f);color:var(--button-text,#fff8ee);border-radius:999px;text-transform:none;font-weight:600;font-size:15px;min-height:54px;padding:17px 26px;min-width:190px;gap:30px}
 body .founder-immersive .founder-actions .button:hover{background:var(--milk-chocolate,#654b3b);border-color:var(--milk-chocolate,#654b3b)}
 @media(max-width:1099px){
