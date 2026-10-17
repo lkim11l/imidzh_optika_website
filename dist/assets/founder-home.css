@@ -182,3 +182,4 @@ html body,html body *,html body *::before,html body *::after{font-family:Montser
 
 /* Montserrat is the site-wide upright text face; logo artwork stays unchanged. */
 html body,html body *,html body *::before,html body *::after{font-family:Montserrat,Arial,sans-serif!important;font-style:normal!important}
+@media(max-width:350px){body #home .founder-natural h1{font-size:24px;max-width:75%;overflow-wrap:normal;word-break:normal}body #home .founder-natural .founder-lead{font-size:12px;max-width:68%;overflow-wrap:normal;word-break:normal}}
