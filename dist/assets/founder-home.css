@@ -176,3 +176,9 @@ body #home .founder-natural{gap:0;max-height:none}body #home .founder-natural .f
 .promo-original-logo{position:relative;display:block;width:166px;height:51px;overflow:hidden;background:#faf9f6;isolation:isolate}.promo-original-logo>img{position:absolute;display:block;width:145%;max-width:none;height:auto;left:50%;top:48%;transform:translate(-50%,-50%);mix-blend-mode:multiply}
 /* All text uses upright faces, including semantic emphasis and generated content. */
 html body,html body *,html body *::before,html body *::after{font-style:normal!important}
+
+/* Montserrat is the site-wide upright text face; logo artwork stays unchanged. */
+html body,html body *,html body *::before,html body *::after{font-family:Montserrat,Arial,sans-serif!important;font-style:normal!important}
+
+/* Montserrat is the site-wide upright text face; logo artwork stays unchanged. */
+html body,html body *,html body *::before,html body *::after{font-family:Montserrat,Arial,sans-serif!important;font-style:normal!important}
