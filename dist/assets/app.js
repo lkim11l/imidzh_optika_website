@@ -210,7 +210,7 @@ try {
     let displayed=[];try{displayed=selectHomepageBrands(content?.data,products);}catch{}
     $('#brand-list').innerHTML=brandCarouselHTML(displayed,name=>catalogURL({brands:[name]}));
     $('#brands').hidden=!displayed.length;
-    $('#brands .prototype-note').hidden=false;
+    if($('#brands .prototype-note'))$('#brands .prototype-note').hidden=false;
   });
   if(collectionRoute())await renderRoute({scroll:!!location.hash});
 } catch(error) {console.error('Unable to load collection',error);$('#featured-products').innerHTML = '<p>Не удалось загрузить коллекцию. Попробуйте обновить страницу.</p>';$('#featured-products').setAttribute('aria-busy','false');if(location.pathname.replace(/\/$/,'')==='/about'){await renderRoute({scroll:false});}else if(collectionRoute() && !view.querySelector('.catalog-page,.product-page')){home.hidden = true;view.hidden = false;view.innerHTML = emptyState('Коллекция временно недоступна','Попробуйте обновить страницу через некоторое время.','<a class="button" href="/">На главную</a>');}}

@@ -3,19 +3,22 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;',
 export const editorialDefaults = {
  promoTitle:'Приятное начало знакомства',promoBadge:'−10%',promoName:'Скидка 10% на всё',promoDescription:'Зарегистрируйтесь в салоне при первом визите и получите скидку 10% на всё.',promoTerms:'Для новых клиентов при регистрации в салоне во время первого визита.',
  hoyaText:'Линзы — важная часть ваших очков. Мы поможем подобрать линзы под ваши потребности и объясним выбор понятным языком.',
- heroTitle:'Хорошие очки.\nЛичное отношение.',
- heroLead:'Лично подбираем оправы и линзы. Для нас важно, чтобы в очках вам было удобно — каждый день.',
+ heroTitle:'Экспертный\nподбор очков',
+ visionTitle:'Правильная диагностика зрения — залог вашего комфорта',
+ hoyaTitle:'Правильные инструменты для вашего зрения',
+ heroQuote:'Я помогаю подобрать очки, которые подчеркивают индивидуальность и обеспечивают комфорт зрения.',
+ heroLead:'Брендовые оправы, современные линзы и профессиональная забота о вашем зрении.',
  collectionTitle:'Найдите свою пару очков!',
  trustTitle:'С 2002 года', trustText:'сохраняем здоровье ваших глаз!',
  aboutTitle:'Индивидуальный на 100% подход к каждому клиенту!',
  aboutStory:'У нас нет наёмных продавцов-консультантов — всех наших клиентов ведём мы, владельцы Эдуард и Наталья с 25-летним стажем. За счёт этого и получается действительно индивидуальный подход. Обращаясь к нам, вы гарантированно получаете лучшую услугу в оптическом смысле! За свои деньги!',
  eduardName:'Эдуард', eduardRole:'Владелец · 25 лет опыта',
  eduardBio:'Лично веду наших клиентов и помогаю подобрать оправы и линзы с учётом их потребностей.',
- nataliaName:'Наталья', nataliaRole:'Совладелец · 25 лет опыта',
+ nataliaName:'Наталья', nataliaRole:'Владелец · 25 лет опыта',
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
- ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-cutout-v3.webp'],
+ ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-natural-v4.webp'],
  ['collectionSunPhoto','Фотография солнцезащитных очков','.real-product-photo img','/assets/sunglasses-real-v1.webp']
 ];
 export const aboutFields = [
@@ -35,6 +38,9 @@ export function imageSource(value,preview=false){
 }
 export function editorialData(data={}){
  const resolved={...data};
+ const legacy={heroTitle:/Хорошие очки|Правильные инструменты для качественного/i,heroLead:/Лично подбираем|Мы с Натальей|Просто приходите/i,visionTitle:/Сначала.*понять/is,hoyaTitle:/Точность в линзах/is};
+ for(const [key,pattern] of Object.entries(legacy))if(pattern.test(String(resolved[key]||'')))resolved[key]=editorialDefaults[key];
+ if(typeof resolved.nataliaRole==='string')resolved.nataliaRole=resolved.nataliaRole.replace(/совладелец/gi,'Владелец');
  if(typeof resolved.eduardRole==='string')resolved.eduardRole=resolved.eduardRole.replace(/совладелец/gi,'Владелец');
  if(/^правильные инструменты для качественного зрения!?$/i.test(String(resolved.heroTitle||'').trim()))resolved.heroTitle=editorialDefaults.heroTitle;
  if(typeof resolved.heroLead==='string' && /^просто приходите, потому что вы достойны самого лучшего!?$/i.test(resolved.heroLead.trim()))resolved.heroLead=editorialDefaults.heroLead;

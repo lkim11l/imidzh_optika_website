@@ -12,12 +12,11 @@ export const promotionFields = [
 export const contentFields = [
  ...promotionFields,
  ['heroTitle','Заголовок первого экрана','.hero h1',160],
- ['heroLead','Вводный текст','.founder-intro, .hero .lead',400],
+ ['heroLead','Вводный текст','.founder-lead, .hero .lead',400],
+ ['heroQuote','Цитата Эдуарда','.founder-intro',400],
  ['visionTitle','Заголовок проверки зрения','#vision h2',160],
- ['visionText','Текст проверки зрения','#vision>div:last-child>p',600],
  ['hoyaTitle','Заголовок блока линз','.hoya-copy h2',160],
  ['hoyaText','Описание блока линз','.hoya-copy>p:not(.eyebrow)',700],
- ['collectionTitle','Заголовок коллекции','#collection h2',160],
  ['trustTitle','Опыт — заголовок','.trust-line>div:first-child strong',100],
  ['trustText','Опыт — описание','.trust-line>div:first-child span',200],
  ['appointmentTitle','Заголовок записи','#appointment h2',160]
