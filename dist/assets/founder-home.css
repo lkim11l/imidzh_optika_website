@@ -8,7 +8,7 @@ body .founder-hero h1{font-size:clamp(38px,4.2vw,64px);font-weight:450;line-heig
 .founder-actions .button{gap:24px;font-size:14px;border-radius:4px;padding:19px 24px}
 .founder-catalog{font-size:13px;border-bottom:1px solid #b5a491;padding:9px 0}
 .founder-signature{display:flex;align-items:center;gap:26px;margin-top:45px;padding-top:25px;border-top:1px solid #dfd7cb;max-width:470px}
-.founder-signature>span{font-family:Georgia,serif;font-style:italic;font-size:31px;color:#4b382a}
+.founder-signature>span{font-family:Georgia,serif;font-style:normal;font-size:31px;color:#4b382a}
 .founder-signature p{font-size:11px;line-height:1.7;letter-spacing:.3px;color:#817264;margin:0;border-left:1px solid #d9cbbb;padding-left:26px}
 .founder-portrait{margin:0;position:relative;min-width:0;background:#ddd0bd}
 .founder-portrait>img{display:block;width:100%;height:600px;object-fit:cover;object-position:55% center}
@@ -32,7 +32,7 @@ body :is(#home,.preview-page) .promo-copy .button{border-radius:3px;font-size:13
 body :is(#home,.preview-page) .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-block:1px solid #d9d0c4}
 body :is(#home,.preview-page) .cards .card{background:none;border:0;border-radius:0;min-height:330px;padding:35px 30px;display:flex;flex-direction:column;align-items:flex-start;box-shadow:none}
 body :is(#home,.preview-page) .cards .card+.card{border-left:1px solid #d9d0c4}
-body :is(#home,.preview-page) .card-number{position:static;font-family:Georgia,serif;font-style:italic;font-size:29px;color:#ae9677;margin-bottom:34px}
+body :is(#home,.preview-page) .card-number{position:static;font-family:Georgia,serif;font-style:normal;font-size:29px;color:#ae9677;margin-bottom:34px}
 body :is(#home,.preview-page) .cards h3{font-size:25px;font-weight:450;letter-spacing:-.7px;line-height:1.25;margin:0 0 24px;min-height:63px}
 body :is(#home,.preview-page) .cards p{font-size:14px;line-height:1.8;margin:0 0 20px}
 body :is(#home,.preview-page) .cards .text-button{background:none!important;color:#493727!important;border:0;border-bottom:1px solid #ad9678;border-radius:0;padding:10px 0;font-size:13px;white-space:normal}
@@ -174,3 +174,5 @@ body #home .founder-natural{gap:0;max-height:none}body #home .founder-natural .f
 @media(max-width:650px){body #home .founder-natural .founder-portrait{height:470px}body #home .founder-natural .founder-portrait img{object-position:45% center}body #home .founder-natural:after{height:470px}body #home .founder-natural h1{font-size:clamp(29px,7.8vw,38px);max-width:66%}body #home .founder-natural .founder-lead{max-width:51%;text-align:left}body #home .founder-natural .founder-signature{display:block}body #home .founder-natural .founder-signature p{max-width:none}}
 @media(max-width:650px){body #home .founder-natural .founder-portrait img{object-position:58% center}body #home .founder-natural h1{max-width:58%;font-size:clamp(27px,7.6vw,33px)}body #home .founder-natural .founder-lead{max-width:49%}body #home .founder-natural .founder-signature{text-align:left}body #home .founder-natural .founder-signature>span{text-align:left}}
 .promo-original-logo{position:relative;display:block;width:166px;height:51px;overflow:hidden;background:#faf9f6;isolation:isolate}.promo-original-logo>img{position:absolute;display:block;width:145%;max-width:none;height:auto;left:50%;top:48%;transform:translate(-50%,-50%);mix-blend-mode:multiply}
+/* All text uses upright faces, including semantic emphasis and generated content. */
+html body,html body *,html body *::before,html body *::after{font-style:normal!important}
