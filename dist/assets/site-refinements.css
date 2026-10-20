@@ -29,3 +29,4 @@ body #home .cards .card h3{line-height:1.3}
  body #home .founder-natural .founder-intro{font-size:19px;line-height:1.55;text-align:left}
  body #home .founder-natural .founder-signature>span{font-size:30px;letter-spacing:normal!important}
 }
+@media(max-width:760px){body #home .cards .card>div{text-align:left;display:block}body #home .cards .text-button{float:none;position:static;align-self:flex-start;justify-self:start;margin-left:0!important;margin-right:auto!important}}
