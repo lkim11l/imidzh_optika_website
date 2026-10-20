@@ -30,3 +30,19 @@ body #home .cards .card h3{line-height:1.3}
  body #home .founder-natural .founder-signature>span{font-size:30px;letter-spacing:normal!important}
 }
 @media(max-width:760px){body #home .cards .card>div{text-align:left;display:block}body #home .cards .text-button{float:none;position:static;align-self:flex-start;justify-self:start;margin-left:0!important;margin-right:auto!important}}
+
+/* The quotation is the sole italic accent. Its ribbon continues behind Eduard. */
+body #home .founder-natural .founder-intro,body #home .founder-natural .founder-intro *{font-style:italic!important;font-weight:400;font-size:clamp(20px,1.8vw,27px);line-height:1.55;letter-spacing:normal!important}
+body #home .founder-natural .founder-band{width:100%;right:0;z-index:1;padding-right:55%;background:#dfc9a6}
+body #home .founder-natural .founder-intro{max-width:620px}
+body #home .founder-natural .founder-front{position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:2;pointer-events:none}
+body #home .founder-natural .founder-front img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;max-width:none}
+body #home .founder-natural .immersive-heading,body #home .founder-natural .founder-signature{z-index:3}
+body #home .promo-invitation{justify-content:flex-start;gap:0}
+body #home .promo-badge{padding-bottom:28px;border-bottom:1px solid #ad967870}
+@media(max-width:650px){
+ body #home .founder-natural .founder-front{height:470px;inset:0 0 auto}
+ body #home .founder-natural .founder-front img{object-position:58% center}
+ body #home .founder-natural .founder-band{position:relative;padding:72px 24px 26px;margin-top:-50px;min-height:0}
+ body #home .founder-natural .founder-intro,body #home .founder-natural .founder-intro *{font-size:19px;line-height:1.6;max-width:none}
+}
