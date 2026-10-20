@@ -16,3 +16,9 @@ body #home .founder-natural .founder-intro:after{content:'”';right:-45px;botto
 
 @media(min-width:1101px){body #home .founder-natural .founder-lead{max-width:510px;width:100%}}
 @media(max-width:650px){body #home .founder-natural h1{max-width:58%;font-size:clamp(23px,6.15vw,28px)}}
+
+/* Keep a clear visual pause between the quote ribbon and the name. */
+@media(min-width:1101px){body #home .founder-natural .founder-band{bottom:clamp(230px,16vw,260px)}}
+@media(min-width:651px) and (max-width:1100px){body #home .founder-natural .founder-band{bottom:190px}}
+@media(max-width:650px){body #home .founder-natural .founder-signature{padding-top:42px}}
+
