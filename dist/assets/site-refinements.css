@@ -1,0 +1,31 @@
+/* One upright, readable type system. Original logo files are not modified. */
+html body,html body *,html body *::before,html body *::after{font-family:Montserrat,Arial,sans-serif!important;font-style:normal!important;font-synthesis:none}
+body p,body address,body button,body input,body select,body textarea,body .text-button,body .category-caption,body .review-placeholder{letter-spacing:normal!important;word-spacing:normal!important}
+body h1,body h2,body h3{letter-spacing:-.015em!important;word-spacing:normal!important;font-weight:400}
+body #home .promo-badge{font-weight:400;letter-spacing:-.025em!important;font-variant-numeric:lining-nums}
+body #home .card-number,body #home .category-type em{font-weight:400;font-style:normal}
+body #home .review-placeholder h3{line-height:1.35;letter-spacing:normal!important}
+body #home .founder-intro{line-height:1.5;letter-spacing:normal!important}
+body #home .cards .card h3{line-height:1.3}
+@media(max-width:760px){
+ body #home .wrap{width:calc(100% - 40px);max-width:100%;margin-left:auto;margin-right:auto}
+ body #home .approach-heading{margin-bottom:28px;text-align:center}
+ body #home .approach-heading h2{font-size:28px;line-height:1.3;max-width:22ch;margin:auto}
+ body #home .cards{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+ body #home .cards .card{display:block;padding:28px 0;min-height:0;text-align:left}
+ body #home .cards .card-number{display:block;font-size:20px;margin:0 0 20px}
+ body #home .cards .card h3{font-size:25px;min-height:0;margin:0 0 16px;text-align:left}
+ body #home .cards .card p{font-size:16px;line-height:1.65;margin:0 0 22px;text-align:left}
+ body #home .cards .text-button{display:inline-flex;font-size:14px;line-height:1.5;text-align:left;margin:0;max-width:100%}
+ body #home .category-type{padding:28px!important;min-height:280px}
+ body #home .category-type p,body #home .category-type em{font-size:30px;line-height:1.25;letter-spacing:normal!important}
+ body #home .review-placeholder{text-align:left;padding:24px;min-height:240px}
+ body #home .review-placeholder h3{font-size:21px;text-align:left;margin-top:32px}
+ body #home .review-placeholder p,body #home .reviews-preview-label{font-size:15px;line-height:1.6;text-align:left}
+ body #home .trust-line>div{text-align:center;padding:20px;min-height:110px}
+ body #home #vision h2,body #home .hoya-copy h2{font-size:29px;line-height:1.3}
+ body #home .store-contacts h3{font-size:29px;line-height:1.3}
+ body #home .founder-natural .founder-lead{line-height:1.6;letter-spacing:normal!important;text-align:left}
+ body #home .founder-natural .founder-intro{font-size:19px;line-height:1.55;text-align:left}
+ body #home .founder-natural .founder-signature>span{font-size:30px;letter-spacing:normal!important}
+}
