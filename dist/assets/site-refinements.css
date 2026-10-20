@@ -46,3 +46,4 @@ body #home .promo-badge{padding-bottom:28px;border-bottom:1px solid #ad967870}
  body #home .founder-natural .founder-band{position:relative;padding:72px 24px 26px;margin-top:-50px;min-height:0}
  body #home .founder-natural .founder-intro,body #home .founder-natural .founder-intro *{font-size:19px;line-height:1.6;max-width:none}
 }
+@media(min-width:651px) and (max-width:1100px){body #home .founder-natural .immersive-heading{padding-top:28px}body #home .founder-natural h1{margin-top:18px;margin-bottom:16px}body #home .founder-natural .founder-lead{margin-bottom:22px}body #home .founder-natural .founder-signature>span{font-size:30px;text-align:left}body #home .founder-natural .founder-signature{text-align:left}}
