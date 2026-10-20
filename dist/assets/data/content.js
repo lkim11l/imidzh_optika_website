@@ -18,7 +18,7 @@ export const contentFields = [
  ['hoyaTitle','Заголовок блока линз','.hoya-copy h2',160],
  ['hoyaText','Описание блока линз','.hoya-copy>p:not(.eyebrow)',700],
  ['trustTitle','Опыт — заголовок','.trust-line>div:first-child strong',100],
- ['trustText','Опыт — описание','.trust-line>div:first-child span',200],
+ ['trustText','Опыт — описание','.trust-line>div:first-child>span',200],
  ['appointmentTitle','Заголовок записи','#appointment h2',160]
 ];
 export async function loadContent() {
