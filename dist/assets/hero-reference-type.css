@@ -18,7 +18,9 @@ body #home .founder-natural .founder-intro:after{content:'”';right:-45px;botto
 @media(max-width:650px){body #home .founder-natural h1{max-width:58%;font-size:clamp(23px,6.15vw,28px)}}
 
 /* Keep a clear visual pause between the quote ribbon and the name. */
-@media(min-width:1101px){body #home .founder-natural .founder-band{bottom:clamp(230px,16vw,260px)}}
-@media(min-width:651px) and (max-width:1100px){body #home .founder-natural .founder-band{bottom:190px}}
 @media(max-width:650px){body #home .founder-natural .founder-signature{padding-top:42px}}
 
+
+/* Let text determine the hero height: CTA, quote and name cannot overlap. */
+@media(min-width:651px){body #home .founder-natural.founder-immersive{height:auto;min-height:780px;display:block}body #home .founder-natural .founder-band{position:relative;inset:auto;margin-top:40px}body #home .founder-natural .founder-signature{position:relative;inset:auto;width:auto;max-width:none;margin:0;padding:36px max(5vw,24px) 36px}}
+@media(min-width:1101px){body #home .founder-natural .immersive-heading{max-width:960px}}
