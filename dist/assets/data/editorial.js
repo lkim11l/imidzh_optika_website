@@ -14,11 +14,11 @@ export const editorialDefaults = {
  aboutStory:'У нас нет наёмных продавцов-консультантов — всех наших клиентов ведём мы, владельцы Эдуард и Наталья с 25-летним стажем. За счёт этого и получается действительно индивидуальный подход. Обращаясь к нам, вы гарантированно получаете лучшую услугу в оптическом смысле! За свои деньги!',
  eduardName:'Эдуард', eduardRole:'Владелец · 25 лет опыта',
  eduardBio:'Лично веду наших клиентов и помогаю подобрать оправы и линзы с учётом их потребностей.',
- nataliaName:'Наталья', nataliaRole:'Владелец · 25 лет опыта',
+ nataliaName:'Наталья', nataliaRole:'Совладелец · 25 лет опыта',
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
- ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-natural-v4.webp'],
+ ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-business-v6.webp'],
  ['collectionSunPhoto','Фотография солнцезащитных очков','.real-product-photo img','/assets/sunglasses-real-v1.webp']
 ];
 export const aboutFields = [
@@ -40,7 +40,7 @@ export function editorialData(data={}){
  const resolved={...data};
  const legacy={heroTitle:/Хорошие очки|Правильные инструменты для качественного/i,heroLead:/Лично подбираем|Мы с Натальей|Просто приходите/i,visionTitle:/Сначала.*понять/is,hoyaTitle:/Точность в линзах/is};
  for(const [key,pattern] of Object.entries(legacy))if(pattern.test(String(resolved[key]||'')))resolved[key]=editorialDefaults[key];
- if(typeof resolved.nataliaRole==='string')resolved.nataliaRole=resolved.nataliaRole.replace(/совладелец/gi,'Владелец');
+ if(typeof resolved.nataliaRole==='string')resolved.nataliaRole=resolved.nataliaRole.replace(/(?:со)?владелец/gi,'Совладелец');
  if(typeof resolved.eduardRole==='string')resolved.eduardRole=resolved.eduardRole.replace(/совладелец/gi,'Владелец');
  if(/^правильные инструменты для качественного зрения!?$/i.test(String(resolved.heroTitle||'').trim()))resolved.heroTitle=editorialDefaults.heroTitle;
  if(typeof resolved.heroLead==='string' && /^просто приходите, потому что вы достойны самого лучшего!?$/i.test(resolved.heroLead.trim()))resolved.heroLead=editorialDefaults.heroLead;
