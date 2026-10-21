@@ -106,3 +106,8 @@ body #home .founder-natural .founder-signature p{font-size:clamp(14px,1.5vw,20px
 
 /* Keep the rating source label on one line at every viewport width. */
 body #home .reviews-rating>span{max-width:none;white-space:nowrap;flex-shrink:0}
+
+/* Mobile centering audit: equal quote gutters, centered catalogue CTA and prices. */
+@media(max-width:760px){body #home .collection-heading>.text-button{align-self:center!important;margin-left:auto!important;margin-right:auto!important;justify-content:center}body #home .product-price{justify-content:center}body #home .category-caption>span{align-self:center;justify-content:center}}
+@media(max-width:650px){body #home .founder-natural .founder-band{padding-left:45px;padding-right:45px}body #home .founder-natural .founder-intro:before{left:-30px}body #home .founder-natural .founder-intro:after{right:-30px}}
+@media(max-width:760px){body #home .cards .card,body #home .cards .card-large{grid-template-columns:minmax(0,1fr);justify-content:stretch}}
