@@ -12,7 +12,7 @@ body #home .founder-natural h1{width:62%;max-width:62%;font-size:clamp(18px,5.1v
 body #home .founder-natural .founder-lead{width:49%;max-width:49%;font-size:clamp(11px,3vw,16px);line-height:1.5;text-align:left;margin:0 0 22px}
 body #home .founder-natural .founder-actions{width:58%;justify-content:flex-start;align-items:flex-start;flex-direction:row;margin:0}
 body #home .founder-natural .founder-actions .button{font-size:12px;min-width:0;min-height:44px;padding:12px 15px;gap:12px;white-space:nowrap}
-body #home .founder-natural .founder-signature{position:relative;inset:auto;order:1;width:100%;max-width:none;min-height:0;margin:0;padding:18px 20px 28px;background:transparent;text-align:left;z-index:3}
+body #home .founder-natural .founder-signature{position:relative;inset:auto;order:1;width:100%;max-width:none;min-height:0;margin:-24px 0 0;padding:18px 20px 28px;background:transparent;text-align:left;z-index:3}
 body #home .founder-natural .founder-signature>span{font-size:clamp(21px,6vw,34px);line-height:1.2;text-align:left;white-space:nowrap;max-width:none;font-weight:300;text-shadow:0 1px 4px #21170f}
 body #home .founder-natural .founder-signature>span:before{display:block;width:30px;height:2px;margin:0 0 12px}
 body #home .founder-natural .founder-signature p{font-size:clamp(10px,2.7vw,15px);line-height:1.45;text-align:left;width:62%;max-width:none;margin:10px 0 0;padding:0;text-shadow:0 1px 4px #21170f}
