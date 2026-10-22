@@ -1,25 +1,23 @@
-/* Phone-only cover: the same layered composition as the desktop reference. */
+/* Mobile portrait stays at its natural scale; no stepped clipping. */
 .founder-mobile-portrait,.founder-mobile-front{display:none}
 @media(max-width:650px){
- body #home .founder-natural.founder-immersive{display:block;position:relative;isolation:isolate;height:auto;min-height:0;background:#3c332b}
- body #home .founder-natural .founder-portrait,body #home .founder-natural .founder-front{display:none}
- body #home .founder-natural .founder-mobile-portrait,body #home .founder-natural .founder-mobile-front{display:block;position:absolute;inset:0;width:100%;height:100%;margin:0;pointer-events:none}
- body #home .founder-natural .founder-mobile-portrait{z-index:0;clip-path:inset(0 0 0 53%)}
- body #home .founder-natural .founder-mobile-front{z-index:2;clip-path:polygon(53% 0,100% 0,100% 100%,43% 100%,43% 74%,53% 74%)}
- body #home .founder-natural .founder-mobile-portrait img,body #home .founder-natural .founder-mobile-front img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:60% top}
- body #home .founder-natural .founder-mobile-portrait:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#271e17e8 0%,#271e1790 42%,transparent 75%)}
- body #home .founder-natural .immersive-heading{position:relative;inset:auto;width:100%;max-width:none;min-height:0;padding:25px 20px 0;background:transparent;text-align:left;z-index:3}
- body #home .founder-natural .immersive-heading:before{width:30px;height:2px;margin:0 0 18px}
- body #home .founder-natural h1{width:62%;max-width:62%;font-size:clamp(17px,5.1vw,28px);line-height:1.12;letter-spacing:-.025em!important;text-align:left;margin:0 0 20px;overflow-wrap:normal;word-break:normal}
- body #home .founder-natural .founder-lead{width:48%;max-width:48%;font-size:clamp(10px,3vw,12px);line-height:1.5;text-align:left;margin:0 0 18px}
- body #home .founder-natural .founder-actions{width:58%;justify-content:flex-start;align-items:flex-start;flex-direction:row;margin:0}
- body #home .founder-natural .founder-actions .button{font-size:12px;min-width:0;min-height:46px;padding:12px 17px;gap:15px;white-space:nowrap}
- body #home .founder-natural .founder-band{position:relative;inset:auto;order:initial;width:100%;margin:24px 0 0;padding:20px 50% 20px 38px;background:#dfc9a6;z-index:1}
- body #home .founder-natural .founder-intro,body #home .founder-natural .founder-intro *{font-size:clamp(12px,4vw,17px);line-height:1.2;text-align:left;max-width:none}
- body #home .founder-natural .founder-intro:before{font-size:43px;left:-27px;top:-5px}
- body #home .founder-natural .founder-intro:after{font-size:43px;right:-20px;bottom:-20px}
- body #home .founder-natural .founder-signature{position:relative;inset:auto;order:initial;width:100%;max-width:none;min-height:0;margin:0;padding:25px 20px 28px;background:transparent;text-align:left;z-index:3}
- body #home .founder-natural .founder-signature>span{font-size:clamp(18px,5.7vw,30px);line-height:1.2;text-align:left;white-space:nowrap;max-width:66%;font-weight:300;text-shadow:0 1px 3px #21170f,0 0 6px #21170f}
- body #home .founder-natural .founder-signature>span:before{display:block;width:30px;height:2px;margin:0 0 12px}
- body #home .founder-natural .founder-signature p{font-size:11px;line-height:1.4;text-align:left;width:58%;max-width:210px;margin:10px 0 0;padding:0}
+body #home .founder-natural.founder-immersive{display:flex;flex-direction:column;position:relative;isolation:isolate;height:auto;min-height:0;background:#3c332b}
+body #home .founder-natural .founder-portrait,body #home .founder-natural .founder-front,body #home .founder-natural .founder-mobile-front{display:none}
+body #home .founder-natural .founder-mobile-portrait{display:block;position:absolute;inset:0 0 auto;width:100%;height:calc(78vw + 110px);margin:0;pointer-events:none;z-index:0;overflow:hidden;mask-image:linear-gradient(#000 84%,transparent)}
+body #home .founder-natural .founder-mobile-portrait img{display:block;position:absolute;top:0;right:-38%;width:180%;height:auto;max-width:none;object-fit:contain;mask-image:linear-gradient(#000 84%,transparent)}
+body #home .founder-natural .founder-mobile-portrait:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#30271ff2 0%,#30271fd9 30%,#30271f45 48%,transparent 65%)}
+body #home .founder-natural .immersive-heading{position:relative;inset:auto;order:0;width:100%;max-width:none;min-height:78vw;padding:25px 20px 20px;background:transparent;text-align:left;z-index:3}
+body #home .founder-natural .immersive-heading:before{width:30px;height:2px;margin:0 0 20px}
+body #home .founder-natural h1{width:62%;max-width:62%;font-size:clamp(18px,5.1vw,32px);line-height:1.15;letter-spacing:-.025em!important;text-align:left;margin:0 0 18px;overflow-wrap:normal;word-break:normal}
+body #home .founder-natural .founder-lead{width:49%;max-width:49%;font-size:clamp(11px,3vw,16px);line-height:1.5;text-align:left;margin:0 0 22px}
+body #home .founder-natural .founder-actions{width:58%;justify-content:flex-start;align-items:flex-start;flex-direction:row;margin:0}
+body #home .founder-natural .founder-actions .button{font-size:12px;min-width:0;min-height:44px;padding:12px 15px;gap:12px;white-space:nowrap}
+body #home .founder-natural .founder-signature{position:relative;inset:auto;order:1;width:100%;max-width:none;min-height:0;margin:0;padding:18px 20px 28px;background:transparent;text-align:left;z-index:3}
+body #home .founder-natural .founder-signature>span{font-size:clamp(21px,6vw,34px);line-height:1.2;text-align:left;white-space:nowrap;max-width:none;font-weight:300;text-shadow:0 1px 4px #21170f}
+body #home .founder-natural .founder-signature>span:before{display:block;width:30px;height:2px;margin:0 0 12px}
+body #home .founder-natural .founder-signature p{font-size:clamp(10px,2.7vw,15px);line-height:1.45;text-align:left;width:62%;max-width:none;margin:10px 0 0;padding:0;text-shadow:0 1px 4px #21170f}
+body #home .founder-natural .founder-band{position:relative;inset:auto;order:2;width:100%;margin:0;padding:25px 38px;background:#dfc9a6;z-index:3}
+body #home .founder-natural .founder-intro,body #home .founder-natural .founder-intro *{font-size:clamp(20px,5.5vw,30px);line-height:1.3;text-align:left;max-width:none;white-space:normal}
+body #home .founder-natural .founder-intro:before{font-size:43px;left:-27px;top:-5px}
+body #home .founder-natural .founder-intro:after{font-size:43px;right:-25px;bottom:-12px}
 }
