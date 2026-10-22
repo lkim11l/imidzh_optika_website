@@ -1,10 +1,10 @@
 /* Mobile layout follows the supplied portrait reference. Desktop is unchanged. */
 .founder-mobile-portrait,.founder-mobile-front,.mobile-reference-logo{display:none}
 @media(max-width:650px){
-body .header-shell .header{width:100%;max-width:none;margin:0;min-height:66px;height:66px;padding:8px 6%;display:flex;align-items:center;justify-content:space-between;gap:16px}
-body .header-shell .header>.header-socials,body .header-shell .header>nav:not(.header-socials),body .header-shell .favorite-nav,body .header-shell .header-about{display:none!important}
+body .header-shell .header{width:100%;max-width:none;margin:0;min-height:66px;height:auto;flex-wrap:wrap;row-gap:7px;padding:8px 6%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+body .header-shell .header>nav:not(.header-socials),body .header-shell .favorite-nav,body .header-shell .header-about{display:none!important}
 body .header-shell .header .wordmark{width:160px;height:47px}body .header-shell .wordmark>img{display:block}body .header-shell .mobile-reference-logo{display:none;flex-direction:column;align-items:flex-start;justify-content:center;height:47px;color:#99734a;font-size:clamp(28px,8vw,34px);font-weight:300;letter-spacing:.12em;line-height:1.15}body .header-shell .mobile-reference-logo small{display:block;color:#27221e;font-size:7.5px;letter-spacing:2.6px;line-height:1.4;white-space:nowrap}
-body .header-shell .header-actions{display:flex;gap:12px;margin:0;align-items:center}
+body .header-shell .header-actions{display:flex;gap:12px;margin:0 0 0 auto;align-items:center;order:1}body .header-shell .header .header-socials{display:flex!important;order:2;flex:0 0 100%;width:100%;justify-content:space-between;gap:6px;margin:0;padding:0}body .header-shell .header .header-socials .social-link{display:flex;flex:1 1 0;min-width:0;min-height:34px;justify-content:center;padding:8px 6px;gap:4px;font-size:clamp(10px,2.8vw,12px);white-space:nowrap}body .header-shell .header .header-socials .social-link>span{display:inline}body .header-shell .header .header-socials .social-link>svg{width:14px;height:14px;flex:0 0 14px}
 body .header-shell .header-actions .icon-button{width:28px;height:36px;min-width:28px;padding:2px}
 body .header-shell .header-actions .mobile-menu-button{display:flex;border-left:1px solid #b49a75;border-radius:0;padding-left:14px;width:42px}
 body #home .founder-natural.founder-immersive{display:flex;flex-direction:column;position:relative;isolation:isolate;height:auto;min-height:0;background:#3c332b}
