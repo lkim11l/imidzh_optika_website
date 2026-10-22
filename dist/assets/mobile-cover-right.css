@@ -10,8 +10,8 @@ body .header-shell .header-actions .mobile-menu-button{display:flex;border-left:
 body #home .founder-natural.founder-immersive{display:flex;flex-direction:column;position:relative;isolation:isolate;height:auto;min-height:0;background:#3c332b}
 body #home .founder-natural .founder-portrait,body #home .founder-natural .founder-front,body #home .founder-natural .founder-mobile-front{display:none}
 body #home .founder-natural .founder-mobile-portrait{display:block;position:absolute;inset:0;width:100%;height:100%;margin:0;pointer-events:none;z-index:0;overflow:hidden;mask-image:none}
-body #home .founder-natural .founder-mobile-portrait img{display:block;position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center top;mask-image:none}
-body #home .founder-natural .founder-mobile-portrait:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#281d1526,transparent 56%)}
+body #home .founder-natural .founder-mobile-portrait img{display:block;position:absolute;inset:-5% auto auto -20%;width:145%;height:145%;max-width:none;object-fit:cover;object-position:center top;mask-image:none}
+body #home .founder-natural .founder-mobile-portrait:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#281d159e 0%,#281d1559 43%,transparent 64%)}
 body #home .founder-natural .immersive-heading{position:relative;inset:auto;order:0;width:100%;max-width:none;min-height:89vw;padding:8vw 6% 20px;background:transparent;text-align:left;z-index:3}
 body #home .founder-natural .immersive-heading:before{width:28px;height:2px;margin:0 0 11.5vw}
 body #home .founder-natural h1{width:51%;max-width:51%;font-size:6.55vw;line-height:1.08;letter-spacing:-.035em!important;text-align:left;margin:0 0 10px;overflow-wrap:normal;word-break:normal}
