@@ -15,6 +15,11 @@ export async function request(path, {method='GET', body, authenticated=false, he
   } catch {throw new Error(config.apiBase ? 'Сервер сайта не ответил вовремя. Повторите попытку.' : 'Не удалось связаться с базой. Проверьте соединение и повторите попытку.');}
   const result = await response.json().catch(()=>null);
   if(!response.ok) {
+    if(path.includes('/rpc/optika_delete_')||path.includes('/rpc/optika_pending_file_cleanup')){
+      if(response.status===404)throw new Error('DELETE_NOT_CONFIGURED');
+      if(result?.code==='40001')throw new Error('DELETE_CONFLICT');
+      if(result?.code==='55000')throw new Error('DELETE_EMAIL_BUSY');
+    }
     if(response.status===502 || response.status===503 || response.status===504) throw new Error('Сервер сайта не может связаться с базой Татнет. Повторите попытку позже.');
     if(response.status===429) throw new Error('Слишком много попыток. Подождите немного и повторите вход.');
     if(response.status===401 && authenticated) clearSession();

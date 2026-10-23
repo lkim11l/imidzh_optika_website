@@ -20,3 +20,13 @@ test('backend proxy preserves public permissions and bearer while dropping cooki
  assert.match(url,/\/auth\/v1\/token\?grant_type=password$/);assert.equal(opts.headers.cookie,undefined);assert.notEqual(opts.headers.apikey,'wrong');assert.equal(opts.redirect,'error');assert.match(opts.body.toString(),/pilot@example.invalid/);return new Response('{"error":"Invalid login credentials"}',{status:400,headers:{'content-type':'application/json'}});
  });assert.equal(res.statusCode,400);assert.match(res.body.toString(),/Invalid login/);
 });
+test('deletion is limited to named RPCs and the catalog storage bucket',async()=>{
+ for(const [route,method] of [['/rest/v1/rpc/optika_delete_product','POST'],['/rest/v1/rpc/optika_delete_booking','POST'],['/rest/v1/rpc/optika_pending_file_cleanup','POST'],['/storage/v1/object/optika-products','DELETE']]){
+  const res=response();await backendProxy(request('/api/backend'+route,method,{authorization:'Bearer test','content-type':'application/json'},'{}'),res,async(url,options)=>{
+   assert.equal(options.headers.authorization,'Bearer test');assert.equal(options.method,method);return new Response('[]',{status:200});
+  });assert.equal(res.statusCode,200);
+ }
+ for(const route of ['/rest/v1/optika_products','/rest/v1/optika_bookings','/storage/v1/object/other-bucket']){
+  const res=response();await backendProxy(request('/api/backend'+route,'DELETE'),res,()=>{throw Error('must not fetch');});assert.equal(res.statusCode,404);
+ }
+});
