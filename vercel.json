@@ -26,7 +26,7 @@
       ]
     },
     {
-      "source": "/cookie(.*)",
+      "source": "/(admin|cookie)(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -62,7 +62,7 @@
       ]
     },
     {
-      "source": "/(cookie|favorites|cart)(.*)",
+      "source": "/(admin|cookie|favorites|cart)(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -91,6 +91,16 @@
         }
       ],
       "destination": "https://optikim.ru/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/cookie",
+      "destination": "/admin",
+      "permanent": true
+    },
+    {
+      "source": "/cookie/index.html",
+      "destination": "/admin",
       "permanent": true
     }
   ],

@@ -21,11 +21,13 @@ export function createApp({seoHandler=seo,imageHandler=productImage,statusHandle
   if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');
+   if(/^\/(admin|cookie)(\/|$)/.test(url.pathname)){res.setHeader('Cache-Control','no-store');res.setHeader('X-Robots-Tag','noindex, nofollow');}
    if(url.pathname==='/api/admin/status')return await statusHandler(req,res);
    if(url.pathname.startsWith('/api/backend/'))return await backendHandler(req,res);
    if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{Allow:'GET, HEAD'});return res.end();}
    if(url.pathname==='/healthz'){res.setHeader('Cache-Control','no-store');return res.end(req.method==='HEAD'?'':'ok');}
    if(!staging&&String(req.headers.host).split(':')[0]==='www.optikim.ru'){res.writeHead(308,{Location:'https://optikim.ru'+url.pathname+url.search});return res.end();}
+   if(['/cookie','/cookie/','/cookie/index.html','/admin/index.html'].includes(url.pathname)){res.writeHead(308,{Location:'/admin'+url.search});return res.end();}
    if(url.pathname!=='/'&&url.pathname.endsWith('/')){res.writeHead(308,{Location:url.pathname.replace(/\/+$/,'')+url.search});return res.end();}
    if(staging&&url.pathname==='/robots.txt'){res.setHeader('Content-Type',types['.txt']);return res.end(req.method==='HEAD'?'':'User-agent: *\nDisallow: /\n');}
    req.query=Object.fromEntries(url.searchParams);

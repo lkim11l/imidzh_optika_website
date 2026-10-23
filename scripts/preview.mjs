@@ -10,6 +10,7 @@ const types = {'.svg':'image/svg+xml','.jpg':'image/jpeg','.html':'text/html; ch
 http.createServer(async(req,res) => {
   try {
     const url = new URL(req.url,'http://127.0.0.1');
+    if(['/cookie','/cookie/','/cookie/index.html'].includes(url.pathname)){res.writeHead(308,{Location:'/admin'+url.search,'Cache-Control':'no-store'});res.end();return;}
     if(url.pathname==='/api/product-image'){req.query=Object.fromEntries(url.searchParams);await productImage(req,res);return;}
     if(url.pathname !== '/' && url.pathname.endsWith('/')) {res.writeHead(308,{Location:url.pathname.replace(/\/+$/,'')+url.search});res.end();return;}
     if(url.pathname==='/' || /^\/(catalog|product)(\/|$)/.test(url.pathname) || ['/about','/sitemap.xml'].includes(url.pathname)) {

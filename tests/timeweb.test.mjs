@@ -15,7 +15,11 @@ test('Timeweb preserves dynamic routes, queries, redirects and staging isolation
   assert.match(await(await fetch(base+'/robots.txt')).text(),/Disallow: \//);
   assert.equal(await(await fetch(base+'/api/product-image?file=test')).text(),'image');
   assert.equal((await fetch(base+'/cookie')).status,200);
-  const head=await fetch(base+'/cookie',{method:'HEAD'});assert.equal(await head.text(),'');assert.equal(head.headers.get('cache-control'),'no-store');
+  for(const alias of ['/cookie','/cookie/','/cookie/index.html','/admin/index.html']){
+   const r=await fetch(base+alias+'?from=bookmark',{redirect:'manual'});assert.equal(r.status,308);assert.equal(r.headers.get('location'),'/admin?from=bookmark');assert.equal(r.headers.get('cache-control'),'no-store');assert.equal(r.headers.get('x-robots-tag'),'noindex, nofollow');
+  }
+  const admin=await fetch(base+'/admin');assert.equal(admin.status,200);assert.match(await admin.text(),/id="login"/);assert.equal(admin.headers.get('x-robots-tag'),'noindex, nofollow');
+  const head=await fetch(base+'/admin',{method:'HEAD'});assert.equal(await head.text(),'');assert.equal(head.headers.get('cache-control'),'no-store');
   assert.equal((await fetch(base+'/missing-page')).status,404);
   assert.equal((await fetch(base+'/seo-shell.html')).status,404);
   assert.equal((await fetch(base+'/%2e%2e%2fpackage.json')).status,404);
