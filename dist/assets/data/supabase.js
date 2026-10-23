@@ -1,13 +1,16 @@
 import { supabaseConfig as config } from './supabase-config.js';
+import {createAdminSession} from './admin-session.js';
+const storage=name=>{try{return globalThis[name];}catch{return null;}};
+const sessions=createAdminSession({scope:config.url,temporary:storage('sessionStorage'),persistent:storage('localStorage'),
+ refresh:token=>request('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:token}}),
+ lock:work=>globalThis.navigator?.locks?globalThis.navigator.locks.request('optika:admin-refresh:'+config.url,work):work()
+});
 export const isConfigured = () => !!config.url && !!config.publishableKey;
 export const usesSupabaseCatalog = () => isConfigured() && config.catalogEnabled;
-let session = null;
-export function clearSession() { session = null; }
+export function clearSession() { sessions.clear(); }
 export async function request(path, {method='GET', body, authenticated=false, headers={}}={}) {
   if(!isConfigured()) throw new Error('Подключение Supabase ещё не настроено.');
-  if(authenticated && (!session || Date.now() >= session.expiresAt)) {
-    clearSession(); throw new Error('Войдите заново: сеанс администратора завершён.');
-  }
+  const session=authenticated?await sessions.ensure():null;
   const auth = authenticated ? {Authorization:`Bearer ${session.access_token}`} : {};
   let response;
   try {
@@ -15,6 +18,9 @@ export async function request(path, {method='GET', body, authenticated=false, he
   } catch {throw new Error(config.apiBase ? 'Сервер сайта не ответил вовремя. Повторите попытку.' : 'Не удалось связаться с базой. Проверьте соединение и повторите попытку.');}
   const result = await response.json().catch(()=>null);
   if(!response.ok) {
+    if(path.includes('grant_type=refresh_token')&&[400,401,403].includes(response.status)){
+      const error=new Error('Войдите заново: сеанс администратора завершён.');error.authRejected=true;throw error;
+    }
     if(path.includes('/rpc/optika_delete_')||path.includes('/rpc/optika_pending_file_cleanup')){
       if(response.status===404)throw new Error('DELETE_NOT_CONFIGURED');
       if(result?.code==='40001')throw new Error('DELETE_CONFLICT');
@@ -39,18 +45,29 @@ export async function checkAdminConnection(){
   const result=await response.json();return {...result,reason:result.ready?'ready':result.services?.catalog&&!result.services?.auth?'auth':'backend'};
  }catch{return {ready:false,reason:'network'};}
 }
-export async function signIn(email,password) {
+export async function signIn(email,password,remember=false) {
   clearSession();
   const result = await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}});
-  session = {...result,expiresAt:Date.now() + result.expires_in*1000};
+  sessions.accept(result,remember);
   try {
     const allowed = await request('/rest/v1/rpc/optika_is_admin',{method:'POST',body:{},authenticated:true});
     if(!allowed) throw new Error('У этой учётной записи нет прав администратора.');
   } catch(error) {clearSession();throw error;}
   return result.user;
 }
+export async function restoreSession(){
+ if(!sessions.restore())return null;
+ const allowed=await request('/rest/v1/rpc/optika_is_admin',{method:'POST',body:{},authenticated:true});
+ if(!allowed){clearSession();throw Error('У этой учётной записи нет прав администратора.');}
+ return sessions.get().user;
+}
+if(typeof window!=='undefined')window.addEventListener('storage',event=>{
+ if(event.key===sessions.key&&event.newValue===null&&sessions.isRemembered()){
+  clearSession();window.dispatchEvent(new Event('optika:session-ended'));
+ }
+});
 export async function signOut() {
-  try {if(session) await request('/auth/v1/logout',{method:'POST',authenticated:true});}
+  try {if(sessions.get()) await request('/auth/v1/logout',{method:'POST',authenticated:true});}
   finally {clearSession();}
 }
 export async function listRows(admin=false) {

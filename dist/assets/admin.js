@@ -2,7 +2,7 @@ import {optimizedImageURL} from './data/product-images.js';
 import {makeProductSlug} from './ui/product-address.js';
 import {renderEditorialEditor} from './ui/editorial-editor.js?v=eduard-home1';
 import {AdminPreview} from './ui/admin-preview.js?v=brands3rows1';
-import {isConfigured,signIn,signOut,listRows,saveRow,uploadImage,request} from './data/supabase.js';
+import {isConfigured,signIn,signOut,restoreSession,listRows,saveRow,uploadImage,request} from './data/supabase.js';
 import {AdminGallery} from './ui/admin-gallery.js?v=tatnet-photos1';
 import {contentFields,loadContent,saveContent} from './data/content.js';
 import {renderBrandManager} from './ui/admin-brands.js?v=preview1';
@@ -18,7 +18,7 @@ const message=text=>{$('#message').textContent=text;};
 const error=e=>message(e.message || 'Не удалось выполнить операцию.');
 function resetWorkspace(){disposeEditorial?.();disposeEditorial=null;productPreview?.dispose();productPreview=null;workspacePreview?.dispose();workspacePreview=null;gallery.reset();dirty=false;generation++;rows=[];editing=null;$('#workspace-body').replaceChildren();$('#workspace').hidden=true;$('#login-panel').hidden=false;$('#logout').hidden=true;$('#editor').close();$('#product-form').reset();}
 if(!isConfigured()){message('Подключение Supabase ещё не настроено.');$('#login button').disabled=true;}
-$('#login').addEventListener('submit',async e=>{e.preventDefault();const button=e.currentTarget.querySelector('button');button.disabled=true;message('Входим…');const data=new FormData(e.currentTarget);try{await signIn(data.get('email'),data.get('password'));e.target.reset();$('#login-panel').hidden=true;$('#workspace').hidden=false;$('#logout').hidden=false;await showTab('products');}catch(e){error(e);}finally{button.disabled=false;}});
+$('#login').addEventListener('submit',async e=>{e.preventDefault();const button=e.currentTarget.querySelector('button');button.disabled=true;message('Входим…');const data=new FormData(e.currentTarget);try{await signIn(data.get('email'),data.get('password'),data.has('remember'));e.target.reset();$('#login-panel').hidden=true;$('#workspace').hidden=false;$('#logout').hidden=false;await showTab('products');}catch(e){error(e);}finally{button.disabled=false;}});
 $('#logout').onclick=async()=>{if(busy)return;if(dirty&&!confirm('Выйти без сохранения изменений?'))return;try{await signOut();}catch{}finally{resetWorkspace();message('Вы вышли из аккаунта.');}};
 document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(busy)return;if(dirty&&!confirm('Перейти без сохранения изменений?'))return;dirty=false;showTab(button.dataset.tab);});
 async function showTab(next){disposeEditorial?.();disposeEditorial=null;workspacePreview?.dispose();workspacePreview=null;const current=++generation;tab=next;document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===tab)));$('#workspace-body').innerHTML='<p>Загрузка…</p>';message('');try{if(tab==='products'){const loaded=await listRows(true);if(current!==generation)return;rows=loaded;renderProducts();}else if(tab==='brands'){const [content,products]=await Promise.all([loadContent(),listRows(true)]);if(current!==generation)return;$('#workspace-body').innerHTML='<div class="admin-preview-layout"><div id="brands-editor-pane" class="admin-edit-pane"></div><div id="brands-preview-host" class="admin-preview-host"></div></div>';workspacePreview=new AdminPreview($('#brands-preview-host'));renderBrandManager($('#brands-editor-pane'),content,products,{onPreview:(entries,publishedProducts,changed)=>workspacePreview?.updateBrands(entries,publishedProducts,changed),message,setDirty:value=>dirty=value,setBusy:value=>{busy=value;$('#logout').disabled=value;document.querySelectorAll('[data-tab]').forEach(b=>b.disabled=value);}});}else if(tab==='bookings'){const bookings=await request('/rest/v1/optika_bookings?select=*&order=created_at.desc&limit=500',{authenticated:true});if(current!==generation)return;renderBookings(bookings);}else{const content=await loadContent();if(current!==generation)return;renderContent(content);}}catch(e){if(current===generation){$('#workspace-body').innerHTML='<button id="retry">Повторить загрузку</button>';$('#retry').onclick=()=>showTab(tab);error(e);}}}
@@ -82,3 +82,9 @@ function renderBookings(bookings){$('#workspace-body').innerHTML='<div class="he
   try{await deleteBooking(row);renderBookings(bookings.filter(b=>b.id!==row.id));message('Заявка удалена из рабочей базы.');}
   catch(e){message(deletionError(e));}finally{setListBusy(false);}
  });}
+
+window.addEventListener('optika:session-ended',()=>{resetWorkspace();message('Вход завершён в другом окне.');});
+if(isConfigured()){
+ const button=$('#login button');button.disabled=true;message('Проверяем сохранённый вход…');
+ restoreSession().then(async user=>{if(user){$('#login-panel').hidden=true;$('#workspace').hidden=false;$('#logout').hidden=false;await showTab('products');}else message('');}).catch(error).finally(()=>{button.disabled=false;});
+}
