@@ -1,0 +1,13 @@
+/* Keep the cart and About link visible together in the mobile header. */
+body .header-shell .header-actions .checkout-nav{background:#3c2b22;color:#fff7e9;border:1px solid #5b4131;box-shadow:none}
+body .header-shell .header-actions .checkout-nav:hover{background:#563c2b;color:#fff7e9}
+body .header-shell .checkout-nav .count-badge{background:#dfc59b;color:#3c2b22}
+@media(max-width:650px){
+ body .header-shell .header{column-gap:8px;row-gap:8px}
+ body .header-shell .header .wordmark{width:140px;height:43px}
+ body .header-shell .header-actions{gap:5px;flex:0 0 auto;margin-left:auto}
+ body .header-shell .header-actions .header-about{display:inline-flex!important;align-items:center;justify-content:center;min-width:52px;min-height:36px;height:36px;padding:0 9px;box-sizing:border-box;flex:0 0 auto;border:0;border-radius:22px;background:#3c2b22;color:#fff7e9;font-size:12px;font-weight:500;line-height:1;white-space:nowrap}
+ body .header-shell .header-actions .mobile-menu-button{width:28px;min-width:28px;height:36px;padding:2px;border-left:0}
+}
+@media(max-width:380px){body .header-shell .header{padding-inline:4%}body .header-shell .header .wordmark{width:120px;height:38px}}
+@media(max-width:340px){body .header-shell .header .wordmark{width:110px;height:35px}}
