@@ -8,7 +8,7 @@ test('Timeweb preserves dynamic routes, queries, redirects and staging isolation
  app.listen(0,'127.0.0.1');await once(app,'listening');
  const base=`http://127.0.0.1:${app.address().port}`;
  try {
-  for(const route of ['/','/catalog','/catalog/optical','/catalog/sunglasses','/product/model','/about','/sitemap.xml']){
+  for(const route of ['/','/catalog','/catalog/optical','/catalog/sunglasses','/product/model','/about','/checkout','/cart','/sitemap.xml']){
    const r=await fetch(base+route+'?sort=popular');assert.equal(r.status,200);assert.equal(r.headers.get('x-robots-tag'),'noindex, nofollow');assert.equal((await r.json()).page,route.slice(1));
   }
   const redirect=await fetch(base+'/catalog/?brand=test',{redirect:'manual'});assert.equal(redirect.status,308);assert.equal(redirect.headers.get('location'),'/catalog?brand=test');

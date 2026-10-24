@@ -21,8 +21,8 @@ export default async function handler(req,res) {
     }
     res.setHeader('Content-Type',page==='sitemap.xml'?'application/xml; charset=utf-8':'text/html; charset=utf-8');
     // Short shared caching makes catalog edits visible without a new deployment.
-    res.setHeader('Cache-Control','public, max-age=0, must-revalidate');
-    res.setHeader('Vercel-CDN-Cache-Control','public, s-maxage=30');
+    res.setHeader('Cache-Control',['cart','checkout'].includes(page)?'no-store':'public, max-age=0, must-revalidate');
+    res.setHeader('Vercel-CDN-Cache-Control',['cart','checkout'].includes(page)?'no-store':'public, s-maxage=30');
     if(page==='sitemap.xml') {res.statusCode=200;return res.end(req.method==='HEAD'?'':sitemap(products));}
     const shell=await readFile(new URL('../dist/seo-shell.html',import.meta.url),'utf8').catch(error=>{
       if(error.code!=='ENOENT')throw error;

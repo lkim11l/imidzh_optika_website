@@ -21,7 +21,7 @@ await writeFile(path.join(root,'dist/index.html'),source);
 
 const [products,editorial]=await Promise.all([readCatalog(),readEditorial()]);
 // Use the same public records for prerendering and the live Vercel renderer.
-const routes=[...publicPaths.filter(Boolean),'product','favorites','cart',...new Set([...mockProducts.map(p=>'product/'+p.slug),...products.map(p=>productPath(p.slug).slice(1))])];
+const routes=[...publicPaths.filter(Boolean),'product','favorites','cart','checkout',...new Set([...mockProducts.map(p=>'product/'+p.slug),...products.map(p=>productPath(p.slug).slice(1))])];
 for(const route of routes){
  const directory=path.join(root,'dist',route);await mkdir(directory,{recursive:true});
  await writeFile(path.join(directory,'index.html'),renderPage(source,'/'+route,products,editorial).html);

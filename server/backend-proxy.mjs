@@ -10,6 +10,8 @@ const methods=new Map([
  ['/rest/v1/rpc/optika_delete_product',['POST']],
  ['/rest/v1/rpc/optika_delete_booking',['POST']],
  ['/rest/v1/rpc/optika_pending_file_cleanup',['POST']],
+ ['/rest/v1/optika_orders',['GET','PATCH']],
+ ['/rest/v1/rpc/optika_delete_order',['POST']],
  ['/storage/v1/object/optika-products',['DELETE']]
 ]);
 export async function backendProxy(req,res,fetcher=fetch){

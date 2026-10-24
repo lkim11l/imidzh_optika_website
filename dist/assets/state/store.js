@@ -6,7 +6,7 @@ let knownIds = new Set();
 let storageAvailable = true;
 const read = key => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } };
 const write = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { storageAvailable = false; } };
-const quantity = value => Math.max(1, Math.min(99, Math.floor(Number(value) || 1)));
+const quantity = value => Math.max(1, Math.min(10, Math.floor(Number(value) || 1)));
 function load() {
   const savedFavorites = read(FAVORITES_KEY);
   favorites = new Set(Array.isArray(savedFavorites) ? savedFavorites.filter(id => typeof id === 'string' && knownIds.has(id)) : []);

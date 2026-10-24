@@ -17,7 +17,7 @@ export function pageMetadata(path, product) {
     '/lenses':['Линзы для очков: виды и подбор — Оптика Имидж','Виды очковых линз и руководства по выбору. Индивидуальный подбор в Имидж Оптике.']
   };
   const page = pages[path];
-  if(['/favorites','/cart','/product'].includes(path))return {title:({'/favorites':'Избранное','/cart':'Каталог','/product':'Модель очков'})[path]+' — Оптика Имидж',description:'Оптика Имидж — подбор очков в салоне.',path,index:false};
+  if(['/favorites','/cart','/checkout','/product'].includes(path))return {title:({'/favorites':'Избранное','/cart':'Заявка на покупку','/checkout':'Заявка на покупку','/product':'Модель очков'})[path]+' — Оптика Имидж',description:'Оптика Имидж — подбор очков в салоне.',path,index:false};
   return {title:page?.[0] || 'Страница не найдена — Оптика Имидж',description:page?.[1] || 'Посмотрите каталог оправ и солнцезащитных очков.',path,index:!!page};
 }
 export function productSchema(product) {

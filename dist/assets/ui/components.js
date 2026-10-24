@@ -29,6 +29,7 @@ export function productCard(product) {
   return `<article class="product-card" data-product-id="${escapeHTML(product.id)}">
     <a class="product-card-link" href="/product/${encodeURIComponent(product.slug)}"><span class="product-image">${ProductImage(photo)}</span><div class="product-info"><span class="product-brand">${escapeHTML(product.brand)}</span><h3>${escapeHTML(product.model)}</h3><p class="product-price">${money(product.price)}${product.oldPrice ? `<s>${money(product.oldPrice)}</s>` : ''}</p></div></a>
     <button class="favorite-button icon-button${favorite ? ' is-favorite' : ''}" data-favorite="${escapeHTML(product.id)}" aria-label="${favorite ? 'Убрать из избранного' : 'В избранное'}: ${escapeHTML(product.brand)} ${escapeHTML(product.model)}" aria-pressed="${favorite}">${icon('heart')}</button>
+    ${product.isMock?'':`<button class="product-card-order" type="button" data-add-cart="${escapeHTML(product.id)}" aria-label="Добавить в заказ: ${escapeHTML(product.brand+' '+product.model)}">В заказ</button>`}
   </article>`;
 }
 export function productGrid(products) { return `<div class="product-grid">${products.map(productCard).join('')}</div>`; }
