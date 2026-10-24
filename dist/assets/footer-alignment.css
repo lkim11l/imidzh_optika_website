@@ -1,0 +1,13 @@
+/* One centered reading axis keeps mobile footer labels and contacts aligned. */
+@media(max-width:720px){
+ body .footer{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;row-gap:24px;padding-top:28px;padding-bottom:20px}
+ body .footer .footer-brand{width:100%;justify-items:center;gap:12px}
+ body .footer .footer-brand .wordmark{margin-inline:auto}
+ body .footer .footer-brand p{margin:0;font-size:13px;line-height:1.6;text-align:center}
+ body .footer .footer-nav{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-rows:minmax(42px,auto);width:100%;max-width:360px;gap:0;justify-items:stretch;align-items:stretch}
+ body .footer .footer-nav a{grid-column:1;display:flex;align-items:center;justify-content:center;min-height:42px;height:auto;padding:7px 8px;box-sizing:border-box;margin:0;font-size:14px;line-height:1.5;text-align:center}
+ body .footer .footer-call{grid-column:1;width:100%;justify-items:center;gap:8px;padding-top:22px;box-sizing:border-box}
+ body .footer .footer-call>span{font-size:13px;line-height:1.6;text-align:center}
+ body .footer .footer-call>.footer-phone{display:flex;justify-content:center;align-items:center;margin:0;min-height:40px;font-size:22px;line-height:1.4;letter-spacing:0}
+ body .footer>.footer-copyright{grid-column:1;justify-self:stretch;text-align:center;margin:0;width:100%;box-sizing:border-box}
+}
