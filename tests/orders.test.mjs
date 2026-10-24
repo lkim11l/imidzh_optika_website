@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {Readable} from 'node:stream';
 import {createOrdersHandler} from '../server/orders.mjs';
 import {createOrderMailer,orderMessage,ORDER_RECIPIENT} from '../server/order-mail.mjs';
-import {checkoutItems,checkoutTotal,checkoutPageHTML} from '../dist/assets/ui/checkout.js';
+import {checkoutItems,checkoutTotal,checkoutPageHTML,orderComment} from '../dist/assets/ui/checkout.js';
 
 const env={SMTP_HOST:'smtp.example.test',SMTP_USER:'sender@example.test',SMTP_PASSWORD:'server-secret',SUPABASE_SERVICE_ROLE_KEY:'private-role',SUPABASE_URL:'https://db.example.test',SUPABASE_PUBLISHABLE_KEY:'public-key'};
 const order={id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',name:'Test <customer>',phone:'+79990000000',items:[{id:'p1',slug:'p1',brand:'Brand',model:'Model',quantity:2,price:100,subtotal:200}],total:200,delivery:{method:'pickup'},created_at:'2026-10-23T12:00:00Z',lease_id:'lease'};
@@ -26,7 +26,7 @@ test('orders expose useful errors without leaking database data',async()=>{
  for(const [code,status] of [['P0002',429],['P0003',409],['22023',400]]){const h=createOrdersHandler({env,fetcher:async()=>Response.json({code,message:'sensitive database details'},{status:400})});const r=await call(h);assert.equal(r.statusCode,status);assert.doesNotMatch(JSON.stringify(r),/sensitive/);}
 });
 test('mail uses fixed owner recipient and contains contact and selected products without payment links',()=>{
- const message=orderMessage({...order,recipient:'attacker@example.test'},env.SMTP_USER);assert.equal(message.to,ORDER_RECIPIENT);assert.match(message.text,/\+79990000000/);assert.match(message.text,/Brand · Model/);assert.match(message.text,/2 шт/);assert.match(message.text,/Самовывоз/);assert.equal(message.html,undefined);assert.equal(message.replyTo,undefined);assert.match(message.messageId,/order-aaaaaaaa/);
+ const message=orderMessage({...order,recipient:'attacker@example.test'},env.SMTP_USER);assert.equal(message.to,ORDER_RECIPIENT);assert.match(message.text,/\+79990000000/);assert.match(message.text,/Brand · Model/);assert.match(message.text,/2 шт/);assert.match(message.text,/Самовывоз/);assert.match(message.html,/<table/);assert.match(message.html,/Test &lt;customer&gt;/);assert.doesNotMatch(message.html,/Test <customer>/);assert.match(message.html,/Сумма заказа/);assert.equal(message.replyTo,undefined);assert.match(message.messageId,/order-aaaaaaaa/);
 });
 test('mail worker leases once and records SMTP acceptance or failure for durable retry',async()=>{
  for(const accepted of [true,false]){let claims=0,finished;const worker=createOrderMailer({env,fetcher:async(url,options)=>{if(url.endsWith('optika_claim_order_email'))return Response.json(claims++===0?order:null);finished=JSON.parse(options.body);return Response.json(true);},transportFactory:options=>{assert.equal(options.secure,true);assert.equal(options.disableFileAccess,true);return {sendMail:async m=>{assert.equal(m.to,ORDER_RECIPIENT);return {accepted:accepted?[ORDER_RECIPIENT]:[]};}};}});await Promise.all([worker.drain(),worker.drain()]);assert.deepEqual(finished,{job_id:order.id,job_lease:'lease',delivered:accepted});assert.equal(claims,2);}
@@ -34,5 +34,7 @@ test('mail worker leases once and records SMTP acceptance or failure for durable
 test('checkout includes mandatory phone and unchecked consent, excludes demo products and clamps quantities',()=>{
  const product={id:'p1',slug:'p1',brand:'<Brand>',model:'Model',price:100,images:[{src:'/photo.webp',alt:'photo'}]};
  const items=checkoutItems([product,{...product,id:'demo',isMock:true}],[{id:'p1',quantity:99},{id:'demo',quantity:1}]);assert.equal(items.length,1);assert.equal(items[0].quantity,10);assert.equal(checkoutTotal(items),1000);
- const html=checkoutPageHTML([product],[{id:'p1',quantity:2}]);assert.match(html,/name="phone"[^>]*required/);assert.match(html,/type="checkbox" name="consent" required/);assert.doesNotMatch(html,/type="email"|name="email"|name="consent"[^>]*checked/);assert.match(html,/&lt;Brand&gt;/);assert.match(html,/Отправить заявку/);
+ const html=checkoutPageHTML([product],[{id:'p1',quantity:2}]);assert.match(html,/name="phone"[^>]*required/);assert.match(html,/type="checkbox" name="consent" required/);assert.doesNotMatch(html,/type="email"|name="email"|name="consent"[^>]*checked/);assert.match(html,/&lt;Brand&gt;/);assert.match(html,/Оформить заказ/);assert.match(html,/Менеджер свяжется/);assert.doesNotMatch(html,/Эдуард (свяжется|позвонит)/);assert.match(html,/name="payment"/);assert.match(html,/name="city"[^>]*required/);
 });
+
+test('payment preference and buyer city survive in the saved order comment',()=>{const values=new Map([['city','Москва'],['payment','transfer'],['comment','После 18:00']]);const comment=orderComment(values);assert.match(comment,/Город: Москва/);assert.match(comment,/Перевод после согласования с менеджером/);assert.match(comment,/После 18:00/);const longest=orderComment(new Map([['city','x'.repeat(100)],['payment','transfer'],['comment','x'.repeat(700)]]));assert.ok(longest.length<=1000);});
