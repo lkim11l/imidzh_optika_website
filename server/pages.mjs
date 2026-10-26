@@ -1,3 +1,4 @@
+import {cookiesPageHTML} from '../dist/assets/ui/cookie-notice.js';
 import {cartPageHTML} from '../dist/assets/ui/cart.js';
 import {checkoutPageHTML} from '../dist/assets/ui/checkout.js';
 import {catalogPageHTML} from '../dist/assets/ui/catalog-page.js';
@@ -14,7 +15,7 @@ const json = value => JSON.stringify(value).replace(/</g,'\\u003c');
 export const cards=productGrid;
 function catalogHTML(path,products){return catalogPageHTML(products,{category:path.split('/')[2]||'',genders:[],brands:[],min:null,max:null,sort:'popular',query:''});}
 function productHTML(product,products){return productDetailHTML(product,products.filter(p=>p.category===product.category&&p.id!==product.id).slice(0,4));}
-export const publicPaths = ['','about','lenses','catalog','catalog/optical','catalog/sunglasses',...Object.keys(guidePages).map(p=>p.slice(1))];
+export const publicPaths = ['','cookies','about','lenses','catalog','catalog/optical','catalog/sunglasses',...Object.keys(guidePages).map(p=>p.slice(1))];
 export function sitemap(products) {
   const entries = [...publicPaths.map(p=>({path:'/'+p})),...products.map(p=>({path:productPath(p.slug),updated:p.updatedAt}))];
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+entries.map(p=>`<url><loc>${esc(siteURL+p.path)}</loc>${p.updated&&!Number.isNaN(Date.parse(p.updated))?`<lastmod>${new Date(p.updated).toISOString()}</lastmod>`:''}</url>`).join('')+'</urlset>\n';
@@ -25,7 +26,7 @@ export function renderPage(shell,path,products,editorial={}) {
   const known = !!product || publicPaths.includes(path.slice(1)) || ['/checkout','/cart'].includes(path);
   const meta = guide ? {...pageMetadata(path),title:guide.title,description:guide.description,index:true} : pageMetadata(path,product);
   if(!known) meta.index=false;
-  const content = path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
+  const content = path==='/cookies'?cookiesPageHTML():path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');
   if(path==='/')html=html.replace(/<!-- hero-slides:start -->[\s\S]*?<!-- hero-slides:end -->/,()=>`<!-- hero-slides:start -->${heroSlidesHTML(editorial)}<!-- hero-slides:end -->`);
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));

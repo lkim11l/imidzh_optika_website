@@ -1,3 +1,4 @@
+import {installCookieNotice,cookiesPageHTML} from './ui/cookie-notice.js';
 import {cartPageHTML,mountCart} from './ui/cart.js';
 import {checkoutPageHTML,mountCheckout} from './ui/checkout.js';
 import {catalogPageHTML} from './ui/catalog-page.js';
@@ -21,6 +22,7 @@ import { shopStore } from './state/store.js';
 import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, modelCount } from './ui/components.js?v=no-cart1';
 import { installProductImages, setProductImageSource } from './ui/product-image.js';
 installProductImages();
+installCookieNotice();
 installHeroCarousel();
 installSiteGlow();
 
@@ -92,7 +94,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
   else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path);}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
-  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;
   const meta = guidePages[path] ? {...pageMetadata(path),title:guidePages[path].title,description:guidePages[path].description,index:true} : pageMetadata(path,resolvedProduct);
   document.title=meta.title;
@@ -133,8 +135,8 @@ document.addEventListener('click',event => {
     if(button.hasAttribute('data-clear-filter')){const filters = filtersFromURL(), key = button.dataset.clearFilter;if(key === 'gender')filters.genders = filters.genders.filter(value => value !== button.dataset.value);if(key === 'brand')filters.brands = filters.brands.filter(value => value !== button.dataset.value);if(key === 'price'){filters.min = null;filters.max = null;}if(key === 'q')filters.query = '';navigate(catalogURL(filters),{scroll:false});}
     if(button.dataset.favorite){shopStore.toggleFavorite(button.dataset.favorite);notify(shopStore.isFavorite(button.dataset.favorite) ? 'Модель сохранена в избранном' : 'Модель убрана из избранного');}
     if(button.dataset.requestProduct)startRequest(button.dataset.requestProduct);
-    if(button.dataset.buyProduct){const product=productById(button.dataset.buyProduct);if(product&&!product.isMock){shopStore.addToCart(product.id);navigate('/cart');}}
-    if(button.dataset.addCart){const product=productById(button.dataset.addCart);if(product&&!product.isMock){shopStore.addToCart(product.id);notify('Модель добавлена в заказ. Оформите заявку через значок сумки вверху.');}}
+    if(button.dataset.buyProduct){const product=productById(button.dataset.buyProduct);if(product&&!product.isMock){shopStore.addToCart(product.id);notify('Очки добавлены в корзину. Можно продолжить выбор.');}}
+    if(button.dataset.addCart){const product=productById(button.dataset.addCart);if(product&&!product.isMock){shopStore.addToCart(product.id);notify('Очки добавлены в корзину. Можно продолжить выбор.');}}
     if(button.dataset.gallerySrc || button.hasAttribute('data-gallery-detail')){const detail = button.hasAttribute('data-gallery-detail');$('#gallery-main').classList.toggle('show-detail',detail);if(!detail){setProductImageSource($('#gallery-image'),button.dataset.gallerySrc,button.dataset.galleryAlt);}document.querySelectorAll('.gallery-thumb').forEach(thumb => {thumb.classList.toggle('selected',thumb === button);thumb.setAttribute('aria-pressed',String(thumb === button));});}
   }
   const link = event.target.closest('a[href]');if(!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download'))return;

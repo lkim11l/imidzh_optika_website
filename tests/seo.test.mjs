@@ -36,7 +36,7 @@ test('removed and unknown products return real 404 with noindex',()=>{
 test('category HTML exposes product links and sitemap matches public catalog',()=>{
  const result=renderPage(shell,'/catalog/sunglasses',[real]);assert.equal(result.status,200);assert.match(result.html,/href="\/product\/new-model"/);
  const xml=sitemap([real]);assert.match(xml,/<loc>https:\/\/optikim.ru\/product\/new-model<\/loc>/);assert.match(xml,/<lastmod>2026-10-12T00:00:00.000Z<\/lastmod>/);
- assert.doesNotMatch(xml,/demo-model|favorites|cookie|cart/);assert.doesNotMatch(sitemap([]),/new-model/);
+ assert.doesNotMatch(xml,/demo-model|favorites|\/cookie<|cart/);assert.doesNotMatch(sitemap([]),/new-model/);
 });
 test('structured data never invents availability and safely escapes HTML-sensitive content',()=>{
  assert.equal(productSchema(real).offers.availability,undefined);
@@ -71,3 +71,5 @@ test('image optimization rejects arbitrary URLs and returns bounded WebP sizes',
   assert.equal(optimizedImageURL('https://example.com/image.png'),'https://example.com/image.png');
  } finally {globalThis.fetch=previous;}
 });
+
+test('cookie information is a real public page and the map waits for explicit loading',()=>{const result=renderPage(shell,'/cookies',[]);assert.equal(result.status,200);assert.match(result.html,/Cookies и настройки браузера/);assert.match(result.html,/localStorage/);const home=renderPage(shell,'/',[]);assert.doesNotMatch(home.html,/<iframe[^>]*src="https:\/\/yandex/);assert.match(home.html,/data-load-map/);});
