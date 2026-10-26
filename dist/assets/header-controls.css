@@ -11,3 +11,7 @@ body .header-shell .checkout-nav .count-badge{background:#dfc59b;color:#3c2b22}
 }
 @media(max-width:380px){body .header-shell .header{padding-inline:4%}body .header-shell .header .wordmark{width:120px;height:38px}}
 @media(max-width:340px){body .header-shell .header .wordmark{width:110px;height:35px}}
+
+/* Hover and keyboard focus keep a circular shape for the compact controls. */
+body .header-shell .header-actions .mobile-menu-button{border-radius:50%}
+@media(max-width:650px){body .header-shell .header-actions :is(.mobile-menu-button,[data-search]){width:28px;height:28px;min-width:28px;min-height:28px;padding:3px;box-sizing:border-box;border-radius:50%;align-items:center;justify-content:center}}
