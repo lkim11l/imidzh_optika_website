@@ -69,3 +69,5 @@ body .checkout-classic .order-line .order-remove:hover:not(:disabled){background
 body .checkout-classic .order-line .order-remove:focus-visible{outline:2px solid #ac8b58;outline-offset:4px}
 body .checkout-classic .order-line .order-remove:disabled{opacity:.5;cursor:default}
 @media(prefers-reduced-motion:reduce){body .checkout-classic .order-line .order-remove{transition:none}}
+/* Both checkout columns start at the same baseline. */
+body .checkout-classic #order-form{margin:0}
