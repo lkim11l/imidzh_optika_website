@@ -1,6 +1,6 @@
 /* Keep the cart and About link visible together in the mobile header. */
-body .header-shell .header-actions .checkout-nav{background:#795238;color:#fff7e9;border:1px solid #6a442f;box-shadow:none}
-body .header-shell .header-actions .checkout-nav:hover{background:#69452f;color:#fff7e9}
+body .header-shell .header-actions .checkout-nav{background:#3c2b22;color:#fff7e9;border:1px solid #3c2b22;box-shadow:none}
+body .header-shell .header-actions .checkout-nav:hover{background:#563c2b;color:#fff7e9}
 body .header-shell .checkout-nav .count-badge{background:#dfc59b;color:#3c2b22}
 @media(max-width:650px){
  body .header-shell .header{column-gap:8px;row-gap:8px}
@@ -15,3 +15,5 @@ body .header-shell .checkout-nav .count-badge{background:#dfc59b;color:#3c2b22}
 /* Hover and keyboard focus keep a circular shape for the compact controls. */
 body .header-shell .header-actions .mobile-menu-button{border-radius:50%}
 @media(max-width:650px){body .header-shell .header-actions :is(.mobile-menu-button,[data-search]){width:28px;height:28px;min-width:28px;min-height:28px;padding:3px;box-sizing:border-box;border-radius:50%;align-items:center;justify-content:center}}
+
+body .header-shell .header-actions .header-about{background:#3c2b22;color:#fff7e9;border-color:#3c2b22}body .header-shell .header-actions .header-about:hover{background:#563c2b;color:#fff7e9;border-color:#563c2b}
