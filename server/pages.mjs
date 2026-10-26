@@ -1,3 +1,4 @@
+import {cartPageHTML} from '../dist/assets/ui/cart.js';
 import {checkoutPageHTML} from '../dist/assets/ui/checkout.js';
 import {catalogPageHTML} from '../dist/assets/ui/catalog-page.js';
 import {productDetailHTML} from '../dist/assets/ui/product-detail.js';
@@ -24,7 +25,7 @@ export function renderPage(shell,path,products,editorial={}) {
   const known = !!product || publicPaths.includes(path.slice(1)) || ['/checkout','/cart'].includes(path);
   const meta = guide ? {...pageMetadata(path),title:guide.title,description:guide.description,index:true} : pageMetadata(path,product);
   if(!known) meta.index=false;
-  const content = ['/checkout','/cart'].includes(path)?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
+  const content = path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');
   if(path==='/')html=html.replace(/<!-- hero-slides:start -->[\s\S]*?<!-- hero-slides:end -->/,()=>`<!-- hero-slides:start -->${heroSlidesHTML(editorial)}<!-- hero-slides:end -->`);
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));
