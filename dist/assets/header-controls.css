@@ -1,6 +1,6 @@
 /* Keep the cart and About link visible together in the mobile header. */
-body .header-shell .header-actions .checkout-nav{background:#3c2b22;color:#fff7e9;border:1px solid #5b4131;box-shadow:none}
-body .header-shell .header-actions .checkout-nav:hover{background:#563c2b;color:#fff7e9}
+body .header-shell .header-actions .checkout-nav{background:#795238;color:#fff7e9;border:1px solid #6a442f;box-shadow:none}
+body .header-shell .header-actions .checkout-nav:hover{background:#69452f;color:#fff7e9}
 body .header-shell .checkout-nav .count-badge{background:#dfc59b;color:#3c2b22}
 @media(max-width:650px){
  body .header-shell .header{column-gap:8px;row-gap:8px}
