@@ -1,3 +1,4 @@
+import {checkoutDocumentHTML} from './ui/checkout-documents.js';
 import {installCookieNotice,cookiesPageHTML} from './ui/cookie-notice.js';
 import {cartPageHTML,mountCart} from './ui/cart.js';
 import {checkoutPageHTML,mountCheckout} from './ui/checkout.js';
@@ -94,7 +95,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
   else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path);}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
-  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;
   const meta = guidePages[path] ? {...pageMetadata(path),title:guidePages[path].title,description:guidePages[path].description,index:true} : pageMetadata(path,resolvedProduct);
   document.title=meta.title;

@@ -73,3 +73,5 @@ test('image optimization rejects arbitrary URLs and returns bounded WebP sizes',
 });
 
 test('cookie information is a real public page and the map waits for explicit loading',()=>{const result=renderPage(shell,'/cookies',[]);assert.equal(result.status,200);assert.match(result.html,/Cookies и настройки браузера/);assert.match(result.html,/localStorage/);const home=renderPage(shell,'/',[]);assert.doesNotMatch(home.html,/<iframe[^>]*src="https:\/\/yandex/);assert.match(home.html,/data-load-map/);});
+
+test('checkout documents are separate public pages for the current operator',()=>{for(const path of ['/terms','/consent']){const result=renderPage(shell,path,[]);assert.equal(result.status,200);assert.match(result.html,/ИП Ким Эдуард Олегович/);assert.match(result.html,/ecolog77@inbox.ru/);assert.match(result.html,/Рудневка/);}assert.match(renderPage(shell,'/consent',[]).html,/Отозвать согласие/);});
