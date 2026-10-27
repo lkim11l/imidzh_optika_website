@@ -121,3 +121,8 @@ body .checkout-classic:not(.cart-review) .checkout-continue{justify-self:start;d
 body .checkout-classic:not(.cart-review) .checkout-continue:hover{background:#424b56}
 @media(max-width:1000px){body .checkout-classic:not(.cart-review) #order-form .payment-options label{min-height:88px}}
 @media(max-width:650px){body .checkout-classic:not(.cart-review) .payment-options{gap:16px}body .checkout-classic:not(.cart-review) #order-form .checkout-agreements label{font-size:13px}}
+body .checkout-classic:not(.cart-review) .checkout-agreement-compact{gap:8px}
+body .checkout-classic:not(.cart-review) #order-form .checkout-agreement-compact .order-consent{align-items:flex-start;gap:14px;font-size:14px;line-height:1.65}
+body .checkout-classic:not(.cart-review) .checkout-consent-caption{margin:0;font-size:13px;line-height:1.8;color:#6d635a}
+body .checkout-classic:not(.cart-review) .agreement-required{color:#d46b62}
+@media(max-width:650px){body .checkout-classic:not(.cart-review) #order-form .checkout-agreement-compact .order-consent{font-size:13px;gap:12px}body .checkout-classic:not(.cart-review) .checkout-consent-caption{font-size:12px}}
