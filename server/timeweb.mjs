@@ -32,7 +32,7 @@ export function createApp({seoHandler=seo,imageHandler=productImage,statusHandle
    if(url.pathname==='/api/bookings/status'){
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
     if(req.method!=='GET'){res.statusCode=405;return res.end('{}');}
-    return res.end(JSON.stringify({ready:await bookingMailer.ready()}));
+    return res.end(JSON.stringify(await bookingMailer.status()));
    }
    if(url.pathname==='/api/admin/status')return await statusHandler(req,res);
    if(url.pathname.startsWith('/api/backend/'))return await backendHandler(req,res);

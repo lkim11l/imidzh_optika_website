@@ -15,10 +15,11 @@ export function createBookingMailer({env=process.env,fetcher=fetch,transportFact
  let working=false,transport;
  const headers=()=>({apikey:env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_ROLE_KEY,'Content-Type':'application/json'});
  const db=async(path,body)=>{const r=await fetcher((env.SUPABASE_URL||supabaseConfig.url)+'/rest/v1/'+path,{method:'POST',headers:headers(),body:JSON.stringify(body),signal:AbortSignal.timeout(15000)});if(!r.ok)throw Error('Booking email queue unavailable');return r.json();};
- async function ready(){
-  if(!orderMailConfigured(env))return false;
-  try{const r=await fetcher((env.SUPABASE_URL||supabaseConfig.url)+'/rest/v1/optika_email_settings?select=enabled,recipient&limit=1',{headers:headers(),signal:AbortSignal.timeout(8000)});if(!r.ok)return false;const rows=await r.json();return rows.some(s=>s.enabled&&s.recipient===ORDER_RECIPIENT);}catch{return false;}
+ async function status(){
+  if(!orderMailConfigured(env))return {ready:false,reason:'mail_configuration'};
+  try{const r=await fetcher((env.SUPABASE_URL||supabaseConfig.url)+'/rest/v1/optika_email_settings?select=enabled,recipient&limit=1',{headers:headers(),signal:AbortSignal.timeout(8000)});if(!r.ok){const error=await r.json().catch(()=>({}));return {ready:false,reason:error.code==='PGRST205'?'queue_not_installed':'queue_unavailable'};}const rows=await r.json();return rows.some(s=>s.enabled&&s.recipient===ORDER_RECIPIENT)?{ready:true}:{ready:false,reason:'queue_disabled_or_recipient'};}catch{return {ready:false,reason:'database_connection'};}
  }
+ const ready=async()=> (await status()).ready;
  async function drain(){
   if(working||!orderMailConfigured(env))return;working=true;
   try{
@@ -33,5 +34,5 @@ export function createBookingMailer({env=process.env,fetcher=fetch,transportFact
   }catch{/* Keep jobs retryable without logging contacts or credentials. */}finally{working=false;}
  }
  function start(){const timer=setInterval(drain,15000);timer.unref();drain();return()=>{clearInterval(timer);transport?.close?.();};}
- return {drain,start,ready};
+ return {drain,start,ready,status};
 }
