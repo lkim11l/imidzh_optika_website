@@ -15,7 +15,7 @@ export function mountCheckout(root,products,store,{fetcher=fetch}={}){
  const message=root.querySelector('#order-message'),send=root.querySelector('#send-order'),summary=root.querySelector('#order-summary-body');
  const validatePhone=installRussianPhone(form.elements.phone);
  let ready=false,busy=false,active=true,submitted=false,requestId=null;
- function availability(){send.hidden=!ready;message.textContent='';}
+ function availability(){send.hidden=false;message.textContent='';}
  function refresh(){if(!active||submitted)return;const items=checkoutItems(products,store.getCart());summary.innerHTML=summaryHTML(items,{editable:false})+'<a class="checkout-edit-cart" href="/cart">Изменить заказ</a>';send.textContent='Оформить заказ ('+money(checkoutTotal(items))+')';summary.querySelectorAll('button,input').forEach(el=>el.disabled=busy);send.disabled=!ready||busy||!items.length;}
  function methodChanged(){const delivery=form.elements.method.value==='delivery';root.querySelector('#delivery-fields').hidden=!delivery;root.querySelector('#pickup-address').hidden=delivery;for(const name of ['address','postal']){form.elements[name].disabled=!delivery;form.elements[name].required=delivery;}}
  form.addEventListener('change',event=>{if(event.target.name==='method')methodChanged();requestId=null;});

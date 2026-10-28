@@ -117,7 +117,7 @@ body .checkout-classic:not(.cart-review) #order-form .checkout-agreements label{
 body .checkout-classic:not(.cart-review) #order-form .checkout-agreements input{appearance:none;width:24px;height:24px;flex:0 0 24px;border:1px solid #dcd2c5;border-radius:6px;background:#fffdf9;box-shadow:inset 0 1px 3px #3c2b2214;margin:0}
 body .checkout-classic:not(.cart-review) #order-form .checkout-agreements input:checked{appearance:auto;accent-color:#3c2b22;box-shadow:none}
 body .checkout-classic:not(.cart-review) .checkout-agreements a{color:#795b38;text-decoration:underline;text-underline-offset:4px}
-body .checkout-classic:not(.cart-review) .checkout-continue{justify-self:start;display:inline-flex;align-items:center;min-height:48px;padding:11px 22px;box-sizing:border-box;border-radius:999px;background:#3c2b22;color:#fff7e9;text-decoration:none;box-shadow:none}
+body .checkout-classic:not(.cart-review) .checkout-continue{justify-self:center;display:inline-flex;align-items:center;justify-content:center;text-align:center;max-width:100%;min-height:48px;padding:11px 22px;box-sizing:border-box;border-radius:999px;background:#3c2b22;color:#fff7e9;text-decoration:none;box-shadow:none}
 body .checkout-classic:not(.cart-review) .checkout-continue:hover{background:#563c2b}
 @media(max-width:1000px){body .checkout-classic:not(.cart-review) #order-form .payment-options label{min-height:88px}}
 @media(max-width:650px){body .checkout-classic:not(.cart-review) .payment-options{gap:16px}body .checkout-classic:not(.cart-review) #order-form .checkout-agreements label{font-size:13px}}
