@@ -18,7 +18,7 @@ export const editorialDefaults = {
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
- ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-business-matte-watch-v7.webp'],
+ ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-business-mens-watch-v8.webp'],
  ['collectionSunPhoto','Фотография солнцезащитных очков','.real-product-photo img','/assets/sunglasses-real-v1.webp']
 ];
 export const aboutFields = [
