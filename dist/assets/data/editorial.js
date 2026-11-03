@@ -18,7 +18,7 @@ export const editorialDefaults = {
  nataliaBio:'Индивидуальный подход для меня — внимание к каждому человеку, его комфорту и пожеланиям.'
 };
 export const homepageImages = [
- ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-business-v6.webp'],
+ ['founderPhoto','Портрет Эдуарда','.founder-portrait>img','/assets/eduard-business-matte-watch-v7.webp'],
  ['collectionSunPhoto','Фотография солнцезащитных очков','.real-product-photo img','/assets/sunglasses-real-v1.webp']
 ];
 export const aboutFields = [
@@ -52,7 +52,7 @@ export function editorialData(data={}){
  return resolved;
 }
 export function applyHomepageImages(root,data,preview=false){
- for(const [key,label,selector,fallback] of homepageImages){const img=root.querySelector(selector);if(img){img.src=optimizedImageURL(imageSource(data[key],preview)||fallback,960);if(data[key]){img.removeAttribute('srcset');img.removeAttribute('sizes');img.alt=label;}}}
+ for(const [key,label,selector,fallback] of homepageImages){const img=root.querySelector(selector);if(img){let src=imageSource(data[key],preview);if(key==='founderPhoto'&&src==='/assets/eduard-business-v6.webp')src=fallback;img.src=optimizedImageURL(src||fallback,960);if(data[key]){img.removeAttribute('srcset');img.removeAttribute('sizes');img.alt=label;}}}
 }
 export function aboutHTML(raw={},preview=false){
  const data=editorialData(raw);
