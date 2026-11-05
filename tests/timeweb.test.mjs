@@ -3,6 +3,18 @@ import assert from 'node:assert/strict';
 import {once} from 'node:events';
 import http from 'node:http';
 import {createApp} from '../server/timeweb.mjs';
+
+test('read-only preview blocks mutations and private endpoints before handlers',async()=>{
+ let calls=0;
+ const app=createApp({readOnlyPreview:true,staging:false,backendHandler:async(req,res)=>{calls++;res.end('public');},orderHandler:()=>{throw Error('must not call orders');},statusHandler:()=>{throw Error('must not call admin');}});
+ app.listen(0,'127.0.0.1');await once(app,'listening');const base=`http://127.0.0.1:${app.address().port}`;
+ try{
+  for(const route of ['/api/orders','/api/backend/auth/v1/token','/api/backend/rest/v1/rpc/optika_submit_booking','/api/backend/rest/v1/optika_products'])assert.equal((await fetch(base+route,{method:'POST'})).status,405);
+  assert.equal((await fetch(base+'/api/admin/status')).status,404);
+  for(const route of ['/api/orders/status','/api/bookings/status'])assert.deepEqual(await(await fetch(base+route)).json(),{ready:false});
+  const r=await fetch(base+'/api/backend/rest/v1/optika_products');assert.equal(await r.text(),'public');assert.equal(r.headers.get('x-robots-tag'),'noindex, nofollow');assert.equal(calls,1);
+ }finally{app.closeAllConnections();await new Promise(resolve=>app.close(resolve));}
+});
 test('Timeweb preserves dynamic routes, queries, redirects and staging isolation',async()=>{
  const app=createApp({seoHandler:async(req,res)=>{res.setHeader('Content-Type','application/json');res.end(JSON.stringify(req.query));},imageHandler:async(req,res)=>res.end('image'),staging:true});
  app.listen(0,'127.0.0.1');await once(app,'listening');

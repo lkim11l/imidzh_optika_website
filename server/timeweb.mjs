@@ -17,16 +17,21 @@ import {adminStatus} from './admin-status.mjs';
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.mp4':'video/mp4','.ico':'image/x-icon'};
 const origin=new URL(supabaseConfig.url).origin;
-export function createApp({seoHandler=seo,imageHandler=productImage,statusHandler=adminStatus,backendHandler=backendProxy,orderHandler=ordersHandler,staging=process.env.STAGING!=='false'}={}) {
+export function createApp({seoHandler=seo,imageHandler=productImage,statusHandler=adminStatus,backendHandler=backendProxy,orderHandler=ordersHandler,staging=process.env.STAGING!=='false',readOnlyPreview=process.env.READ_ONLY_PREVIEW==='true'}={}) {
  return http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('X-Frame-Options','SAMEORIGIN');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(), payment=(), usb=()');
   res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self'; connect-src 'self' ${origin}; frame-src 'self' https://yandex.ru https://yandex.com https://api-maps.yandex.ru; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'`);
-  if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
+  if(staging||readOnlyPreview)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');
+   if(readOnlyPreview){
+    if(!['GET','HEAD'].includes(req.method)){res.statusCode=405;res.setHeader('Allow','GET, HEAD');return res.end();}
+    if(['/api/orders/status','/api/bookings/status'].includes(url.pathname)){res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');return res.end(req.method==='HEAD'?'':'{"ready":false}');}
+    if(url.pathname.startsWith('/api/')&&!['/api/seo','/api/product-image','/api/backend/rest/v1/optika_products','/api/backend/rest/v1/optika_content'].includes(url.pathname)){res.statusCode=404;return res.end();}
+   }
    if(/^\/(admin|cookie)(\/|$)/.test(url.pathname)){res.setHeader('Cache-Control','no-store');res.setHeader('X-Robots-Tag','noindex, nofollow');}
    if(['/api/orders','/api/orders/status'].includes(url.pathname))return await orderHandler(req,res);
    if(url.pathname==='/api/bookings/status'){
@@ -64,8 +69,8 @@ export function createApp({seoHandler=seo,imageHandler=productImage,statusHandle
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  if(origin.endsWith('.supabase.co'))throw new Error('Configure the Russian backend before deployment.');
- const stopOrderMail=orderMailer.start();
- const stopBookingMail=bookingMailer.start();
+ const stopOrderMail=process.env.READ_ONLY_PREVIEW==='true'?()=>{}:orderMailer.start();
+ const stopBookingMail=process.env.READ_ONLY_PREVIEW==='true'?()=>{}:bookingMailer.start();
  const app=createApp();
  app.requestTimeout=30000;app.headersTimeout=15000;
  app.listen(Number(process.env.PORT||4173),process.env.HOST||'127.0.0.1');

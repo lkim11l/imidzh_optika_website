@@ -4,7 +4,8 @@ import {readFile} from 'node:fs/promises';
 import {readCatalog} from '../server/catalog.mjs';
 import {renderPage,sitemap} from '../server/pages.mjs';
 import {productSchema} from '../dist/assets/data/seo.js';
-import handler from '../api/seo.mjs';
+import {createSEOHandler} from '../api/seo.mjs';
+import {publicCache} from '../server/public-cache.mjs';
 import imageHandler from '../api/product-image.mjs';
 import sharp from 'sharp';
 import {optimizedImageURL} from '../dist/assets/data/product-images.js';
@@ -44,6 +45,7 @@ test('structured data never invents availability and safely escapes HTML-sensiti
  assert.doesNotMatch(html,/<script>alert\(1\)/);assert.match(html,/\\u003c\/script>/);
 });
 test('SSR HTTP handler redirects legacy URL, serves real 404 and handles database outage as 503',async()=>{
+ const handler=createSEOHandler({catalog:publicCache(()=>readCatalog(),{retry:0})});
  const previous=globalThis.fetch;
  const request=async(page,slug)=>{
   const headers={};const res={statusCode:200,setHeader:(key,value)=>headers[key]=value,end:body=>{res.body=body;}};

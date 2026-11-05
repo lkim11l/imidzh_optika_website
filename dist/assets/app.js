@@ -19,7 +19,7 @@ import {selectHomepageBrands} from './data/homepage-brands.js';
 import {applyContent} from './data/content.js';
 import {request as supabaseRequest} from './data/supabase.js?v=tatnet-requests1';
 import {supabaseConfig} from './data/supabase-config.js?v=tatnet-requests1';
-import { productRepository, filterProducts } from './data/product-repository.js';
+import { productRepository, filterProducts,catalogState } from './data/product-repository.js';
 import { shopStore } from './state/store.js';
 import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, modelCount } from './ui/components.js?v=no-cart1';
 import { installProductImages, setProductImageSource } from './ui/product-image.js';
@@ -83,12 +83,17 @@ function renderFavorites() {
   view.innerHTML = `<section class="saved-page wrap">${breadcrumb([{label:'Избранное'}])}<div class="catalog-heading"><p class="eyebrow">ВАШ ВЫБОР</p><h1>То, что понравилось.</h1><p>Сохраните модели, чтобы вернуться к ним перед примеркой.</p></div>${selected.length ? `${mockNotice}<p class="results-count" role="status">${modelCount(selected.length)}</p>${productGrid(selected)}` : emptyState('Найдите то, что вам близко', 'Нажмите на сердце у модели — она останется здесь после обновления страницы.')}</section>`;
 }
 function renderNotFound() { document.title = 'Страница не найдена — Имидж Оптика';view.innerHTML = `<section class="wrap saved-page">${emptyState('Эта страница не найдена', 'Возможно, модель больше не входит в коллекцию. Посмотрите другие варианты.')}</section>`; }
-async function renderRoute({scroll = true, focus = false} = {}) {
+async function renderRoute(options={}) {
+  try {await renderRouteContent(options);}
+  catch {home.hidden=true;view.hidden=false;view.innerHTML=emptyState('Коллекция временно недоступна','Попробуйте обновить страницу позже.','<a class="button" href="/">На главную</a>');}
+}
+async function renderRouteContent({scroll = true, focus = false} = {}) {
   checkoutController?.dispose();checkoutController=null;
 
   resolvedProduct = null;
   if(location.pathname.replace(/\/$/,'')==='/product' && new URLSearchParams(location.search).get('slug'))history.replaceState({},'',productPath(new URLSearchParams(location.search).get('slug')));
   const generation = ++routeGeneration, path = location.pathname.replace(/\/$/,'') || '/';currentRoute = path;home.hidden = path !== '/';view.hidden = path === '/';
+  if((catalogState.unavailable&&/^\/(catalog|favorites|cart|checkout)(\/|$)/.test(path))||(catalogState.stale&&path==='/checkout'))throw new Error('Catalog unavailable');
   document.querySelectorAll('.header nav a').forEach(link => { const selected = new URL(link.href).pathname === path && path !== '/';if(selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current'); });
   if(path === '/')document.title = 'Имидж Оптика — видеть больше';
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
@@ -96,8 +101,9 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
   else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path);}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
-  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(homepageData?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;
+  if(catalogState.stale&&/^\/(catalog|product|favorites|cart)(\/|$)/.test(path))view.insertAdjacentHTML('afterbegin','<p class="wrap" role="status">Показана сохранённая коллекция. Цены и наличие уточняйте в салоне.</p>');
   const meta = guidePages[path] ? {...pageMetadata(path),title:guidePages[path].title,description:guidePages[path].description,index:true} : pageMetadata(path,resolvedProduct);
   document.title=meta.title;
   const canonical=document.querySelector('link[rel=canonical]');if(canonical)canonical.href=siteURL+meta.path;
@@ -210,7 +216,8 @@ window.addEventListener('optika:statechange',() => {
 });
 window.addEventListener('popstate',() => renderRoute({focus:true}));
 installHeroLeadFit();
-const homepageContent=applyContent().catch(()=>undefined);
+let homepageData;
+const homepageContent=applyContent().then(content=>{homepageData=content;if(currentRoute==='/about')renderRoute({scroll:false});return content;}).catch(()=>undefined);
 const collectionRoute=()=>/^\/(catalog|product|favorites|checkout|cart)(\/|$)/.test(location.pathname);
 if(!collectionRoute())await renderRoute({scroll:!!location.hash});
 try {

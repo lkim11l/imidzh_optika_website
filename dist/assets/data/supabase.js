@@ -8,15 +8,15 @@ const sessions=createAdminSession({scope:config.url,temporary:storage('sessionSt
 export const isConfigured = () => !!config.url && !!config.publishableKey;
 export const usesSupabaseCatalog = () => isConfigured() && config.catalogEnabled;
 export function clearSession() { sessions.clear(); }
-export async function request(path, {method='GET', body, authenticated=false, headers={}}={}) {
+export async function request(path, {method='GET', body, authenticated=false, headers={},signal}={}) {
   if(!isConfigured()) throw new Error('Подключение Supabase ещё не настроено.');
   const session=authenticated?await sessions.ensure():null;
   const auth = authenticated ? {Authorization:`Bearer ${session.access_token}`} : {};
   let response;
   try {
-    response = await fetch((config.apiBase || config.url) + path, {method, headers:{apikey:config.publishableKey,...auth,...(body && !(body instanceof Blob) ? {'Content-Type':'application/json'} : {}),...headers},body:body instanceof Blob ? body : body === undefined ? undefined : JSON.stringify(body),signal:AbortSignal.timeout(20000)});
+    response = await fetch((config.apiBase || config.url) + path, {method, headers:{apikey:config.publishableKey,...auth,...(body && !(body instanceof Blob) ? {'Content-Type':'application/json'} : {}),...headers},body:body instanceof Blob ? body : body === undefined ? undefined : JSON.stringify(body),signal:signal||AbortSignal.timeout(!authenticated&&method==='GET'?4000:20000)});
   } catch {throw new Error(config.apiBase ? 'Сервер сайта не ответил вовремя. Повторите попытку.' : 'Не удалось связаться с базой. Проверьте соединение и повторите попытку.');}
-  const result = await response.json().catch(()=>null);
+  const result = response.status===204?null:await response.json().catch(()=>{throw new Error('Сервер вернул неполный ответ. Повторите попытку.');});
   if(!response.ok) {
     if(path.includes('grant_type=refresh_token')&&[400,401,403].includes(response.status)){
       const error=new Error('Войдите заново: сеанс администратора завершён.');error.authRejected=true;throw error;
@@ -71,9 +71,11 @@ export async function signOut() {
   finally {clearSession();}
 }
 export async function listRows(admin=false) {
+  const signal=AbortSignal.timeout(admin?20000:4000);
   const rows=[];
   for(let offset=0;;offset+=500) {
-    const page=await request(`/rest/v1/optika_products?select=*&order=id.asc&limit=500&offset=${offset}${admin?'':'&published=eq.true'}`,{authenticated:admin});
+    const page=await request(`/rest/v1/optika_products?select=*&order=id.asc&limit=500&offset=${offset}${admin?'':'&published=eq.true'}`,{authenticated:admin,signal});
+    if(!Array.isArray(page))throw new Error('Некорректный ответ каталога.');
     rows.push(...page);if(page.length<500)return rows;
   }
 }

@@ -10,5 +10,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      # The test suite includes a full isolated build with local fixtures.
+      # CI never needs production database credentials.
       - run: npm run test:seo

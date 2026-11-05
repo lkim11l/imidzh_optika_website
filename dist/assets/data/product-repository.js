@@ -1,6 +1,24 @@
 import {usesSupabaseCatalog,listRows,normalizeRow} from './supabase.js';
 let catalogPromise, catalogLoadedAt=0;
-const catalog=()=>{if(!catalogPromise||Date.now()-catalogLoadedAt>30000){catalogLoadedAt=Date.now();catalogPromise=listRows().then(rows=>rows.map(normalizeRow).filter(product=>product.isMock!==true)).catch(error=>{catalogPromise=null;throw error;});}return catalogPromise;};
+export const catalogState={stale:false,unavailable:false};
+let lastGood,expiresAt=0,pending=false;
+function savedCatalog(){
+  if(lastGood&&expiresAt>Date.now())return lastGood;
+  let snapshot;try{snapshot=JSON.parse(globalThis.document?.getElementById('public-catalog')?.textContent||'null');}catch{}
+  if(Array.isArray(snapshot?.products)&&snapshot.expiresAt>Date.now())return snapshot.products;
+}
+const catalog=()=>{
+  if(!catalogPromise||(!pending&&Date.now()-catalogLoadedAt>30000)){
+    pending=true;catalogLoadedAt=Date.now();
+    catalogPromise=listRows().then(rows=>{
+      const products=rows.map(normalizeRow).filter(product=>product.isMock!==true);
+      lastGood=products;expiresAt=Date.now()+300000;catalogState.stale=false;catalogState.unavailable=false;return products;
+    }).catch(error=>{
+      const saved=savedCatalog();catalogState.stale=!!saved;catalogState.unavailable=!saved;
+      if(saved)return saved;catalogPromise=null;throw error;
+    }).finally(()=>{pending=false;});
+  }return catalogPromise;
+};
 import { mockProducts, brands } from './products.js';
 /**
  * Data boundary. Replace this provider with an API adapter later.
@@ -11,7 +29,7 @@ import { mockProducts, brands } from './products.js';
 /** @type {ProductRepository} */
 export const productRepository = Object.freeze({
   async getProducts() { return usesSupabaseCatalog() ? [...await catalog()] : [...mockProducts]; },
-  async getProduct(slug) { return (usesSupabaseCatalog() ? await catalog() : mockProducts).find(product => product.slug === slug) || null; },
+  async getProduct(slug) { const product=(usesSupabaseCatalog() ? await catalog() : mockProducts).find(product => product.slug === slug) || null;if(!product&&catalogState.stale)throw new Error('Коллекция временно недоступна');return product; },
   async getBrands() { return usesSupabaseCatalog() ? [...new Set((await catalog()).map(p=>p.brand))].sort() : [...brands]; }
 });
 export function filterProducts(products, filters) {
