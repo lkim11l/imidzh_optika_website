@@ -8,7 +8,9 @@
     "build:timeweb": "node scripts/configure-timeweb.mjs && npm run build",
     "start": "node scripts/preview.mjs",
     "build": "node scripts/prepare-pages.mjs",
-    "test:seo": "node --test tests/*.test.mjs"
+    "test:seo": "node --test tests/*.test.mjs",
+    "preview:test": "node scripts/test-preview.mjs",
+    "test:local": "node --import ./scripts/deny-live-network.mjs --test tests/*.test.mjs"
   },
   "engines": {
     "node": "22.x"
@@ -16,7 +18,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
     "nodemailer": "^10.2.1",
-    "sharp": "^0.34.5"
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "clean-css": "^5.3.3"

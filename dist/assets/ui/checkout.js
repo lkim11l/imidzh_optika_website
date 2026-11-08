@@ -10,34 +10,53 @@ export function checkoutPageHTML(products,cart=[]){
  return `<section class="checkout-page checkout-classic wrap"><header class="checkout-heading"><h1>Оформить заказ</h1><p>Менеджер свяжется с вами, уточнит наличие очков и согласует оплату и доставку.</p></header><div id="checkout-content">${!items.length?emptyState('Вы ещё не выбрали очки','Добавьте понравившиеся модели из каталога.'): `<div class="checkout-layout"><form id="order-form"><fieldset><legend>Доставка в</legend><div class="checkout-location"><label>Город<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Укажите ваш город"></label><label>Страна<select name="country" aria-label="Страна"><option value="RU">Россия</option></select></label></div><div class="delivery-options"><label><input type="radio" name="method" value="pickup" checked>Самовывоз</label><label><input type="radio" name="method" value="delivery">Доставка</label></div><p id="pickup-address">Москва, Лермонтовский проспект, 19, корпус 1, ТЦ «Феникс», 1 этаж.</p></fieldset><fieldset><legend>Покупатель</legend><div id="delivery-fields" class="checkout-fields" hidden><label>Адрес доставки<input name="address" autocomplete="street-address" maxlength="250" required placeholder="Улица, дом, квартира" disabled></label><label>Почтовый индекс<input name="postal" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required disabled></label></div><div class="checkout-fields"><label>Имя и фамилия<input name="name" autocomplete="name" required maxlength="80" placeholder="Имя и фамилия"></label><label>Телефон<input name="phone" type="tel" autocomplete="tel" required placeholder="+7 (___) ___-__-__"></label></div><label class="checkout-comment">Примечания покупателя<textarea name="comment" rows="4" maxlength="700" placeholder="Удобное время для звонка и пожелания к заказу"></textarea></label></fieldset><fieldset><legend>Способы оплаты</legend><div class="payment-options"><label><input type="radio" name="payment" value="cash" checked><span>Оплата наличными при получении</span></label><label><input type="radio" name="payment" value="cod"><span>Наложенный платеж</span></label></div></fieldset><div class="checkout-agreements checkout-agreement-compact"><label class="order-consent"><input type="checkbox" name="consent" required><span>Настоящим подтверждаю, что ознакомлен(а) с отдельным согласием и даю согласие на обработку моих персональных данных. <span class="agreement-required" aria-hidden="true">*</span></span></label><p class="checkout-consent-caption">Нажимая кнопку «Оформить заказ», я даю ИП Ким Эдуард Олегович согласие на обработку указанных в заявке данных для связи со мной и оформления заказа в соответствии с указанным <a href="/consent" target="_blank" rel="noopener noreferrer">здесь текстом</a>. <a href="/privacy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a>.</p></div><p id="order-message" role="status" aria-live="polite"></p><button class="button" id="send-order" type="submit" disabled>Оформить заказ</button><a class="checkout-continue" href="/catalog">Продолжить покупки</a></form><aside class="order-summary" aria-labelledby="order-summary-title"><h2 id="order-summary-title">Ваш заказ</h2><div id="order-summary-body">${summaryHTML(items,{editable:false})}<a class="checkout-edit-cart" href="/cart">Изменить заказ</a></div></aside></div>`}</div></section>`;
 }
 
-export function mountCheckout(root,products,store,{fetcher=fetch}={}){
+export function mountCheckout(root,products,store,{fetcher=fetch,onAccepted=()=>{}}={}){
  const form=root.querySelector('#order-form');if(!form)return {refresh(){},dispose(){}};
  const message=root.querySelector('#order-message'),send=root.querySelector('#send-order'),summary=root.querySelector('#order-summary-body');
+ const recovery=root.ownerDocument.createElement('div');
+ recovery.id='order-recovery';recovery.hidden=true;
+ recovery.innerHTML='<p>Если оформить заявку не получается, позвоните в салон: <a href="tel:+74956416676">+7 495 641-66-76</a>.</p><button type="button" id="retry-order-status">Повторить проверку</button>';
+ message.insertAdjacentElement('afterend',recovery);
+ const retry=recovery.querySelector('#retry-order-status');
  const validatePhone=installRussianPhone(form.elements.phone);
- let ready=false,busy=false,active=true,submitted=false,requestId=null;
- function availability(){send.hidden=false;message.textContent='';}
- function refresh(){if(!active||submitted)return;const items=checkoutItems(products,store.getCart());summary.innerHTML=summaryHTML(items,{editable:false})+'<a class="checkout-edit-cart" href="/cart">Изменить заказ</a>';send.textContent='Оформить заказ ('+money(checkoutTotal(items))+')';summary.querySelectorAll('button,input').forEach(el=>el.disabled=busy);send.disabled=!ready||busy||!items.length;}
+ let ready=false,busy=false,checking=false,active=true,submitted=false,requestId=null,requestSignature=null;
+ const unavailable='Сейчас не удалось подтвердить приём заявок. Повторите проверку или позвоните в салон.';
+ function refresh(){if(!active||submitted)return;const items=checkoutItems(products,store.getCart());summary.innerHTML=summaryHTML(items,{editable:false})+'<a class="checkout-edit-cart" href="/cart">Изменить заказ</a>';send.textContent='Оформить заказ ('+money(checkoutTotal(items))+')';summary.querySelectorAll('button,input').forEach(el=>el.disabled=busy);send.disabled=!ready||checking||busy||!items.length;retry.disabled=busy||checking;}
  function methodChanged(){const delivery=form.elements.method.value==='delivery';root.querySelector('#delivery-fields').hidden=!delivery;root.querySelector('#pickup-address').hidden=delivery;for(const name of ['address','postal']){form.elements[name].disabled=!delivery;form.elements[name].required=delivery;}}
- form.addEventListener('change',event=>{if(event.target.name==='method')methodChanged();requestId=null;});
+ form.addEventListener('change',event=>{if(busy)return;if(event.target.name==='method')methodChanged();requestId=null;});
  form.addEventListener('input',()=>{if(!busy)requestId=null;});
- summary.addEventListener('change',event=>{if(event.target.dataset.orderQuantity){store.setQuantity(event.target.dataset.orderQuantity,event.target.value);requestId=null;refresh();}});
+ summary.addEventListener('change',event=>{if(!busy&&event.target.dataset.orderQuantity){store.setQuantity(event.target.dataset.orderQuantity,event.target.value);requestId=null;refresh();}});
  summary.addEventListener('click',event=>{const button=event.target.closest('[data-order-remove]');if(button&&!busy){store.removeFromCart(button.dataset.orderRemove);requestId=null;refresh();}});
- const check=async()=>{message.textContent='Проверяем приём заявок…';try{const r=await fetcher('/api/orders/status',{cache:'no-store',signal:AbortSignal.timeout(12000)});const result=await r.json();if(!active)return;ready=r.ok&&result.ready;message.textContent='';availability();}catch{if(active){message.textContent='';availability();}}finally{refresh();}};
+ const check=async()=>{
+  if(!active||busy||checking||submitted)return;
+  checking=true;ready=false;message.textContent='Проверяем приём заявок…';refresh();
+  try{
+   const response=await fetcher('/api/orders/status',{cache:'no-store',signal:AbortSignal.timeout(12000)});const result=await response.json();
+   if(!active)return;
+   ready=response.ok&&result?.ready===true;
+   message.textContent=ready?'':unavailable;recovery.hidden=ready;
+  }catch{if(active){ready=false;message.textContent=unavailable;recovery.hidden=false;}}
+  finally{checking=false;refresh();}
+ };
+ retry.addEventListener('click',check);
  form.addEventListener('submit',async event=>{
-  event.preventDefault();if(busy||!ready)return;validatePhone();if(!form.reportValidity())return;
+  event.preventDefault();if(busy||checking||submitted||!ready)return;validatePhone();if(!form.reportValidity())return;
   const items=checkoutItems(products,store.getCart());if(!items.length)return;
-  const values=new FormData(form);requestId ||= crypto.randomUUID();
-  const payload={request_id:requestId,customer_name:String(values.get('name')).trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on',selected_items:items.map(({product,quantity})=>({id:product.id,quantity})),delivery_details:values.get('method')==='delivery'?{method:'delivery',city:values.get('city'),address:values.get('address'),postal:values.get('postal')||''}:{method:'pickup'},customer_comment:orderComment(values)};
-  busy=true;message.textContent='Отправляем заявку…';form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);refresh();
+  const values=new FormData(form);
+  const payload={customer_name:String(values.get('name')).trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on',selected_items:items.map(({product,quantity})=>({id:product.id,quantity})),delivery_details:values.get('method')==='delivery'?{method:'delivery',city:values.get('city'),address:values.get('address'),postal:values.get('postal')||''}:{method:'pickup'},customer_comment:orderComment(values)};
+  const signature=JSON.stringify(payload);if(signature!==requestSignature)requestId=null;
+  requestId ||= crypto.randomUUID();requestSignature=signature;payload.request_id=requestId;
+  busy=true;message.textContent='Отправляем заявку…';recovery.hidden=true;form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);refresh();
   try{
    const response=await fetcher('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(20000)});const result=await response.json();
-   if(!response.ok)throw Error(result.error||'Не удалось отправить заявку. Попробуйте ещё раз или позвоните в салон.');
+   if(!response.ok)throw Error(result?.error||'Не удалось отправить заявку. Попробуйте ещё раз или позвоните в салон.');
+   if(typeof result?.id!=='string'||result.id!==payload.request_id||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(result.id)||typeof result.total!=='number'||!Number.isFinite(result.total)||result.total<0)throw Error('Сервер не подтвердил заказ. Повторите отправку или позвоните в салон.');
    submitted=true;
    for(const item of items){const current=store.getCart().find(c=>c.id===item.product.id);if(current){if(current.quantity>item.quantity)store.setQuantity(current.id,current.quantity-item.quantity);else store.removeFromCart(current.id);}}
-   if(!active)return;
-   root.querySelector('#checkout-content').innerHTML=`<div class="order-success" role="status"><p class="eyebrow">ЗАКАЗ ПОЛУЧЕН</p><h2>Спасибо! Мы свяжемся с вами.</h2><p>Менеджер позвонит по указанному номеру, уточнит наличие очков и согласует оплату и доставку.</p><p>Номер заказа: <strong>${esc(String(result.id).slice(0,8).toUpperCase())}</strong></p><p>Стоимость выбранных очков: <strong>${money(result.total)}</strong>. Доставка согласуется отдельно.</p><a class="button" href="/catalog">Вернуться в каталог</a></div>`;
-  }catch(error){if(active)message.textContent=error.name==='TimeoutError'?'Сервер не ответил вовремя. Повторите отправку: повторная заявка не создаётся.':error.message;}
-  finally{busy=false;if(active&&!submitted){form.querySelectorAll('input,textarea,button').forEach(el=>el.disabled=false);methodChanged();refresh();}}
+   if(active)root.querySelector('#checkout-content').innerHTML=`<div class="order-success" role="status"><p class="eyebrow">ЗАКАЗ ПОЛУЧЕН</p><h2>Спасибо! Мы свяжемся с вами.</h2><p>Менеджер позвонит по указанному номеру, уточнит наличие очков и согласует оплату и доставку.</p><p>Номер заказа: <strong>${esc(String(result.id).slice(0,8).toUpperCase())}</strong></p><p>Стоимость выбранных очков: <strong>${money(result.total)}</strong>. Доставка согласуется отдельно.</p><a class="button" href="/catalog">Вернуться в каталог</a></div>`;
+   try{Promise.resolve(onAccepted({accepted:true,requestId:payload.request_id})).catch(()=>{});}catch{}
+  }catch(error){if(active){message.textContent=error?.name==='TimeoutError'?'Сервер не ответил вовремя. Повторите отправку: повторная заявка не создаётся.':error?.message||'Не удалось отправить заявку. Повторите отправку или позвоните в салон.';recovery.hidden=false;}}
+  finally{busy=false;if(active&&!submitted){form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=false);methodChanged();refresh();}}
  });
  methodChanged();check();return {refresh,dispose(){active=false;}};
 }

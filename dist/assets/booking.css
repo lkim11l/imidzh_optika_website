@@ -1,0 +1,13 @@
+#booking-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid rgba(140, 128, 112, .35);
+  border-radius: 10px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+}
+#booking-form select:focus-visible { outline: 2px solid #9a753a; outline-offset: 2px; }
+#booking-form select:disabled { opacity: .6; }
+.order-retry { margin-top: 10px; }

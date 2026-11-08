@@ -5,9 +5,12 @@ import {orderMailConfigured,ORDER_RECIPIENT} from './order-mail.mjs';
 export function bookingMessage(job,from){
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const number=String(job.booking_id).slice(0,8).toUpperCase();
+ const label=({vision_check:'Проверка зрения и подбор для взрослых',progressive:'Прогрессивные очки',miyosmart:'Заказ HOYA MiYOSMART по рецепту'})[job.direction];
+ const directionText=label?'Направление: '+label+'\n':'';
+ const directionHTML=label?'<p><strong>Направление:</strong> '+esc(label)+'</p>':'';
  return {from,to:ORDER_RECIPIENT,subject:`Новая заявка № ${number} — Имидж Оптика`,
-  text:`НОВАЯ ЗАЯВКА С САЙТА\n\nИмя: ${job.customer_name}\nТелефон: ${job.customer_phone}\nДата: ${job.booking_created_at}\nНомер: ${job.booking_id}\n\nСвяжитесь с клиентом, чтобы согласовать обращение и время визита. Подробности заявки: https://optikim.ru/admin (раздел «Заявки»).`,
-  html:`<!doctype html><html lang="ru"><body style="margin:0;background:#f6f4f0;color:#30271f;font:16px/1.6 Arial,sans-serif"><div style="max-width:600px;margin:24px auto;padding:28px;background:#fff"><h1 style="font-size:24px">Новая заявка № ${esc(number)}</h1><p><strong>Имя:</strong> ${esc(job.customer_name)}</p><p><strong>Телефон:</strong> <a href="tel:${esc(job.customer_phone)}" style="color:#795b38">${esc(job.customer_phone)}</a></p><p>Свяжитесь с клиентом, чтобы согласовать обращение и время визита.</p><p><a href="https://optikim.ru/admin" style="color:#795b38">Открыть раздел «Заявки» в админке</a></p><p style="font-size:12px;color:#81786b">${esc(job.booking_created_at)} · ${esc(job.booking_id)}</p></div></body></html>`,
+  text:`НОВАЯ ЗАЯВКА С САЙТА\n\n${directionText}Имя: ${job.customer_name}\nТелефон: ${job.customer_phone}\nДата: ${job.booking_created_at}\nНомер: ${job.booking_id}\n\nСвяжитесь с клиентом, чтобы согласовать обращение и время визита. Подробности заявки: https://optikim.ru/admin (раздел «Заявки»).`,
+  html:`<!doctype html><html lang="ru"><body style="margin:0;background:#f6f4f0;color:#30271f;font:16px/1.6 Arial,sans-serif"><div style="max-width:600px;margin:24px auto;padding:28px;background:#fff"><h1 style="font-size:24px">Новая заявка № ${esc(number)}</h1>${directionHTML}<p><strong>Имя:</strong> ${esc(job.customer_name)}</p><p><strong>Телефон:</strong> <a href="tel:${esc(job.customer_phone)}" style="color:#795b38">${esc(job.customer_phone)}</a></p><p>Свяжитесь с клиентом, чтобы согласовать обращение и время визита.</p><p><a href="https://optikim.ru/admin" style="color:#795b38">Открыть раздел «Заявки» в админке</a></p><p style="font-size:12px;color:#81786b">${esc(job.booking_created_at)} · ${esc(job.booking_id)}</p></div></body></html>`,
   messageId:`<booking-${job.booking_id}@${String(from).split('@').at(-1)}>`,date:new Date(job.booking_created_at)};
 }
 
@@ -25,7 +28,8 @@ export function createBookingMailer({env=process.env,fetcher=fetch,transportFact
   try{
    transport ||= transportFactory({host:env.SMTP_HOST,port:Number(env.SMTP_PORT||465),secure:Number(env.SMTP_PORT||465)===465,requireTLS:true,auth:{user:env.SMTP_USER,pass:env.SMTP_PASSWORD},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:20000,disableFileAccess:true,disableUrlAccess:true});
    for(let n=0;n<3;n++){
-    const rows=await db('rpc/optika_claim_email',{sender_address:env.BOOKING_EMAIL_FROM||env.SMTP_USER}),job=rows?.[0];if(!job)break;
+    const claim=env.SERVICE_BOOKINGS_ENABLED==='true'?'rpc/optika_claim_service_email':'rpc/optika_claim_email';
+    const rows=await db(claim,{sender_address:env.BOOKING_EMAIL_FROM||env.SMTP_USER}),job=rows?.[0];if(!job)break;
     let accepted_id=null,error_message='Почтовый сервер не подтвердил отправку. Повтор запланирован.';
     if(job.recipient===ORDER_RECIPIENT){try{const result=await transport.sendMail(bookingMessage(job,env.BOOKING_EMAIL_FROM||env.SMTP_USER));if(result.accepted?.some(a=>String(a).toLowerCase()===ORDER_RECIPIENT)){accepted_id=result.messageId||`booking-${job.booking_id}`;error_message=null;}}catch{}}
     else error_message='Получатель не совпадает с настроенным адресом салона.';

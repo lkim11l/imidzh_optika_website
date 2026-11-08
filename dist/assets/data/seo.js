@@ -1,3 +1,4 @@
+import {productSchemaAdditions} from './catalog-seo.js';
 export const siteURL = 'https://optikim.ru';
 export const categoryNames = {optical:'Оправы для зрения',sunglasses:'Солнцезащитные очки'};
 export const productPath = slug => '/product/' + encodeURIComponent(slug);
@@ -27,22 +28,29 @@ export function pageMetadata(path, product) {
 export function productSchema(product) {
   const url = siteURL + productPath(product.slug);
   // Availability is not confirmed by this catalog: never invent stock or reviews.
-  return {'@context':'https://schema.org','@type':'Product',name:`${product.brand} ${product.model}`,url,
+  return {...productSchemaAdditions(product),'@context':'https://schema.org','@type':'Product',name:`${product.brand} ${product.model}`,url,
     brand:{'@type':'Brand',name:product.brand},model:product.model,
     description:product.description || product.shortDescription || '',
     image:(product.images || []).map(image=>new URL(image.src,siteURL).href),
     ...(Number.isFinite(product.price) && product.price > 0 ? {offers:{'@type':'Offer',url,price:product.price,priceCurrency:'RUB'}} : {})};
 }
-export function pageSchemas(path,meta,product) {
+export function pageSchemas(path,meta,product,breadcrumbs) {
   const schemas=[];
   if(product)schemas.push(productSchema(product));
   if(meta.index && path!=='/') {
-    const items=[{name:'Главная',path:'/'}];
-    if(product)items.push({name:'Каталог',path:'/catalog'},{name:categoryNames[product.category],path:'/catalog/'+product.category});
-    else if(path.startsWith('/catalog/'))items.push({name:'Каталог',path:'/catalog'});
-    items.push({name:product?`${product.brand} ${product.model}`:meta.title,path:meta.path});
+    const items=Array.isArray(breadcrumbs) && breadcrumbs.length>1
+      ? breadcrumbs.map(([itemPath,name])=>({name,path:itemPath??meta.path}))
+      : [{name:'Главная',path:'/'}];
+    if(!Array.isArray(breadcrumbs) || breadcrumbs.length<2) {
+      if(product)items.push({name:'Каталог',path:'/catalog'},{name:categoryNames[product.category],path:'/catalog/'+product.category});
+      else if(path.startsWith('/catalog/'))items.push({name:'Каталог',path:'/catalog'});
+      items.push({name:product?`${product.brand} ${product.model}`:meta.title,path:meta.path});
+    }
     schemas.push({'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:items.map((item,i)=>({'@type':'ListItem',position:i+1,name:item.name,item:siteURL+item.path}))});
   }
-  if(path==='/')schemas.push({'@context':'https://schema.org','@type':'Store',name:'Оптика Имидж',url:siteURL,description:meta.description});
+  if(path==='/')schemas.push({'@context':'https://schema.org','@type':'Store',name:'Оптика Имидж',url:siteURL,description:meta.description,
+    telephone:'+74956416676',
+    address:{'@type':'PostalAddress',streetAddress:'Лермонтовский проспект, 19, корпус 1',addressLocality:'Москва',addressCountry:'RU'},
+    openingHoursSpecification:[{'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day=>'https://schema.org/'+day),opens:'10:00',closes:'20:00'}]});
   return schemas;
 }

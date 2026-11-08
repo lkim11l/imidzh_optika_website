@@ -22,13 +22,13 @@ export function sitemap(products) {
   const entries = [...publicPaths.map(p=>({path:'/'+p})),...products.map(p=>({path:productPath(p.slug),updated:p.updatedAt}))];
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+entries.map(p=>`<url><loc>${esc(siteURL+p.path)}</loc>${p.updated&&!Number.isNaN(Date.parse(p.updated))?`<lastmod>${new Date(p.updated).toISOString()}</lastmod>`:''}</url>`).join('')+'</urlset>\n';
 }
-export function renderPage(shell,path,products,editorial={}) {
+export function renderPage(shell,path,products,editorial={}, {preview:previewMode=false}={}) {
   const product = path.startsWith('/product/') ? products.find(p=>productPath(p.slug)===path) : undefined;
   const guide = guidePages[path];
   const known = !!product || publicPaths.includes(path.slice(1)) || ['/checkout','/cart'].includes(path);
   const meta = guide ? {...pageMetadata(path),title:guide.title,description:guide.description,index:true} : pageMetadata(path,product);
   if(!known) meta.index=false;
-  const content = path==='/privacy'?privacyPageHTML():['/terms','/consent'].includes(path)?checkoutDocumentHTML(path):path==='/cookies'?cookiesPageHTML():path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
+  const content = path==='/privacy'?privacyPageHTML():['/terms','/consent'].includes(path)?checkoutDocumentHTML(path):path==='/cookies'?cookiesPageHTML():path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path,{preview:previewMode}):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');
   if(path==='/')html=html.replace(/<!-- hero-slides:start -->[\s\S]*?<!-- hero-slides:end -->/,()=>`<!-- hero-slides:start -->${heroSlidesHTML(editorial)}<!-- hero-slides:end -->`);
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));
@@ -41,7 +41,7 @@ export function renderPage(shell,path,products,editorial={}) {
     const begin=html.indexOf('<div id="home" hidden>'),end=html.indexOf('</div><div id="route-view">');
     if(begin>=0&&end>begin)html=html.slice(0,begin)+html.slice(begin,end).replace(/<img\b[^>]*>/g,tag=>tag.replace(/ loading="[^"]*"| fetchpriority="[^"]*"/g,'').replace('<img','<img loading="lazy"'))+html.slice(end);
   }
-  const schemas=pageSchemas(path,meta,product);
+  const schemas=pageSchemas(path,meta,product,guide?.breadcrumbs);
   html=html.replace('</head>',()=>`<script type="application/ld+json" id="seo-data">${json(schemas)}</script>\n</head>`);
   return {html:html.replace(/[ \t]+$/gm,''),status:known?200:404};
 }

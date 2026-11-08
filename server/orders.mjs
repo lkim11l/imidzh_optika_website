@@ -1,6 +1,8 @@
 import {supabaseConfig} from '../dist/assets/data/supabase-config.js';
 import {orderMailConfigured} from './order-mail.mjs';
 
+const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
 export function createOrdersHandler({env=process.env,fetcher=fetch,wake=()=>{}}={}){
  return async(req,res)=>{
   res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json; charset=utf-8');
@@ -24,8 +26,8 @@ export function createOrdersHandler({env=process.env,fetcher=fetch,wake=()=>{}}=
    const r=await fetcher((env.SUPABASE_URL||supabaseConfig.url)+'/rest/v1/rpc/optika_submit_order',{method:'POST',headers:{apikey:env.SUPABASE_PUBLISHABLE_KEY||supabaseConfig.publishableKey,'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(12000)});
    const result=await r.json().catch(()=>null);
    if(!r.ok){if(result?.code==='P0002')return reply(429,{error:'Заявка с этим номером уже принята недавно. Подождите 5 минут или позвоните в салон.'});if(result?.code==='P0003')return reply(409,{error:'Одна из моделей больше не доступна. Обновите каталог и состав заказа.'});return reply(r.status>=500?503:400,{error:'Не удалось принять заявку. Проверьте данные или позвоните в салон.'});}
-   if(!result?.id||!Number.isFinite(Number(result.total)))return reply(503,{error:'Не удалось подтвердить сохранение заявки. Повторите отправку.'});
-   reply(200,{id:result.id,total:Number(result.total)});Promise.resolve().then(wake).catch(()=>{});
+   if(typeof body.request_id!=='string'||!uuid.test(body.request_id)||result?.id!==body.request_id||typeof result.total!=='number'||!Number.isFinite(result.total)||result.total<0)return reply(503,{error:'Не удалось подтвердить сохранение заявки. Повторите отправку.'});
+   reply(200,{id:result.id,total:result.total});Promise.resolve().then(wake).catch(()=>{});
   }catch{return reply(503,{error:'Сайт не смог связаться с базой. Повторите отправку или позвоните: +7 (495) 641-66-76.'});}
  };
 }

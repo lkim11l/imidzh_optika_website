@@ -23,6 +23,12 @@ import { productRepository, filterProducts } from './data/product-repository.js'
 import { shopStore } from './state/store.js';
 import { escapeHTML as esc, money, icon, productGrid, emptyState, ProductImage, modelCount } from './ui/components.js?v=no-cart1';
 import { installProductImages, setProductImageSource } from './ui/product-image.js';
+import {createAnalytics,directionForPath} from './analytics.js';
+import {createServiceBookingTransport,legacyVisionPayload} from './data/service-bookings.js';
+import {createBookingController} from './ui/booking-controller.js';
+const fixtureMode=window.OPTIKA_TEST?.enabled===true;
+const analytics=createAnalytics({...window.OPTIKA_ANALYTICS,location:window.location});
+if(fixtureMode)window.__OPTIKA_ANALYTICS__=analytics;
 installProductImages();
 installCookieNotice();
 installHeroCarousel();
@@ -40,7 +46,7 @@ function notify(message) {
   clearTimeout(toastTimer); $('#toast').textContent = message; $('#toast').classList.add('shown');
   toastTimer = setTimeout(() => $('#toast').classList.remove('shown'), 3500);
 }
-function openDialog(dialog) { document.querySelectorAll('dialog[open]').forEach(other => other.close()); dialog.showModal(); }
+function openDialog(dialog) { if(bookingController.isBusy())return;document.querySelectorAll('dialog[open]').forEach(other => other.close()); dialog.showModal(); }
 function filtersFromURL() {
   const url = new URL(location.href), category = url.pathname.replace(/\/$/,'').split('/')[2];
   const number = key => { const value = url.searchParams.get(key); return value !== null && value !== '' && Number.isFinite(Number(value)) ? Math.max(0,Number(value)) : null; };
@@ -94,9 +100,9 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
   else if(path==='/product')await renderProduct(new URLSearchParams(location.search).get('slug')||'',generation);
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
-  else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path);}
+  else if(guidePages[path]){document.title=guidePages[path].title;view.innerHTML=guidePageHTML(path,{preview:fixtureMode&&window.OPTIKA_TEST?.contentPreview!==false});}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
-  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore);}else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore,{onAccepted:confirmation=>analytics.orderRequestSuccess(confirmation)});}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;
   const meta = guidePages[path] ? {...pageMetadata(path),title:guidePages[path].title,description:guidePages[path].description,index:true} : pageMetadata(path,resolvedProduct);
   document.title=meta.title;
@@ -104,20 +110,45 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   const description=document.querySelector('meta[name=description]');if(description)description.content=meta.description;
   document.querySelector('meta[property="og:title"]')?.setAttribute('content',meta.title);document.querySelector('meta[property="og:description"]')?.setAttribute('content',meta.description);document.querySelector('meta[property="og:url"]')?.setAttribute('content',siteURL+meta.path);
   document.querySelector('meta[property="og:image"]')?.setAttribute('content',new URL(resolvedProduct?.images?.[0]?.src||'/assets/hero-portrait-v1.webp',siteURL).href);
-  document.querySelector('meta[name=robots]')?.setAttribute('content',meta.index?'index,follow':'noindex,follow');
+  document.querySelector('meta[name=robots]')?.setAttribute('content',fixtureMode?'noindex,nofollow':meta.index?'index,follow':'noindex,follow');
   document.getElementById('seo-data')?.remove();
-  const schemas=pageSchemas(path,meta,resolvedProduct);if(schemas.length){const schema=document.createElement('script');schema.id='seo-data';schema.type='application/ld+json';schema.textContent=JSON.stringify(schemas);document.head.append(schema);}
+  const schemas=pageSchemas(path,meta,resolvedProduct,guidePages[path]?.breadcrumbs);if(schemas.length){const schema=document.createElement('script');schema.id='seo-data';schema.type='application/ld+json';schema.textContent=JSON.stringify(schemas);document.head.append(schema);}
+  analytics.navigate(location.href);
   updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
 }
-async function navigate(url, options = {}) {document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
+async function navigate(url, options = {}) {if(bookingController.isBusy())return;document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
 function updateCountsAndHearts() {
   document.querySelectorAll('[data-cart-count]').forEach(count=>{count.textContent=shopStore.cartCount();count.hidden=!shopStore.cartCount();});
   const favorites = shopStore.getFavorites().length;
   document.querySelectorAll('[data-favorite-count]').forEach(count => {count.textContent = favorites;count.hidden = !favorites;});
   document.querySelectorAll('[data-favorite]').forEach(button => {const product = productById(button.dataset.favorite), selected = shopStore.isFavorite(button.dataset.favorite);button.classList.toggle('is-favorite',selected);button.setAttribute('aria-pressed',String(selected));button.setAttribute('aria-label',`${selected ? 'Убрать из избранного' : 'В избранное'}: ${product?.brand || ''} ${product?.model || ''}`);});
 }
-function startBooking(callback=false) {$('#booking-title').textContent=callback?'Заказать звонок':'Начнем с вас.';$('#booking-dialog .eyebrow').textContent=callback?'ОБРАТНЫЙ ЗВОНОК':'ПРОВЕРКА ЗРЕНИЯ';$('#booking-form button[type=submit]').textContent=callback?'Заказать звонок':'Записаться бесплатно';$('#booking-result p').textContent=callback?'Мы свяжемся с вами по указанному телефону.':'Время проверки зрения необходимо согласовать с салоном.';$('#booking-error').textContent='';$('#booking-form').hidden = false;$('#booking-result').hidden = true;openDialog($('#booking-dialog'));}
+let bookingCallback=false;
+function syncBookingContext(direction) {
+ const contexts={
+  vision_check:{title:'Согласовать проверку зрения взрослому',note:'Бесплатная проверка и подбор взрослым у оптометристов Эдуарда или Натальи, 30–60 минут. Время согласует сотрудник салона.',success:'Запрос на взрослую проверку получен. Сотрудник салона свяжется с вами и согласует время. Отправка заявки ещё не подтверждает запись.'},
+  progressive:{title:'Обсудить подбор прогрессивных очков',note:'Индивидуальный подбор прогрессивных очков. Сотрудник салона согласует время и детали обращения.',success:'Запрос на подбор прогрессивных очков получен. Сотрудник салона свяжется с вами и согласует время и детали заказа. Отправка заявки ещё не подтверждает запись.'},
+  miyosmart:{title:'Обсудить заказ MiYOSMART по рецепту',note:'До изготовления детских очков нужны внешний детский офтальмолог и действующий рецепт. В салоне — оправа, измерения и заказ. Проверки зрения детям здесь нет. Рецепт через форму не отправляйте.',success:'Запрос по заказу MiYOSMART получен. Сотрудник салона свяжется с вами и обсудит детали заказа по рецепту. Отправка заявки ещё не подтверждает заказ или время визита.'}
+ };
+ const context=contexts[direction],childOrder=direction==='miyosmart';
+ $('#booking-title').textContent=childOrder?context.title:(bookingCallback?'Заказать звонок':'Начнем с вас.');
+ $('#booking-context-note').textContent=context?context.title+'. '+context.note:'Выберите направление и оставьте контакт для связи. Сотрудник салона согласует время или детали заказа.';
+ $('#booking-dialog .eyebrow').textContent=childOrder?'ЗАКАЗ ПО РЕЦЕПТУ':(bookingCallback?'ОБРАТНЫЙ ЗВОНОК':'ПРОВЕРКА ЗРЕНИЯ');
+ $('#booking-form button[type=submit]').textContent=childOrder?'Обсудить заказ':(bookingCallback?'Заказать звонок':'Записаться бесплатно');
+ $('#booking-result h3').textContent='Заявка получена';
+ $('#booking-result p').textContent=bookingCallback?'Мы свяжемся с вами по указанному телефону.':'Время проверки зрения необходимо согласовать с салоном.';
+ $('#booking-result p').hidden=childOrder;
+ $('#booking-result-note').textContent=(fixtureMode?'Локальная тестовая заявка: в салон ничего не отправлено. ':'')+(context?.success||'Сотрудник салона свяжется с вами и согласует время или детали заказа. Отправка заявки ещё не подтверждает запись.');
+}
+function startBooking(callback=false,direction=null) {
+ if(!bookingController.begin())return;
+ const form=$('#booking-form');form.reset();
+ bookingCallback=callback;
+ form.elements.direction.value=direction||directionForPath(location.href)||'';
+ syncBookingContext(form.elements.direction.value);
+ $('#booking-error').textContent='';$('#booking-error-detail').textContent='';form.hidden=false;$('#booking-result').hidden=true;openDialog($('#booking-dialog'));
+}
 let fittingProductId=null,fittingRequestId=null;
 function startRequest(productId) {const product = productById(productId);if(!product||product.isMock)return;fittingProductId=product.id;fittingRequestId=null;$('#request-product').textContent = `${product.brand} · ${product.model}`;$('#request-error').textContent='';$('#request-form').hidden = false;$('#request-result').hidden = true;openDialog($('#request-dialog'));}
 function renderSearch() {
@@ -128,9 +159,9 @@ function setupReveals() {refreshTextReveals();}
 document.addEventListener('click',event => {
   const button = event.target.closest('button');
   if(button) {
-    if(button.hasAttribute('data-booking'))startBooking();if(button.hasAttribute('data-callback'))startBooking(true);if(button.hasAttribute('data-open-menu'))openDialog($('#mobile-menu'));
+    if(button.hasAttribute('data-booking'))startBooking(false,button.dataset.direction);if(button.hasAttribute('data-callback'))startBooking(true,button.dataset.direction);if(button.hasAttribute('data-open-menu'))openDialog($('#mobile-menu'));
     if(button.hasAttribute('data-search')){renderSearch();openDialog($('#search-dialog'));$('#search-input').focus();}
-    if(button.hasAttribute('data-close-dialog') || button.classList.contains('close'))button.closest('dialog')?.close();
+    if(button.hasAttribute('data-close-dialog') || button.classList.contains('close')){if(!bookingController.isBusy())button.closest('dialog')?.close();}
     if(button.hasAttribute('data-open-filters')){fillFilterForm();openDialog($('#filter-dialog'));}
     if(button.hasAttribute('data-reset-filter-form')){$('#filter-form').querySelectorAll('input').forEach(input => {if(['checkbox','radio'].includes(input.type))input.checked = input.name === 'category' && input.value === '';else input.value = '';});previewFilters();}
     if(button.hasAttribute('data-reset-filters'))navigate(catalogURL({category:filtersFromURL().category}),{scroll:false});
@@ -141,7 +172,9 @@ document.addEventListener('click',event => {
     if(button.dataset.addCart){const product=productById(button.dataset.addCart);if(product&&!product.isMock){shopStore.addToCart(product.id);notify('Очки добавлены в корзину. Можно продолжить выбор.');}}
     if(button.dataset.gallerySrc || button.hasAttribute('data-gallery-detail')){const detail = button.hasAttribute('data-gallery-detail');$('#gallery-main').classList.toggle('show-detail',detail);if(!detail){setProductImageSource($('#gallery-image'),button.dataset.gallerySrc,button.dataset.galleryAlt);}document.querySelectorAll('.gallery-thumb').forEach(thumb => {thumb.classList.toggle('selected',thumb === button);thumb.setAttribute('aria-pressed',String(thumb === button));});}
   }
-  const link = event.target.closest('a[href]');if(!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download'))return;
+  const link = event.target.closest('a[href]');
+  if(link&&event.button===0&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey){const target=new URL(link.href),channel=target.protocol==='tel:'?'phone':target.hostname==='t.me'?'telegram':null;if(channel)analytics.trackContact(link.dataset.direction||directionForPath(location.href),channel);}
+  if(!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download'))return;
   const url = new URL(link.href);if(url.origin !== location.origin || url.hash === '#main-content')return;event.preventDefault();
   const key = ({'/catalog':'catalog','/catalog/optical':'frames','/catalog/sunglasses':'sunglasses'})[url.pathname], destination = key && safeDestination(window.OPTIKA_CONFIG.commerce[key]);
   if(destination)location.assign(destination);else navigate(url.pathname + url.search + url.hash);
@@ -163,6 +196,7 @@ $('#filter-form').addEventListener('submit',event => {event.preventDefault();con
 $('#search-input').addEventListener('input',renderSearch);
 $('#search-form').addEventListener('submit',event => {event.preventDefault();navigate(catalogURL({query:$('#search-input').value.trim()}));});
 document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('cancel',event=>{if(bookingController.isBusy())event.preventDefault();});
   dialog.addEventListener('keydown',event => {
     if(event.key !== 'Tab')return;
     const controls = [...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')].filter(element => element.getClientRects().length);
@@ -170,22 +204,36 @@ document.querySelectorAll('dialog').forEach(dialog => {
     if(event.shiftKey && document.activeElement === first){event.preventDefault();last?.focus();}
     else if(!event.shiftKey && document.activeElement === last){event.preventDefault();first?.focus();}
   });
-  dialog.addEventListener('click',event => {if(event.target !== dialog)return;const rect = dialog.getBoundingClientRect();if(event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)dialog.close();});
+  dialog.addEventListener('click',event => {if(event.target !== dialog||bookingController.isBusy())return;const rect = dialog.getBoundingClientRect();if(event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)dialog.close();});
   dialog.addEventListener('close',() => dialog.querySelectorAll('form').forEach(form => form.reset()));
 });
+$('#booking-form select[name=direction]').addEventListener('change',event=>syncBookingContext(event.target.value));
 const validatePhone=installRussianPhone($('#booking-form input[name=phone]'));
-let bookingRequestId=null;
+const serviceTransport=createServiceBookingTransport({enabled:fixtureMode||window.OPTIKA_CONFIG?.serviceBookings===true});
+const bookingController=createBookingController({
+ submit:async payload=>{
+  if(fixtureMode||window.OPTIKA_CONFIG?.serviceBookings===true)return serviceTransport(payload);
+  if(!supabaseConfig.bookingsEnabled)throw Object.assign(new Error(),{code:'unavailable'});
+  const body={request_id:payload.request_id,...legacyVisionPayload(payload)};
+  await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body});
+  return {accepted:true,id:payload.request_id,direction:'vision_check'};
+ },
+ onAccepted:confirmation=>analytics.bookingSuccess(confirmation.direction,confirmation)
+});
 $('#booking-form').addEventListener('submit',async event => {
  event.preventDefault();const form=event.currentTarget;validatePhone();if(!form.reportValidity())return;
- if(!supabaseConfig.bookingsEnabled){$('#booking-error').textContent='Приём заявок ещё не подключён.';return;}
- const button=form.querySelector('button[type=submit]');if(button.disabled)return;
- button.disabled=true;$('#booking-error').textContent='Отправляем заявку…';
- const values=new FormData(form);bookingRequestId ||= crypto.randomUUID();
- try{await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body:{request_id:bookingRequestId,customer_name:values.get('name').trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on'}});bookingRequestId=null;form.reset();form.hidden=true;$('#booking-result').hidden=false;$('#booking-done').focus();}
- catch(error){$('#booking-error').textContent='Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';}
- finally{button.disabled=false;}
+ if(bookingController.isBusy())return;
+ const values=new FormData(form);$('#booking-error').textContent='Отправляем заявку…';$('#booking-error-detail').textContent='';
+ const controls=[...form.querySelectorAll('input,select,button')];controls.forEach(control=>control.disabled=true);
+ try{
+  const result=await bookingController.submit({customer_name:String(values.get('name')).trim(),customer_phone:'+7'+russianDigits(values.get('phone')),accepted:values.get('consent')==='on',direction:values.get('direction')});
+  if(result.status==='accepted'){form.reset();form.hidden=true;$('#booking-result').hidden=false;$('#booking-done').focus();}
+  else if(result.status==='error'){
+   $('#booking-error').textContent=!fixtureMode&&!window.OPTIKA_CONFIG?.serviceBookings&&!supabaseConfig.bookingsEnabled?'Приём заявок ещё не подключён.':'Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз. Если вы уже отправляли заявку, подождите 5 минут.';
+   $('#booking-error-detail').textContent=result.message;
+  }
+ }finally{controls.forEach(control=>control.disabled=false);}
 });
-$('#booking-form').addEventListener('input',()=>{bookingRequestId=null;});
 $('#booking-done').addEventListener('click',() => $('#booking-dialog').close());
 const validateFittingPhone=installRussianPhone($('#request-form input[name=phone]'));
 $('#request-form').addEventListener('submit',async event => {

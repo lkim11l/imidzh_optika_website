@@ -1,34 +1,40 @@
+import {runtimeConfigurationScript,metrikaCspSources} from './runtime-config.mjs';
 import http from 'node:http';
 import path from 'node:path';
 import {readFile,stat,realpath} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import seo from '../api/seo.mjs';
+import {publicPaths} from './pages.mjs';
 import productImage from '../api/product-image.mjs';
 import {supabaseConfig} from '../dist/assets/data/supabase-config.js';
 import {backendProxy} from './backend-proxy.mjs';
 import {createOrdersHandler} from './orders.mjs';
 import {createOrderMailer} from './order-mail.mjs';
 import {createBookingMailer} from './booking-mail.mjs';
+import {createServiceBookingsHandler} from './service-bookings.mjs';
 const bookingMailer=createBookingMailer();
 const orderMailer=createOrderMailer();
 const ordersHandler=createOrdersHandler({wake:orderMailer.drain});
+const serviceBookingsHandler=createServiceBookingsHandler({wake:bookingMailer.drain,mailReady:bookingMailer.ready});
 import {adminStatus} from './admin-status.mjs';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.mp4':'video/mp4','.ico':'image/x-icon'};
 const origin=new URL(supabaseConfig.url).origin;
-export function createApp({seoHandler=seo,imageHandler=productImage,statusHandler=adminStatus,backendHandler=backendProxy,orderHandler=ordersHandler,staging=process.env.STAGING!=='false'}={}) {
+export function createApp({env=process.env,seoHandler=seo,imageHandler=productImage,statusHandler=adminStatus,backendHandler=backendProxy,orderHandler=ordersHandler,serviceBookingHandler=serviceBookingsHandler,staging=env.STAGING!=='false'}={}) {
  return http.createServer(async(req,res)=>{
+  const metrika=metrikaCspSources(env,{staging});
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('X-Frame-Options','SAMEORIGIN');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(), payment=(), usb=()');
-  res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self'; connect-src 'self' ${origin}; frame-src 'self' https://yandex.ru https://yandex.com https://api-maps.yandex.ru; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'`);
+  res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'${metrika.script}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; media-src 'self'; connect-src 'self' ${origin}${metrika.connect}; frame-src 'self' https://yandex.ru https://yandex.com https://api-maps.yandex.ru; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'self'`);
   if(staging)res.setHeader('X-Robots-Tag','noindex, nofollow');
   try {
    const url=new URL(req.url,'http://localhost');
    if(/^\/(admin|cookie)(\/|$)/.test(url.pathname)){res.setHeader('Cache-Control','no-store');res.setHeader('X-Robots-Tag','noindex, nofollow');}
    if(['/api/orders','/api/orders/status'].includes(url.pathname))return await orderHandler(req,res);
+   if(['/api/service-bookings','/api/service-bookings/status'].includes(url.pathname))return await serviceBookingHandler(req,res);
    if(url.pathname==='/api/bookings/status'){
     res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
     if(req.method!=='GET'){res.statusCode=405;return res.end('{}');}
@@ -41,10 +47,15 @@ export function createApp({seoHandler=seo,imageHandler=productImage,statusHandle
    if(!staging&&String(req.headers.host).split(':')[0]==='www.optikim.ru'){res.writeHead(308,{Location:'https://optikim.ru'+url.pathname+url.search});return res.end();}
    if(['/cookie','/cookie/','/cookie/index.html','/admin/index.html'].includes(url.pathname)){res.writeHead(308,{Location:'/admin'+url.search});return res.end();}
    if(url.pathname!=='/'&&url.pathname.endsWith('/')){res.writeHead(308,{Location:url.pathname.replace(/\/+$/,'')+url.search});return res.end();}
+   if(url.pathname==='/assets/config.js'){
+    res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/javascript; charset=utf-8');
+    const source=await readFile(path.join(root,'assets/config.js'),'utf8');
+    return res.end(req.method==='HEAD'?'':runtimeConfigurationScript(source,env,{staging}));
+   }
    if(staging&&url.pathname==='/robots.txt'){res.setHeader('Content-Type',types['.txt']);return res.end(req.method==='HEAD'?'':'User-agent: *\nDisallow: /\n');}
    req.query=Object.fromEntries(url.searchParams);
    if(url.pathname==='/api/product-image')return await imageHandler(req,res);
-   if(url.pathname==='/'||/^\/(catalog|product)(\/|$)/.test(url.pathname)||['/about','/checkout','/cart','/sitemap.xml','/api/seo'].includes(url.pathname)){
+   if(publicPaths.includes(url.pathname.slice(1))||/^\/(catalog|product)(\/|$)/.test(url.pathname)||['/checkout','/cart','/sitemap.xml','/api/seo'].includes(url.pathname)){
     if(url.pathname!=='/api/seo')req.query.page=url.pathname.slice(1);
     return await seoHandler(req,res);
    }

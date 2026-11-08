@@ -1,0 +1,680 @@
+{
+  "source": "historical generated HTML; capture date unknown; not a current offer",
+  "products": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "slug": "akoni-cosmo-blk-blk-cat-3-f5748cb2615342228931b1a085b7b417",
+      "brand": "AKONI",
+      "model": "COSMO BLK - BLK CAT 3",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 143997,
+      "isNew": false,
+      "isFeatured": true,
+      "popularity": 25,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры изделия:",
+      "description": "Размер 52\nШирина линзы 52 мм\nШирина моста 22\nДлина дужек 147 мм\nMADE IN JAPAN",
+      "attributes": {
+        "Цвет": "Черный",
+        "Форма": "Квадратные",
+        "Материал оправы": "Ацетат"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000002",
+      "slug": "akoni-hydra-aks-202a-59-gld-blk-cat-3-titanium-073e917dc31246e09443f0f9534e8ca6",
+      "brand": "AKONI",
+      "model": "HYDRA AKS-202A-59/GLD-BLK CAT 3 TITANIUM",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 87497,
+      "isNew": false,
+      "isFeatured": true,
+      "popularity": 24,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 59-17-147",
+      "description": "MADE IN JAPAN",
+      "attributes": {
+        "Цвет": "Коричневый/золото",
+        "Форма": "Авиаторы",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000003",
+      "slug": "akoni-stargazer-aks-500d-59-gld-blk-cat-3-f896c5f1e4ed4fac9f877aef3d8c8b6c",
+      "brand": "AKONI",
+      "model": "STARGAZER AKS-500D-59/GLD-BLK CAT 3",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 114497,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 23,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 59-20-147",
+      "description": "Made in Japan\nЯпонский титан! Очки из титана были не более чем мечтой до 1980-х годов, когда Япония стала пионером в технологии, необходимой для изготовления сверхпрочных и легких очков из чудо-металла. Но не весь титан одинаково хорош, и лучший в мире по-прежнему доступен исключительно в Японии. Он предназначен для использования в течение всей жизни, поэтому титановые очки AKONI практически не поддаются разрушению.\nНосовые упоры являются важным, но часто упускаемым из виду элементом очков, поэтому AKONI сделала все возможное, спроектировав и разработав инновационные керамические носоупоры с гибким бета-титановым креплением, которые являются стильными, гипоаллергенными и невероятно легкими. Благодаря горизонтальным линиям и глубокой центральной выемке, обеспечивающей нескользящую посадку, очки AKONI столь же удобны, сколь и красивы.\nСолнцезащитные линзы в очках AKONI обладают высокой контрастностью благодаря многослойному антибликовому маслостойкому покрытию и обеспечивают исключительную защиту от солнечного света с высокими характеристиками.\nЕсли Вы:\n- УСПЕШНЫЕ - ОСОЗНАННЫЕ - ИНИЦИАТИВНЫЕ - ЭЛЕГАНТНЫЕ - ИСКАТЕЛИ КРАСОТЫ - ИССЛЕДОВАТЕЛИ СОВРЕМЕННОСТИ - УВЕРЕННЫЕ В СЕБЕ ЛИЧНОСТИ\nОчки AKONI созданы для ВАС!",
+      "attributes": {
+        "Цвет": "Черный",
+        "Форма": "Квадратные",
+        "Материал оправы": "Металл"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000004",
+      "slug": "balmain-admirable-bps-130d-52-blk-rse-cat-3-limited-edition-1ef823fc41d84ce2a30eb9fa8aa9eca3",
+      "brand": "BALMAIN",
+      "model": "ADMIRABLE BPS-130D-52/BLK-RSE/CAT 3 LIMITED EDITION",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 114997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 22,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 52-20-142",
+      "description": "MADE IN JAPAN\nLIMITED EDITION\nИспользуя отличительную мощь и грацию, которые выделяют на подиуме идеально скроенные куртки Оливье Рустена, очки Admirable от Balmain Eyewear сочетают в себе мощные японские титановые формы с динамичной, напоминающей крылья, экструдированной ацетатной рамклй, чтобы создать новый образ, но легко узнаваемый силуэт, который идеально передает смелые движения и геометрию лучшего пошива Balmain. Продолжая тему подиума, цветовые сочетания Admirable напоминают некоторые из любимых тональных сочетаний Рустена.",
+      "attributes": {
+        "Цвет": "Коричневый градиент",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000005",
+      "slug": "balmain-premier-bps-155b-61-rse-cat-2-titanium-309e1068c3d24fc5ba9d5cc0a62d0ed2",
+      "brand": "BALMAIN",
+      "model": "PREMIER BPS-155B-61/RSE/CAT 2 TITANIUM",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 144997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 21,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 61-13.5-141.5",
+      "description": "MADE IN JAPAN",
+      "attributes": {
+        "Цвет": "Коричневый/Золото",
+        "Форма": "Квадратные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000006",
+      "slug": "chopard-3-schf07s-0300-d3353d9780e148f791bfe6d4176977f2",
+      "brand": "Chopard",
+      "model": "3 SCHF07S 0300",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 64997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 20,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 58 17 140.",
+      "description": "",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Кошка",
+        "Материал оправы": "Металл"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000007",
+      "slug": "chopard-l53-672-6d47563ecd294625a772f8588873ca66",
+      "brand": "Chopard",
+      "model": "L53 672",
+      "category": "sunglasses",
+      "gender": "men",
+      "price": 94997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 19,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры",
+      "description": "Ширина линзы: 64\nМост: 17\nДлинна заушника: 150",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Квадратная",
+        "Материал оправы": "Нейлон"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000008",
+      "slug": "chopard-m14s-300-76cc05ace32b4445b383415b29b71ad1",
+      "brand": "Chopard",
+      "model": "M14S 300",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 84997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 18,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Новая коллекция! Солнцезащитные очки Chopard - изысканный аксессуар, ассоциирующийся с роскошью. Трендовый безободковый дизайн, заушники акцентированы ювелирными элементами с драгоценным декором Haute Joaillerie из 38 кристаллов высшего качества. Высокое ювелирное искусство!",
+      "description": "Размеры\nШирина линзы: 57\nМост: 17\nДлинна заушника: 135\nЛинзы: градиент",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Геометрическая",
+        "Материал оправы": "Нейлон"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000009",
+      "slug": "chopard-m15s-300-9de39e049ab24aa78d7563fb476c3cf9",
+      "brand": "Chopard",
+      "model": "M15S 300",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 84997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 17,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Ширина линзы: 60",
+      "description": "Мост: 14\nДлинна заушника: 135",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Кошка",
+        "Материал оправы": "Нейлон"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000010",
+      "slug": "chopard-m32-568-7c7ed525503e44d98fe81d1b2262d9a6",
+      "brand": "Chopard",
+      "model": "M32 568",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 81997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 16,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Ширина линзы: 60",
+      "description": "Мост: 17\nДлинна заушника: 145",
+      "attributes": {
+        "Цвет": "Коричневый",
+        "Форма": "Прямоугольная",
+        "Материал оправы": "Нейлон"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000011",
+      "slug": "chopard-sch340-700z-ccb5971f4f0d45daa93e1761db6ea48b",
+      "brand": "Chopard",
+      "model": "SCH340 700Z",
+      "category": "sunglasses",
+      "gender": "men",
+      "price": 82497,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 15,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры: 59 13 145. Сделаны в Италии.",
+      "description": "",
+      "attributes": {
+        "Цвет": "черный/золото",
+        "Форма": "Квадратные",
+        "Материал оправы": "Ацетат"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000012",
+      "slug": "renaissance-lix-cat3-18kt-titanium-a7b3ce037d9849a39d31b1ed5d07215d",
+      "brand": "Renaissance",
+      "model": "LIX CAT3 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 14,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры:",
+      "description": "Линза 55mm\nПереносица 18mm\nЗаушник 140mm\nФотохромные линзы\nОчки из новой коллекции эксклюзивного французского бренда RENAISSANCE под мистическим названием Исида - десять верховных животных, десять сакральных символов культуры Древнего Египта!\nКобра у каждого виска, и линза без оправы.\nМодель без металлической оправы, подчёркивающая чистоту обнажённого стекла. Двойная перемычка на переносице держит в центре сияющий камень. У каждого виска появляется кобра: вырезанная в металле, она кусает и обхватывает край стекла, чтобы нести и защищать его.\nКоличество ограничено!!",
+      "attributes": {
+        "Цвет": "Розовое золото",
+        "Форма": "Геометрическая",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000013",
+      "slug": "renaissance-lv-cat2-18kt-titanium-dc8f3e83c4444458882bff3566f80acb",
+      "brand": "Renaissance",
+      "model": "LV CAT2 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 13,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры:",
+      "description": "Линза 58mm\nПереносица 18mm\nЗаушник 145mm\nУникальные фотохромные очки из мистической коллекции Исида - в исполнении сакрального симовла Око Гора, прорезанного в заушнике.\nБезободковая модель, где край каждой линзы обработан гранёными скошенными углами, чтобы ловить свет. Египетский символ Око Гора вырезан и ажурно проработан прямо в металле каждой дужки.\nНастоящее произведение искусства на вашем лице!!",
+      "attributes": {
+        "Цвет": "Голубой",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000014",
+      "slug": "renaissance-renaissance-li-colori-2-18kt-titanium-d2985fae70dd4845ab38208bab66c899",
+      "brand": "Renaissance",
+      "model": "RENAISSANCE LI Colori 2 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 12,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры изделия: 55-16-140",
+      "description": "Уникальные фотохромные очки французского бренда Renaissance из высококачественного титана с покрытием в 18KT\nНастоящее произведение искусства на вашем лице!!",
+      "attributes": {
+        "Цвет": "Голубой",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000015",
+      "slug": "renaissance-renaissance-lx-colori-2-18kt-titanium-4f82d541b3604679bc2423668abe21be",
+      "brand": "Renaissance",
+      "model": "RENAISSANCE LX Colori 2 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 11,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры:",
+      "description": "Линза 57mm\nПереносица 20mm\nЗаушник 138mm",
+      "attributes": {
+        "Цвет": "Голубой",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000016",
+      "slug": "renaissance-renaissance-xvi-cat2-18kt-titanium-676fbab1843c49d1bf061d571e03d66a",
+      "brand": "Renaissance",
+      "model": "RENAISSANCE XVI CAT2 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 10,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры:",
+      "description": "Линза 59mm\nПереносица 16mm\nЗаушник 145mm\nРоскошные овальные RENAISSANCE PARIS\nR на линзе, для того, кто напротив. Diamond cut - линзы с бриллиантовой огранкой, чтобы играть на свету. Кристалл на конце заушника, за ухом - утонченный французский шарм, о нем знает только владелец. Коллекция не для всех.",
+      "attributes": {
+        "Цвет": "Зеркальные",
+        "Форма": "Овальные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000017",
+      "slug": "renaissance-xliv-cat2-18kt-titanium-3410957d7b014ad09b1e6fbfc27ab4a3",
+      "brand": "Renaissance",
+      "model": "XLIV CAT2 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 9,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Размеры:",
+      "description": "Линза 57mm\nПереносица 17mm\nЗаушник 140mm\nНовые солнцезащитные очки из коллекция Héritage изготовлены из титана с покрытием золотом 18KT и уникальными фотохромными линзами!!",
+      "attributes": {
+        "Цвет": "Голубые",
+        "Форма": "Геометрическая",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000018",
+      "slug": "renaissance-xxxii-cat1-18kt-titanium-be6aaa38acc04b73a5b3335d4135e004",
+      "brand": "Renaissance",
+      "model": "XXXII CAT1 18KT TITANIUM",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 54997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 8,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Элегантность и новаторство определяют модель XXXII коллекции Legacy. Эта оправа, изготовленная из титана с позолотой 18 карат, сочетает в себе легкость, прочность и изысканность, обеспечивая абсолютный комфорт в повседневной жизни. Бриллиантовая огранка на линзах придает очкам тонкий блеск и уникальную визуальную привлекательность. Эта пара с фотохромными линзами – слегка тонированными по основанию и затемняющимися при освещении-обеспечивает плавный переход от изысканного стиля к оптимальной защите от солнца. Эксклюзивные детали : оправа из титана с позолотой 18 карат, символ роскоши и долговечности линзы с бриллиантовой огранкой, придающие непревзойденный блеск и неповторимость фотохромные линзы, адаптирующиеся к окружающему освещению.",
+      "description": "Идеальные размеры : 140 мм (дужки), 58 мм (линзы), 17 мм (мост) поставляется в компактном корпусе. шкатулка, вдохновленная украшениями из драгоценных камней, в комплекте с чехлом из мягкой кожи и высококачественной замши.\nРенессанс – когда искусство детализации переопределяет совершенство.",
+      "attributes": {
+        "Цвет": "Золотой",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000019",
+      "slug": "silhouette-3199-9000-1474574abe264390825c9a8640369397",
+      "brand": "Silhouette",
+      "model": "3199 9000",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 39997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 7,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры изделия:",
+      "description": "Размер заушника 135\nРазмер линзы 56\nШирина переносицы 15\nСделано в Австрии",
+      "attributes": {
+        "Цвет": "Черный матовый",
+        "Форма": "Квадратные",
+        "Материал оправы": ""
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000020",
+      "slug": "silhouette-4088-9160-00-00-sg-naikoon-1e03065fe98e4c8385d5dde9752504e8",
+      "brand": "Silhouette",
+      "model": "4088 9160 00/00 SG Naikoon",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 28497,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 6,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры изделия:",
+      "description": "Размер заушника 145\nРазмер линзы 51\nШирина переносицы 19\nСделано в Австрии",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Квадратные",
+        "Материал оправы": "Пластик"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000021",
+      "slug": "silhouette-4093-9100-dora-four-3d9b67da0e9d486e8fd9050eec3b38fa",
+      "brand": "Silhouette",
+      "model": "4093 9100 Dora Four",
+      "category": "sunglasses",
+      "gender": "men",
+      "price": 38997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 5,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Параметры изделия:",
+      "description": "Размер заушника 150\nРазмер линзы 60\nШирина переносицы 17\nСделано в Австрии",
+      "attributes": {
+        "Цвет": "Голубой",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Пластик"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000022",
+      "slug": "silhouette-8173-3630-00-00-sg-5d9ee8d670514833a18c40b8df8ae2aa",
+      "brand": "Silhouette",
+      "model": "8173 3630 00/00 SG",
+      "category": "sunglasses",
+      "gender": "women",
+      "price": 41997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 4,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Материал",
+      "description": "Титан\nКонструктор\nНет\nПол\nженская\nФорма модели\nбабочка\nТип ободка\nободковая\nЦвет оправы\nзолото\nЦвет линз\nчёрный\nТип тонировки\nоднотонная\nФильтр линзы\nполяризационный\nРазмер заушника\n145\nРазмер линзы\n0\nЧерный/Золото",
+      "attributes": {
+        "Цвет": "Черный/Золото",
+        "Форма": "Бабочка",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000023",
+      "slug": "silhouette-8716-7530-00-00-sg-5fdc8bcfc103427690034728634d9e29",
+      "brand": "Silhouette",
+      "model": "8716 7530 00/00 SG",
+      "category": "sunglasses",
+      "gender": "men",
+      "price": 40997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 3,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Бренд",
+      "description": "Silhouette\nМатериал\nТитан\nКонструктор\nНет\nПол\nмужская\nФорма модели\nкапли\nТип ободка\nободковая\nЦвет оправы\nзолото\nЦвет линз\nчёрный\nТип тонировки\nоднотонная\nФильтр линзы\nполяризационный\nРазмер заушника\n140\nРазмер линзы\n0",
+      "attributes": {
+        "Цвет": "Черный",
+        "Форма": "Прямоугольные",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000024",
+      "slug": "silhouette-8720-6040-0-0-sg-3795198838d94ce0ac8a60a765258ccb",
+      "brand": "Silhouette",
+      "model": "8720 6040 0/0 SG",
+      "category": "sunglasses",
+      "gender": "unisex",
+      "price": 34997,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 2,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Бренд: Silhouette;",
+      "description": "Конструктор: Нет;\nПол: унисекс;\nФорма модели: овальные;\nТип ободка: ободковая;\nЦвет оправы: коричневый;\nЦвет линз: черный;\nТип тонировки: градиентная;\nФильтр линзы: обычный;\nРазмер заушника: 140;\nРазмер линзы: 0;",
+      "attributes": {
+        "Цвет": "Серый",
+        "Форма": "Круглые",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000025",
+      "slug": "silhouette-8721-8540-sg-28e512fe51634934a2dfdb660dfa3805",
+      "brand": "Silhouette",
+      "model": "8721 8540 SG",
+      "category": "sunglasses",
+      "gender": "men",
+      "price": 29797,
+      "isNew": false,
+      "isFeatured": false,
+      "popularity": 1,
+      "images": [
+        {
+          "src": "/__fixtures/frame.svg",
+          "alt": "Условная иллюстрация локального теста, не фотография этой модели"
+        }
+      ],
+      "shortDescription": "Бренд: Silhouette;",
+      "description": "Конструктор: Нет;\nПол: унисекс;\nФорма модели: капли;\nТип ободка: безободковая;\nЦвет линз: коричневый;\nТип тонировки: градиентная;\nРазмер заушника: 135;\nРазмер линзы: 0;",
+      "attributes": {
+        "Цвет": "Коричневый",
+        "Форма": "Авиаторы",
+        "Материал оправы": "Титан"
+      },
+      "isMock": false,
+      "isFixture": true
+    }
+  ]
+}

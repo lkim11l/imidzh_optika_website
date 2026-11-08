@@ -25,6 +25,32 @@ test('orders forward only allowed fields and return only confirmed id and catalo
 test('orders expose useful errors without leaking database data',async()=>{
  for(const [code,status] of [['P0002',429],['P0003',409],['22023',400]]){const h=createOrdersHandler({env,fetcher:async()=>Response.json({code,message:'sensitive database details'},{status:400})});const r=await call(h);assert.equal(r.statusCode,status);assert.doesNotMatch(JSON.stringify(r),/sensitive/);}
 });
+test('orders reject mismatched confirmation IDs and invalid totals without waking mail',async()=>{
+ const results=[
+  {id:'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',total:200},
+  {id:'not-a-uuid',total:200},
+  {id:order.id,total:-1},
+  {id:order.id,total:NaN},
+  {id:order.id,total:Infinity},
+  {id:order.id,total:null},
+  {id:order.id,total:true},
+  {id:order.id,total:''},
+  {id:order.id,total:'200'}
+ ];
+ let wakes=0;
+ for(const result of results){
+  const handler=createOrdersHandler({env,wake:()=>{wakes++;},fetcher:async()=>({ok:true,json:async()=>({...result,phone:order.phone,details:'private backend details'})})});
+  const response=await call(handler,{body:{request_id:order.id}});
+  assert.equal(response.statusCode,503);assert.doesNotMatch(JSON.stringify(response.body),/private backend details|79990000000|bbbbbbbb|not-a-uuid/);
+ }
+ await Promise.resolve();assert.equal(wakes,0);
+});
+test('orders confirm an exact UUID and a zero total but never a malformed request key',async()=>{
+ const handler=createOrdersHandler({env,fetcher:async()=>Response.json({id:order.id,total:0})});
+ assert.deepEqual((await call(handler,{body:{request_id:order.id}})).body,{id:order.id,total:0});
+ const malformed=createOrdersHandler({env,fetcher:async()=>Response.json({id:'invalid',total:200})});
+ assert.equal((await call(malformed,{body:{request_id:'invalid'}})).statusCode,503);
+});
 test('mail uses fixed owner recipient and contains contact and selected products without payment links',()=>{
  const message=orderMessage({...order,recipient:'attacker@example.test'},env.SMTP_USER);assert.equal(message.to,ORDER_RECIPIENT);assert.match(message.text,/\+79990000000/);assert.match(message.text,/Brand · Model/);assert.match(message.text,/2 шт/);assert.match(message.text,/Самовывоз/);assert.match(message.html,/<table/);assert.match(message.html,/Test &lt;customer&gt;/);assert.doesNotMatch(message.html,/Test <customer>/);assert.match(message.html,/Сумма заказа/);assert.equal(message.replyTo,undefined);assert.match(message.messageId,/order-aaaaaaaa/);
 });
