@@ -13,7 +13,7 @@ const STATIC_PATHS = new Set([
 ]);
 const UTM_VALUES = Object.freeze({
   utm_source: new Set(['yandex', 'google', 'telegram', 'vk']),
-  utm_medium: new Set(['maps', 'organic', 'social', 'referral']),
+  utm_medium: new Set(['maps', 'organic', 'social', 'referral', 'cpc']),
   utm_campaign: new Set(['local_profile', 'vision_check', 'progressive', 'miyosmart'])
 });
 const EXTERNAL_REFERRERS = new Set([
