@@ -26,7 +26,7 @@ export function renderPage(shell,path,products,editorial={}, {preview:previewMod
   const product = path.startsWith('/product/') ? products.find(p=>productPath(p.slug)===path) : undefined;
   const guide = guidePages[path];
   const known = !!product || publicPaths.includes(path.slice(1)) || ['/checkout','/cart'].includes(path);
-  const meta = guide ? {...pageMetadata(path),title:guide.title,description:guide.description,index:true} : pageMetadata(path,product);
+  const meta = guide ? {...pageMetadata(path),title:guide.searchTitle||guide.title,description:guide.searchDescription||guide.description,index:true} : pageMetadata(path,product);
   if(!known) meta.index=false;
   const content = path==='/privacy'?privacyPageHTML():['/terms','/consent'].includes(path)?checkoutDocumentHTML(path):path==='/cookies'?cookiesPageHTML():path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path,{preview:previewMode}):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');

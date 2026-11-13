@@ -34,7 +34,7 @@ test('all three approved service URLs have complete direct-entry SSR and unique 
   const description=html.match(/<meta name="description" content="([^"]+)"/)[1];
   titles.add(title);descriptions.add(description);
   if(direction==='vision_check')assert.match(title,/Бесплатная проверка зрения для взрослых/);
-  if(direction==='progressive')assert.match(title,/Прогрессивные линзы и очки: как выбрать/);
+  if(direction==='progressive')assert.match(title,/Прогрессивные линзы в Москве: цены и подбор/);
   if(direction==='miyosmart')assert.match(title,/HOYA MiYOSMART: цены и заказ/);
   const schemas=JSON.parse(html.match(/id="seo-data">([^<]+)<\/script>/)[1]);
   assert.ok(schemas.some(item=>item['@type']==='BreadcrumbList'));
