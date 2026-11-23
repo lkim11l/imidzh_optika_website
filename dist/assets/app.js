@@ -1,5 +1,5 @@
 import {visionBookingState,VISION_BOOKING_KEY} from './state/vision-booking.js';
-import {syncVisionOffers} from './ui/vision-offer.js';
+import {installCartVisionOffer} from './ui/vision-offer.js';
 import {privacyPageHTML} from './ui/privacy.js';
 import {checkoutDocumentHTML} from './ui/checkout-documents.js';
 import {installCookieNotice,cookiesPageHTML} from './ui/cookie-notice.js';
@@ -33,13 +33,14 @@ const analytics=createAnalytics({...window.OPTIKA_ANALYTICS,location:window.loca
 if(fixtureMode)window.__OPTIKA_ANALYTICS__=analytics;
 installProductImages();
 installCookieNotice();
-syncVisionOffers();
-window.addEventListener('storage',event=>{if(event.key===VISION_BOOKING_KEY||event.key===null)syncVisionOffers();});
+
 installHeroCarousel();
 installSiteGlow();
 
 const $ = selector => document.querySelector(selector);
 const home = $('#home'), view = $('#route-view'), main = $('#main-content');
+const cartVisionOffer=installCartVisionOffer({onBook:()=>startBooking(false,'vision_check')});
+window.addEventListener('storage',event=>{if(event.key===VISION_BOOKING_KEY||event.key===null)cartVisionOffer.sync();});
 const labels = {optical:'Оправы для зрения',sunglasses:'Солнцезащитные очки',women:'Женские',men:'Мужские',unisex:'Унисекс'};
 let resolvedProduct = null,checkoutController=null;
 let products = [], brands = [], currentRoute = '', routeGeneration = 0, toastTimer;
@@ -118,8 +119,9 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   document.getElementById('seo-data')?.remove();
   const schemas=pageSchemas(path,meta,resolvedProduct,guidePages[path]?.breadcrumbs);if(schemas.length){const schema=document.createElement('script');schema.id='seo-data';schema.type='application/ld+json';schema.textContent=JSON.stringify(schemas);document.head.append(schema);}
   analytics.navigate(location.href);
-  syncVisionOffers();updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
+  updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
+  cartVisionOffer.visit({path,hasItems:!!view.querySelector('.cart-next')});
 }
 async function navigate(url, options = {}) {if(bookingController.isBusy())return;document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
 function updateCountsAndHearts() {
@@ -224,7 +226,7 @@ const bookingController=createBookingController({
  },
  onAccepted:confirmation=>{
   visionBookingState.accept(confirmation,{callback:bookingCallback});
-  syncVisionOffers();
+  cartVisionOffer.sync();
   analytics.bookingSuccess(confirmation.direction,confirmation);
  }
 });

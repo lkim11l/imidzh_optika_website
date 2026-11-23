@@ -12,15 +12,15 @@
 #booking-form select:disabled { opacity: .6; }
 .order-retry { margin-top: 10px; }
 
-/* Additive catalog invitation, using the existing warm salon palette. */
-.vision-offer{box-sizing:border-box;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;padding:clamp(20px,2.5vw,36px);background:#f1ebe2;color:#3b2b24;border:1px solid #d8ccbd;border-radius:12px}
-.vision-offer-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:#665043}
-.vision-offer h3{margin:0;font-size:clamp(21px,2vw,28px);line-height:1.2;font-weight:500;letter-spacing:-.025em}
-.vision-offer p{margin:0;font-size:15px;line-height:1.6;color:#57483e}
-.vision-offer .button{min-height:46px;white-space:normal;text-align:center;background:#493126;color:#fff;border:1px solid #493126;cursor:pointer}
-.vision-offer .button:hover{background:#654536}
-.vision-offer .button:focus-visible{outline:3px solid #8b623e;outline-offset:4px}
-.vision-offer small{font-size:12px;line-height:1.5;color:#665043}
-.vision-offer--catalog{min-width:0;align-self:stretch;margin-top:24px}
-.vision-offer--product,.vision-offer--checkout{margin:24px 0}
-@media(max-width:650px){.vision-offer--catalog{grid-column:1 / -1}.vision-offer{padding:24px;gap:12px}.vision-offer .button{width:100%}}
+/* Optional invitation on entry to a populated cart. */
+#cart-vision-offer{box-sizing:border-box;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:36px 28px 28px;border:1px solid #d8ccbd;border-radius:20px;background:#f6f0e7;color:#3b2b24}
+#cart-vision-offer::backdrop{background:rgba(30,22,17,.48)}
+#cart-vision-offer .vision-offer-close{position:absolute;right:10px;top:10px;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:inherit;font:28px/1 sans-serif;cursor:pointer}
+#cart-vision-offer .vision-offer-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:#665043}
+#cart-vision-offer h2{margin:16px 0;font-size:clamp(26px,5vw,34px);line-height:1.15;letter-spacing:-.025em;font-weight:500}
+#cart-vision-offer p{margin:0 0 22px;font-size:16px;line-height:1.6;color:#57483e}
+#cart-vision-offer .vision-offer-actions{display:grid;gap:10px}
+#cart-vision-offer .button{min-height:48px;width:100%;white-space:normal;cursor:pointer;background:#493126;color:#fff}
+#cart-vision-offer .vision-offer-continue{min-height:46px;border:1px solid #a48a76;border-radius:30px;background:transparent;color:#493126;font:inherit;cursor:pointer}
+#cart-vision-offer button:focus-visible{outline:3px solid #8b623e;outline-offset:3px}
+#cart-vision-offer small{display:block;margin-top:18px;font-size:12px;line-height:1.5;color:#665043}
