@@ -1,3 +1,4 @@
+import {parseBrandFilters} from '../dist/assets/data/brand-pages.js';
 import './deny-live-network.mjs';
 import {createServer} from 'node:http';
 import {readFile, realpath} from 'node:fs/promises';
@@ -170,7 +171,7 @@ export function createTestPreview({products=fixtureProducts,editorial=fixtureEdi
       }
       if (state.modes.catalog==='unavailable') { res.setHeader('Retry-After','60'); return reply(res,503,decorateHTML('<!doctype html><html lang="ru"><head><meta name="robots" content="noindex,nofollow"><title>Тест: временно недоступно</title></head><body><h1>Тестовый каталог временно недоступен</h1><p>Повторите загрузку после восстановления тестовых данных.</p></body></html>'),'text/html; charset=utf-8'); }
       const shell=await readFile(resolve(distRoot,'index.html'),'utf8');
-      const result=renderPage(shell,path.replace(/\/$/,'') || '/',products,editorial,{preview:contentPreview});
+      const result=renderPage(shell,path.replace(/\/$/,'') || '/',products,editorial,{preview:contentPreview,brandFilters:parseBrandFilters(new URL(req.url,'http://'+req.headers.host))});
       return reply(res,result.status,decorateHTML(result.html,notice),'text/html; charset=utf-8');
     } catch (error) {
       return reply(res,error.status || 500,{error:error.status?'Некорректные тестовые данные.':'Ошибка локального тестового сервера.'});

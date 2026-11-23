@@ -1,6 +1,6 @@
 import {createTestPreview} from './test-preview.mjs';
 import {fixtureProducts} from '../tests/fixtures/test-catalog.mjs';
-const products=Array.from({length:25},(_,i)=>({...fixtureProducts[i%3],id:'10000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),slug:'test-frame-'+(i+1),model:'Тестовая модель '+(i+1),popularity:100-i}));
+const products=Array.from({length:25},(_,i)=>({...fixtureProducts[i%3],id:'10000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),slug:'test-frame-'+(i+1),brand:i<18?'Silhouette':fixtureProducts[i%3].brand,model:'Тестовая модель '+(i+1),popularity:100-i}));
 const {server}=createTestPreview({products});
 server.prependListener('request',(req,res)=>{
  const end=res.end;

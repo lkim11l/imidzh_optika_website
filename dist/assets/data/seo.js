@@ -11,6 +11,7 @@ export function pageMetadata(path, product) {
   }
   const pages = {
     '/': ['Оптика Имидж — оправы и линзы в Москве','Оптика Имидж с 2002 года. Индивидуальный подбор оправ и очковых линз, проверка зрения и примерка в салоне в Москве.'],
+    '/brands/silhouette':['Очки и оправы Silhouette в Москве — Имидж Оптика','Каталог Silhouette: оправы для зрения и солнцезащитные очки, цены, фотографии и характеристики. Подбор и примерка в салоне Имидж Оптика в Москве.'],
     '/catalog':['Каталог очков и оправ в Москве — Оптика Имидж','Оправы для зрения и солнцезащитные очки: модели, фотографии и характеристики. Подбор и примерка в салоне Оптика Имидж в Москве.'],
     '/catalog/optical':['Оправы для зрения в Москве — Оптика Имидж','Оправы для зрения: фотографии моделей и характеристики. Индивидуальный подбор оправы и линз, примерка в салоне Оптика Имидж в Москве.'],
     '/catalog/sunglasses':['Солнцезащитные очки в Москве — Оптика Имидж','Солнцезащитные очки: бренды, фотографии моделей и характеристики. Подбор и примерка в салоне Оптика Имидж в Москве.'],
@@ -36,6 +37,7 @@ export function productSchema(product) {
 }
 export function pageSchemas(path,meta,product,breadcrumbs) {
   const schemas=[];
+  if(path==='/brands/silhouette')schemas.push({'@context':'https://schema.org','@type':'CollectionPage',name:'Очки и оправы Silhouette',description:meta.description,url:siteURL+meta.path});
   if(product)schemas.push(productSchema(product));
   if(meta.index && path!=='/') {
     const items=Array.isArray(breadcrumbs) && breadcrumbs.length>1
@@ -43,8 +45,9 @@ export function pageSchemas(path,meta,product,breadcrumbs) {
       : [{name:'Главная',path:'/'}];
     if(!Array.isArray(breadcrumbs) || breadcrumbs.length<2) {
       if(product)items.push({name:'Каталог',path:'/catalog'},{name:categoryNames[product.category],path:'/catalog/'+product.category});
+      else if(path==='/brands/silhouette')items.push({name:'Каталог',path:'/catalog'});
       else if(path.startsWith('/catalog/'))items.push({name:'Каталог',path:'/catalog'});
-      items.push({name:product?`${product.brand} ${product.model}`:meta.title,path:meta.path});
+      items.push({name:product?`${product.brand} ${product.model}`:path==='/brands/silhouette'?'Silhouette':meta.title,path:meta.path});
     }
     schemas.push({'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:items.map((item,i)=>({'@type':'ListItem',position:i+1,name:item.name,item:siteURL+item.path}))});
   }

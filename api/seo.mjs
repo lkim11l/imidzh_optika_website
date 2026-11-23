@@ -1,3 +1,4 @@
+import {parseBrandFilters} from '../dist/assets/data/brand-pages.js';
 import {readFile} from 'node:fs/promises';
 import {readCatalog,readEditorial} from '../server/catalog.mjs';
 import {renderPage,sitemap,productPath} from '../server/pages.mjs';
@@ -29,7 +30,7 @@ export default async function handler(req,res) {
       return readFile(new URL('../dist/index.html',import.meta.url),'utf8');
     });
     const editorial=(page==='about'||page==='')?await readEditorial():{};
-    const result=renderPage(shell,'/'+page,products,editorial);
+    const result=renderPage(shell,'/'+page,products,editorial,{brandFilters:parseBrandFilters(url)});
     res.statusCode=result.status;
     if(result.status===404){res.setHeader('X-Robots-Tag','noindex');res.setHeader('Vercel-CDN-Cache-Control','no-store');}
     return res.end(req.method==='HEAD'?'':result.html);

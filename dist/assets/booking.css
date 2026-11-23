@@ -24,3 +24,10 @@
 #cart-vision-offer .vision-offer-continue{min-height:46px;border:1px solid #a48a76;border-radius:30px;background:transparent;color:#493126;font:inherit;cursor:pointer}
 #cart-vision-offer button:focus-visible{outline:3px solid #8b623e;outline-offset:3px}
 #cart-vision-offer small{display:block;margin-top:18px;font-size:12px;line-height:1.5;color:#665043}
+
+.silhouette-about{margin-top:72px;padding:40px 0;border-top:1px solid #ded5ca}
+.silhouette-about h2{font-size:clamp(26px,4vw,42px);font-weight:500;line-height:1.2;margin:16px 0 32px}
+.silhouette-about-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.silhouette-about h3{font-size:20px;font-weight:500;margin:0 0 14px}
+.silhouette-about p{font-size:16px;line-height:1.7}
+@media(max-width:760px){.silhouette-about-grid{grid-template-columns:1fr;gap:24px}.silhouette-about{margin-top:40px;padding:28px 0}}

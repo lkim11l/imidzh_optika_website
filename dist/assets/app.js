@@ -1,3 +1,5 @@
+import {SILHOUETTE_PATH,isSilhouette,silhouetteProducts,brandCatalogURL,parseBrandFilters} from './data/brand-pages.js';
+import {silhouettePageHTML} from './ui/silhouette-page.js';
 import {visionBookingState,VISION_BOOKING_KEY} from './state/vision-booking.js';
 import {installCartVisionOffer} from './ui/vision-offer.js';
 import {privacyPageHTML} from './ui/privacy.js';
@@ -53,11 +55,13 @@ function notify(message) {
 }
 function openDialog(dialog) { if(bookingController.isBusy())return;document.querySelectorAll('dialog[open]').forEach(other => other.close()); dialog.showModal(); }
 function filtersFromURL() {
+  if(location.pathname.replace(/\/$/,'')===SILHOUETTE_PATH)return parseBrandFilters(new URL(location.href));
   const url = new URL(location.href), category = url.pathname.replace(/\/$/,'').split('/')[2];
   const number = key => { const value = url.searchParams.get(key); return value !== null && value !== '' && Number.isFinite(Number(value)) ? Math.max(0,Number(value)) : null; };
   return {category:['optical','sunglasses'].includes(category) ? category : '', genders:url.searchParams.getAll('gender').filter(value => ['men','women','unisex'].includes(value)), brands:url.searchParams.getAll('brand').filter(value => brands.includes(value)), min:number('min'), max:number('max'), sort:['new','price-asc','price-desc'].includes(url.searchParams.get('sort')) ? url.searchParams.get('sort') : 'popular', query:url.searchParams.get('q') || ''};
 }
 function catalogURL(filters) {
+  if(location.pathname.replace(/\/$/,'')===SILHOUETTE_PATH)return brandCatalogURL(filters);
   const params = new URLSearchParams();
   filters.genders?.forEach(value => params.append('gender',value));filters.brands?.forEach(value => params.append('brand',value));
   if(filters.min != null) params.set('min',filters.min);if(filters.max != null) params.set('max',filters.max);
@@ -72,6 +76,7 @@ function renderCatalog(){view.innerHTML=catalogPageHTML(products,filtersFromURL(
 function fillFilterForm() {
   const filters = filtersFromURL();
   $('#filter-form').innerHTML = `<fieldset><legend>Категория</legend><label class="filter-option"><input type="radio" name="category" value="" ${!filters.category ? 'checked' : ''}>Все очки</label>${['optical','sunglasses'].map(category => `<label class="filter-option"><input type="radio" name="category" value="${category}" ${filters.category === category ? 'checked' : ''}>${labels[category]}</label>`).join('')}</fieldset><fieldset><legend>Для кого</legend>${['women','men','unisex'].map(gender => `<label class="filter-option"><input type="checkbox" name="gender" value="${gender}" ${filters.genders.includes(gender) ? 'checked' : ''}>${labels[gender]}</label>`).join('')}</fieldset><fieldset><legend>Бренд</legend><div class="brand-options">${brands.map(brand => `<label class="filter-option"><input type="checkbox" name="brand" value="${esc(brand)}" ${filters.brands.includes(brand) ? 'checked' : ''}>${esc(brand)}</label>`).join('')}</div></fieldset><fieldset><legend>Цена, ₽</legend><div class="price-inputs"><label>От<input type="number" name="min" min="0" max="1000000" step="100" inputmode="numeric" value="${filters.min ?? ''}" placeholder="15 000"></label><label>До<input type="number" name="max" min="0" max="1000000" step="100" inputmode="numeric" value="${filters.max ?? ''}" placeholder="100 000"></label></div><p id="price-error" class="field-error" role="alert" hidden>Цена «От» не должна быть больше цены «До».</p></fieldset><div class="filter-actions"><button class="button" type="submit">Показать модели <span id="filter-preview-count"></span></button><button type="button" class="text-button" data-reset-filter-form>Сбросить фильтры</button></div>`;
+  if(location.pathname.replace(/\/$/,'')===SILHOUETTE_PATH)$('#filter-form .brand-options')?.closest('fieldset')?.remove();
   previewFilters();
 }
 function filterFormValues() {
@@ -79,7 +84,7 @@ function filterFormValues() {
   return {...filtersFromURL(),category:values.get('category') || '',genders:values.getAll('gender'),brands:values.getAll('brand'),min:values.get('min') !== '' ? Number(values.get('min')) : null,max:values.get('max') !== '' ? Number(values.get('max')) : null};
 }
 function previewFilters() {
-  const filters = filterFormValues();$('#filter-preview-count').textContent = `(${filterProducts(products,filters).length})`;
+  const filters = filterFormValues();$('#filter-preview-count').textContent = `(${filterProducts(location.pathname.replace(/\/$/,'')===SILHOUETTE_PATH?silhouetteProducts(products):products,filters).length})`;
   $('#price-error').hidden = !(filters.min != null && filters.max != null && filters.min > filters.max);
 }
 async function renderProduct(slug, generation) {
@@ -102,6 +107,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   const generation = ++routeGeneration, path = location.pathname.replace(/\/$/,'') || '/';currentRoute = path;home.hidden = path !== '/';view.hidden = path === '/';
   document.querySelectorAll('.header nav a').forEach(link => { const selected = new URL(link.href).pathname === path && path !== '/';if(selected)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current'); });
   if(path === '/')document.title = 'Имидж Оптика — видеть больше';
+  else if(path===SILHOUETTE_PATH)view.innerHTML=silhouettePageHTML(products,filtersFromURL());
   else if(['/catalog','/catalog/optical','/catalog/sunglasses'].includes(path))renderCatalog();
   else if(path==='/product')await renderProduct(new URLSearchParams(location.search).get('slug')||'',generation);
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
@@ -269,14 +275,14 @@ window.addEventListener('optika:statechange',() => {
 window.addEventListener('popstate',() => renderRoute({focus:true}));
 installHeroLeadFit();
 const homepageContent=applyContent().catch(()=>undefined);
-const collectionRoute=()=>/^\/(catalog|product|favorites|checkout|cart)(\/|$)/.test(location.pathname);
+const collectionRoute=()=>/^\/(brands|catalog|product|favorites|checkout|cart)(\/|$)/.test(location.pathname);
 if(!collectionRoute())await renderRoute({scroll:!!location.hash});
 try {
   [products,brands] = await Promise.all([productRepository.getProducts(),productRepository.getBrands()]);shopStore.initialize(products);if(!products.some(p=>p.isMock))mockNotice="";
   $('#featured-products').innerHTML = productGrid(products.filter(product => product.isFeatured).slice(0,4));$('#featured-products').setAttribute('aria-busy','false');
   homepageContent.then(content=>{
     let displayed=[];try{displayed=selectHomepageBrands(content?.data,products);}catch{}
-    $('#brand-list').innerHTML=brandCarouselHTML(displayed,name=>catalogURL({brands:[name]}));
+    $('#brand-list').innerHTML=brandCarouselHTML(displayed,name=>isSilhouette(name)?SILHOUETTE_PATH:catalogURL({brands:[name]}));
     $('#brands').hidden=!displayed.length;
     if($('#brands .prototype-note'))$('#brands .prototype-note').hidden=false;
   });
