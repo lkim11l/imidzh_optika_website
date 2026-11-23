@@ -1,3 +1,5 @@
+import {visionBookingState,VISION_BOOKING_KEY} from './state/vision-booking.js';
+import {syncVisionOffers} from './ui/vision-offer.js';
 import {privacyPageHTML} from './ui/privacy.js';
 import {checkoutDocumentHTML} from './ui/checkout-documents.js';
 import {installCookieNotice,cookiesPageHTML} from './ui/cookie-notice.js';
@@ -31,6 +33,8 @@ const analytics=createAnalytics({...window.OPTIKA_ANALYTICS,location:window.loca
 if(fixtureMode)window.__OPTIKA_ANALYTICS__=analytics;
 installProductImages();
 installCookieNotice();
+syncVisionOffers();
+window.addEventListener('storage',event=>{if(event.key===VISION_BOOKING_KEY||event.key===null)syncVisionOffers();});
 installHeroCarousel();
 installSiteGlow();
 
@@ -114,7 +118,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   document.getElementById('seo-data')?.remove();
   const schemas=pageSchemas(path,meta,resolvedProduct,guidePages[path]?.breadcrumbs);if(schemas.length){const schema=document.createElement('script');schema.id='seo-data';schema.type='application/ld+json';schema.textContent=JSON.stringify(schemas);document.head.append(schema);}
   analytics.navigate(location.href);
-  updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
+  syncVisionOffers();updateCountsAndHearts();setupReveals();if(focus)main.focus({preventScroll:true});
   if(scroll) {if(location.hash)document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({behavior:'instant'});else window.scrollTo({top:0,behavior:'instant'});}
 }
 async function navigate(url, options = {}) {if(bookingController.isBusy())return;document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());if(url !== location.pathname + location.search + location.hash)history.pushState({},'',url);await renderRoute({focus:true,...options});}
@@ -218,7 +222,11 @@ const bookingController=createBookingController({
   await supabaseRequest('/rest/v1/rpc/optika_submit_booking',{method:'POST',body});
   return {accepted:true,id:payload.request_id,direction:'vision_check'};
  },
- onAccepted:confirmation=>analytics.bookingSuccess(confirmation.direction,confirmation)
+ onAccepted:confirmation=>{
+  visionBookingState.accept(confirmation,{callback:bookingCallback});
+  syncVisionOffers();
+  analytics.bookingSuccess(confirmation.direction,confirmation);
+ }
 });
 $('#booking-form').addEventListener('submit',async event => {
  event.preventDefault();const form=event.currentTarget;validatePhone();if(!form.reportValidity())return;
