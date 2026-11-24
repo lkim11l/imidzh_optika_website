@@ -31,3 +31,12 @@
 .silhouette-about h3{font-size:20px;font-weight:500;margin:0 0 14px}
 .silhouette-about p{font-size:16px;line-height:1.7}
 @media(max-width:760px){.silhouette-about-grid{grid-template-columns:1fr;gap:24px}.silhouette-about{margin-top:40px;padding:28px 0}}
+
+.silhouette-home-link{margin-bottom:20px}
+.silhouette-order a,.silhouette-models li a{text-decoration:underline;text-underline-offset:.2em}
+.silhouette-models{margin:0 0 28px}
+.silhouette-models h2{font-size:1.15rem;margin:0 0 10px}
+.silhouette-models>div{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-start}
+.silhouette-models details{max-width:100%}
+.silhouette-models summary{padding:8px 0;cursor:pointer}
+.silhouette-models ul{padding-left:1.3em;line-height:1.75;margin:4px 0 12px}

@@ -27,7 +27,7 @@ export function renderPage(shell,path,products,editorial={}, {preview:previewMod
   const product = path.startsWith('/product/') ? products.find(p=>productPath(p.slug)===path) : undefined;
   const guide = guidePages[path];
   const known = !!product || publicPaths.includes(path.slice(1)) || ['/checkout','/cart'].includes(path);
-  const meta = guide ? {...pageMetadata(path),title:guide.searchTitle||guide.title,description:guide.searchDescription||guide.description,index:true} : pageMetadata(path,product);
+  const meta = guide ? {...pageMetadata(path),title:guide.searchTitle||guide.title,description:guide.searchDescription||guide.description,index:true} : pageMetadata(path,product,products);
   if(!known) meta.index=false;
   const content = path==='/brands/silhouette'?silhouettePageHTML(products,brandFilters):path==='/privacy'?privacyPageHTML():['/terms','/consent'].includes(path)?checkoutDocumentHTML(path):path==='/cookies'?cookiesPageHTML():path==='/cart'?cartPageHTML(products):path==='/checkout'?checkoutPageHTML(products):product ? productHTML(product,products) : path.startsWith('/catalog')&&known ? catalogHTML(path,products) : path==='/about'?aboutHTML(editorial):path==='/lenses'?lensesPageHTML():guide?guidePageHTML(path,{preview:previewMode}):'<section class="wrap saved-page"><h1>Страница не найдена</h1><p>Возможно, модель больше не входит в коллекцию.</p><a class="button" href="/catalog">Смотреть каталог</a></section>';
   let html = shell.replace(/<script[^>]+id="seo-data"[^>]*>[\s\S]*?<\/script>/g,'');
@@ -35,7 +35,7 @@ export function renderPage(shell,path,products,editorial={}, {preview:previewMod
   html=html.replace(/<title>[^<]*<\/title>/,()=>`<title>${esc(meta.title)}</title>`).replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+esc(meta.description)).replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+(meta.index?'index,follow':'noindex,follow')).replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+esc(siteURL+meta.path));
   for(const [key,value] of Object.entries({'og:title':meta.title,'og:description':meta.description,'og:url':siteURL+meta.path}))html=html.replace(new RegExp(`(<meta property="${key}" content=")[^"]*`),(_,prefix)=>prefix+esc(value));
   html=html.replace(/<meta property="og:image"[^>]*>/g,'');
-  const preview=product?.images?.[0]?.src||'/assets/eduard-business-gold-white-watch-v10.webp';
+  const preview=meta.image||product?.images?.[0]?.src||'/assets/eduard-business-gold-white-watch-v10.webp';
   html=html.replace('</head>',()=>`<meta property="og:image" content="${esc(new URL(preview,siteURL).href)}">\n</head>`);
   if(path!=='/') {
     html=html.replace('<div id="home">','<div id="home" hidden>').replace('<div id="route-view" hidden></div>',()=>`<div id="route-view">${content}</div>`);
