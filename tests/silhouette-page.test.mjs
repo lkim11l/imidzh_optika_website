@@ -111,3 +111,15 @@ test('a Silhouette product with empty editorial copy has the same factual descri
  assert.equal(pageSchemas(path,pageMetadata(path,existing),existing)[0].description,existing.shortDescription);
  assert.ok(productDetailHTML(existing,[]).includes(existing.shortDescription));
 });
+
+test('Silhouette cards link directly to order terms from outside the collapsed fitting details',async()=>{
+ const {productDetailHTML}=await import('../dist/assets/ui/product-detail.js');
+ const product={...fixtureProducts[0],brand:'Silhouette'};
+ const href='<a class="text-button" href="/terms">Условия заказа и получения</a>';
+ const path='/product/'+product.slug;
+ for(const html of [productDetailHTML(product,[]),renderPage(shell,path,[product]).html]){
+  assert.ok(html.includes('<div class="product-accordions">'+href+'<details>'));
+  assert.equal(html.split(href).length,2);
+ }
+ assert.ok(!productDetailHTML({...product,brand:'Другой бренд'},[]).includes(href));
+});
