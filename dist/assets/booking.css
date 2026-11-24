@@ -40,3 +40,6 @@
 .silhouette-models details{max-width:100%}
 .silhouette-models summary{padding:8px 0;cursor:pointer}
 .silhouette-models ul{padding-left:1.3em;line-height:1.75;margin:4px 0 12px}
+
+.silhouette-product .product-gallery,.silhouette-product .product-detail-info{min-width:0}
+.silhouette-product .product-detail-info h1,.silhouette-product .breadcrumbs{overflow-wrap:anywhere}
