@@ -31,3 +31,9 @@
 .silhouette-about h3{font-size:20px;font-weight:500;margin:0 0 14px}
 .silhouette-about p{font-size:16px;line-height:1.7}
 @media(max-width:760px){.silhouette-about-grid{grid-template-columns:1fr;gap:24px}.silhouette-about{margin-top:40px;padding:28px 0}}
+/* Keep purchase controls inside each card instead of after a 100%-height link. */
+body .product-grid .product-card{display:flex;flex-direction:column;min-width:0}
+body .product-grid .product-card-link{height:auto;flex:1 0 auto;min-width:0}
+body .product-grid .product-card .product-info{overflow-wrap:anywhere}
+body .product-grid .product-card .product-price{flex-wrap:wrap;column-gap:8px}
+body .product-grid .product-card-order{position:static;align-self:flex-start;flex:none;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;max-width:100%;min-height:44px;margin:14px 0 0;padding:10px 16px;line-height:1.4}
