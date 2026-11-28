@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<yml_catalog date="2026-11-28T21:01:00+03:00">
+  <shop>
+    <name>Оптика Имидж</name>
+    <company>ИП Ким Эдуард Олегович</company>
+    <url>https://optikim.ru/</url>
+    <currencies>
+      <currency id="RUR" rate="1" />
+    </currencies>
+    <categories>
+      <category id="1">Солнцезащитные очки</category>
+    </categories>
+    <offers>
+      <offer id="05a40b2a-c18b-4620-be9c-c630ac036513" available="true">
+        <url>https://optikim.ru/product/silhouette-8722-6560-sg-05a40b2ac18b4620be9cc630ac036513</url>
+        <price>29797</price>
+        <currencyId>RUR</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://optikim.ru/api/product-image?file=5d1c52c6-ba72-411d-8e1a-2d6bf1dcfc09.png&amp;w=640</picture>
+        <name>Солнцезащитные очки Silhouette 8722 6560 SG</name>
+        <vendor>Silhouette</vendor>
+        <description>Солнцезащитные очки Silhouette 8722 6560 SG.</description>
+      </offer>
+      <offer id="4b8a644f-3a7d-4c37-80ac-48a16dcc5fd7" available="true">
+        <url>https://optikim.ru/product/silhouette-8722-7530-sg-4b8a644f3a7d4c3780ac48a16dcc5fd7</url>
+        <price>29797</price>
+        <currencyId>RUR</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://optikim.ru/api/product-image?file=678c0555-161e-4f65-9b7a-35d25fc78531.png&amp;w=640</picture>
+        <name>Солнцезащитные очки Silhouette 8722 7530 SG</name>
+        <vendor>Silhouette</vendor>
+        <description>Солнцезащитные очки Silhouette 8722 7530 SG.</description>
+      </offer>
+      <offer id="edde9026-9316-4a90-98f8-1bcf02301390" available="true">
+        <url>https://optikim.ru/product/silhouette-8722-9040-sg-polarized-edde902693164a9098f81bcf02301390</url>
+        <price>35997</price>
+        <currencyId>RUR</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://optikim.ru/api/product-image?file=d1b143d3-3b91-4711-97f6-c0eae361b427.png&amp;w=640</picture>
+        <name>Солнцезащитные очки Silhouette 8722 9040 SG POLARIZED</name>
+        <vendor>Silhouette</vendor>
+        <description>Солнцезащитные очки Silhouette 8722 9040 SG POLARIZED.</description>
+      </offer>
+      <offer id="df7313fc-4e07-4661-8446-f8477ce4c958" available="true">
+        <url>https://optikim.ru/product/silhouette-8722-9140-00-00-sg-df7313fc4e0746618446f8477ce4c958</url>
+        <price>29797</price>
+        <currencyId>RUR</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://optikim.ru/api/product-image?file=b6b5d07b-3ddd-4516-a8c9-fd8f08b84cf0.png&amp;w=640</picture>
+        <name>Солнцезащитные очки Silhouette 8722 9140 00/00 SG</name>
+        <vendor>Silhouette</vendor>
+        <description>Солнцезащитные очки Silhouette 8722 9140 00/00 SG.</description>
+      </offer>
+      <offer id="07936c80-ed5c-4b89-b929-77fa09016235" available="true">
+        <url>https://optikim.ru/product/silhouette-8727-6560-00-00-sg-silhouette-07936c80ed5c4b89b92977fa09016235</url>
+        <price>36997</price>
+        <currencyId>RUR</currencyId>
+        <categoryId>1</categoryId>
+        <picture>https://optikim.ru/api/product-image?file=3020f40f-d580-4c4b-b9c7-097bb82edeae.jpg&amp;w=640</picture>
+        <name>Солнцезащитные очки Silhouette 8727 6560 00/00 SG</name>
+        <vendor>Silhouette</vendor>
+        <description>Солнцезащитные очки Silhouette 8727 6560 00/00 SG.</description>
+      </offer>
+    </offers>
+  </shop>
+</yml_catalog>
