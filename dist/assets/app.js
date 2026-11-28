@@ -4,6 +4,7 @@ import {visionBookingState,VISION_BOOKING_KEY} from './state/vision-booking.js';
 import {installCartVisionOffer} from './ui/vision-offer.js';
 import {privacyPageHTML} from './ui/privacy.js';
 import {checkoutDocumentHTML} from './ui/checkout-documents.js';
+import {deliveryPageHTML} from './ui/delivery.js';
 import {installCookieNotice,cookiesPageHTML} from './ui/cookie-notice.js';
 import {cartPageHTML,mountCart} from './ui/cart.js';
 import {checkoutPageHTML,mountCheckout} from './ui/checkout.js';
@@ -113,7 +114,7 @@ async function renderRoute({scroll = true, focus = false} = {}) {
   else if(path.startsWith('/product/'))await renderProduct(decodeURIComponent(path.slice(9)),generation);
   else if(guidePages[path]){document.title=guidePages[path].searchTitle||guidePages[path].title;view.innerHTML=guidePageHTML(path,{preview:fixtureMode&&window.OPTIKA_TEST?.contentPreview!==false});}
   else if(path === '/lenses'){document.title='Линзы — Имидж Оптика';view.innerHTML=lensesPageHTML();arrangeLensDetails();}
-  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore,{onAccepted:confirmation=>analytics.orderRequestSuccess(confirmation)});}else if(path === '/favorites')renderFavorites();else renderNotFound();
+  else if(path === '/about'){const content=await homepageContent;if(generation!==routeGeneration)return;document.title='О нас — Имидж Оптика';view.innerHTML=aboutHTML(content?.data);}else if(path==='/privacy'){view.innerHTML=privacyPageHTML();}else if(['/terms','/consent'].includes(path)){view.innerHTML=checkoutDocumentHTML(path);}else if(path==='/delivery'){view.innerHTML=deliveryPageHTML();}else if(path === '/cookies'){view.innerHTML=cookiesPageHTML();}else if(path === '/cart'){view.innerHTML=cartPageHTML(products,shopStore.getCart());checkoutController=mountCart(view,products,shopStore);}else if(path === '/checkout'){view.innerHTML=checkoutPageHTML(products,shopStore.getCart());checkoutController=mountCheckout(view,products,shopStore,{onAccepted:confirmation=>analytics.orderRequestSuccess(confirmation)});}else if(path === '/favorites')renderFavorites();else renderNotFound();
   if(generation !== routeGeneration)return;
   const meta = guidePages[path] ? {...pageMetadata(path),title:guidePages[path].searchTitle||guidePages[path].title,description:guidePages[path].searchDescription||guidePages[path].description,index:true} : pageMetadata(path,resolvedProduct,products);
   document.title=meta.title;

@@ -1,13 +1,16 @@
 import {catalogSEOBatch} from './catalog-seo-batch.js';
 const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const selected=new Map(catalogSEOBatch.map(product=>[product.slug,product]));
+export function usableSchemaAttribute(name,value){
+ return !!name.trim() && (typeof value==='string'||typeof value==='number') && !!String(value).trim() && !(/размер\s+линзы/i.test(name)&&/^0(?:[,.]0+)?\s*(?:мм|mm)?$/i.test(String(value).trim()));
+}
 export function selectedSEOProduct(product){
  const expected=selected.get(product?.slug);
  return !!expected&&product.isMock!==true&&['brand','model','category'].every(key=>product[key]===expected[key]);
 }
 export function productSchemaAdditions(product){
  if(!selectedSEOProduct(product))return {};
- const properties=Object.entries(product.attributes||{}).filter(([name,value])=>name.trim()&&typeof value==='string'&&value.trim()).map(([name,value])=>({'@type':'PropertyValue',name,value}));
+ const properties=Object.entries(product.attributes||{}).filter(([name,value])=>typeof value==='string'&&usableSchemaAttribute(name,value)).map(([name,value])=>({'@type':'PropertyValue',name,value}));
  return {category:'Солнцезащитные очки',...(properties.length?{additionalProperty:properties}:{})};
 }
 export function productSEOAdditionHTML(product){

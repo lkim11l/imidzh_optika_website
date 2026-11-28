@@ -1,5 +1,6 @@
 import {isSilhouette,SILHOUETTE_PATH} from './brand-pages.js';
-import {productSchemaAdditions} from './catalog-seo.js';
+import {productSchemaAdditions,usableSchemaAttribute} from './catalog-seo.js';
+import {verifiedAvailability} from './verified-availability.js';
 export const siteURL = 'https://optikim.ru';
 export const categoryNames = {optical:'Оправы для зрения',sunglasses:'Солнцезащитные очки'};
 export const productPath = slug => '/product/' + encodeURIComponent(slug);
@@ -18,6 +19,7 @@ export function pageMetadata(path, product, products = []) {
     '/catalog/sunglasses':['Солнцезащитные очки в Москве — Оптика Имидж','Солнцезащитные очки: бренды, фотографии моделей и характеристики. Подбор и примерка в салоне Оптика Имидж в Москве.'],
     '/privacy':['Политика конфиденциальности — Оптика Имидж','Политика обработки персональных данных ИП Ким Эдуард Олегович на сайте optikim.ru.'],
     '/terms':['Условия использования — Оптика Имидж','Условия оформления заявки на покупку очков в салоне Оптика Имидж.'],
+    '/delivery':['Доставка и самовывоз — Оптика Имидж','Самовывоз из салона в Москве и условия согласования доставки очков.'],
     '/consent':['Согласие на обработку персональных данных — Оптика Имидж','Отдельное согласие на обработку данных заявки в салоне Оптика Имидж.'],
     '/cookies':['Cookies и настройки браузера — Оптика Имидж','Как сайт использует cookies, хранилище браузера и Яндекс Карты.'],
     '/about':['О салоне Оптика Имидж в Москве','Познакомьтесь с владельцами салона Оптика Имидж и нашим подходом к подбору оправ и линз. Работаем с 2002 года.'],
@@ -43,12 +45,16 @@ export function silhouetteDescriptionFallback(product) {
 
 export function productSchema(product) {
   const url = siteURL + productPath(product.slug);
-  // Availability is not confirmed by this catalog: never invent stock or reviews.
+  const availability = verifiedAvailability(product);
+  const safeAttributes = Object.fromEntries(Object.entries(product.attributes || {}).filter(([name,value])=>usableSchemaAttribute(name,value)));
+  const description = [product.description,product.shortDescription].find(text => text?.trim()) ||
+    silhouetteDescriptionFallback({...product,attributes:safeAttributes}) || `${categoryNames[product.category] || 'Очки'} ${product.brand} ${product.model}.`;
+  // Only explicitly confirmed stock for an unchanged offer is eligible.
   return {...productSchemaAdditions(product),'@context':'https://schema.org','@type':'Product',name:`${product.brand} ${product.model}`,url,
     brand:{'@type':'Brand',name:product.brand},model:product.model,
-    description:[product.description,product.shortDescription].find(text => text?.trim()) || silhouetteDescriptionFallback(product),
+    ...(product.id ? {sku:String(product.id)} : {}),description,
     image:(product.images || []).map(image=>new URL(image.src,siteURL).href),
-    ...(Number.isFinite(product.price) && product.price > 0 ? {offers:{'@type':'Offer',url,price:product.price,priceCurrency:'RUB'}} : {})};
+    ...(Number.isFinite(product.price) && product.price > 0 ? {offers:{'@type':'Offer',url,price:product.price,priceCurrency:'RUB',...(availability ? {availability:availability.schema} : {})}} : {})};
 }
 export function pageSchemas(path,meta,product,breadcrumbs) {
   const schemas=[];
